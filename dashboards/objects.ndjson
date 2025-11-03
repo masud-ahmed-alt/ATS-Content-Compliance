@@ -1,0 +1,3 @@
+
+{"type":"index-pattern","id":"illegal_hits-*","attributes":{"title":"illegal_hits*","timeFieldName":"ts"}}
+{"type":"search","id":"illegal_hits_table","attributes":{"title":"Illegal Hits Table","columns":["url","category","keyword","snippet","ts","source"],"sort":[["ts","desc"]],"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"index\":\"illegal_hits-*\",\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"}}}

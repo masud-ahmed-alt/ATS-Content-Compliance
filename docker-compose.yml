@@ -1,0 +1,189 @@
+version: "3.8"
+
+services:
+  # =======================
+  # 1. OpenSearch (Core)
+  # =======================
+  opensearch:
+    image: opensearchproject/opensearch:2.9.0
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - cluster.name=opensearch-cluster
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  # =======================================
+  # 2. OpenSearch Dashboards (Web UI)
+  # =======================================
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.9.0
+    container_name: opensearch-dashboards
+    environment:
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    ports:
+      - "5601:5601"
+    depends_on:
+      - opensearch
+
+  # =======================================
+  # 3. Redis
+  # =======================================
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: always
+
+  # =======================================
+  # 4. Python Analyzer
+  # =======================================
+  python-analyzer:
+    build:
+      context: ./python-analyzer
+      dockerfile: Dockerfile
+    container_name: python-analyzer
+    environment:
+      - OPENSEARCH_HOST=http://opensearch:9200
+      - KEYWORDS_FILE=/app/keywords/keywords.yml
+      - RENDERER_URL=http://playwright-renderer:9000/render
+      - RENDERER_SS=http://playwright-renderer:9000/render-and-screenshot
+      - JS_ESCALATE_THRESHOLD=2
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./python-analyzer:/app
+      - ./keywords:/app/keywords
+      - analyzer-data:/data
+    depends_on:
+      - opensearch
+      - playwright-renderer
+      - redis
+    command: >
+      uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # =======================================
+  # 5. Go Fetcher
+  # =======================================
+  go-fetcher:
+    build:
+      context: ./go-fetcher
+      dockerfile: Dockerfile
+    container_name: go-fetcher
+    environment:
+      - PORT=8080
+      - REDIS_HOST=redis:6379
+      - PYTHON_ANALYZER_URL=http://python-analyzer:8000/webhook/task_done
+    depends_on:
+      - redis
+      - python-analyzer
+    ports:
+      - "8080:8080"
+    restart: always
+    command: ["/usr/local/bin/go-fetcher"]
+
+  # =======================================
+  # 6. Playwright Renderer
+  # =======================================
+  playwright-renderer:
+    build:
+      context: ./playwright-renderer
+      dockerfile: Dockerfile
+    container_name: playwright-renderer
+    environment:
+      - KEYWORDS_FILE=/app/keywords/keywords.yml
+      - PYTHONUNBUFFERED=1
+      - MINIO_ENDPOINT=minio:7000
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=screenshots
+    depends_on:
+      - minio
+    volumes:
+      - ./keywords:/app/keywords
+      - ./screenshots:/app/screenshots
+    ports:
+      - "9000:9000"
+
+  # =======================================
+  # 7. Postgres
+  # =======================================
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: analyzerdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # =======================================
+  # 8. MinIO
+  # =======================================
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    restart: always
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "7000:7000"
+      - "7001:7001"
+    command: server /data --address ":7000" --console-address ":7001"
+
+  # =======================================
+  # 9. Frontend (React + Vite)
+  # =======================================
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    container_name: frontend
+    profiles: ["dev"]
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: ["npm", "run", "dev", "--", "--host"]
+    depends_on:
+      python-analyzer:
+        condition: service_started
+      playwright-renderer:
+        condition: service_started
+      go-fetcher:
+        condition: service_started
+
+# =======================================
+# Persistent Volumes
+# =======================================
+volumes:
+  opensearch-data:
+  analyzer-data:
+  pgdata:
+  minio-data:

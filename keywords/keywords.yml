@@ -1,0 +1,2735 @@
+keywords:
+  - term: CC_IP_INFRINGEMENT_PIRACY_COPYRIGHT
+    category: ip infringement / piracy / copyright
+    aliases:
+      - counterfeit rolex
+      - counterfeit rolexes
+      - counterfeit-rolex
+      - cracked
+      - cracked software
+      - cracked softwares
+      - cracked-software
+      - crackeds
+      - fake nike
+      - fake nikes
+      - fake-nike
+      - free copyright
+      - free copyrights
+      - free keygen
+      - free keygens
+      - free movies
+      - free movieses
+      - free movy
+      - free spotify premium
+      - free spotify premiums
+      - free-copyright
+      - free-keygen
+      - free-movies
+      - free-spotify-premium
+      - hacked account
+      - hacked accounts
+      - hacked-account
+      - illegal streaming
+      - illegal streamings
+      - illegal-streaming
+      - ip infringement / piracy / copyright
+      - ip infringement / piracy / copyrights
+      - ip-infringement-/-piracy-/-copyright
+      - iptv code
+      - iptv codes
+      - iptv subscription
+      - iptv subscriptions
+      - iptv-code
+      - iptv-subscription
+      - keygen
+      - keygens
+      - knockoff
+      - knockoffs
+      - license activator
+      - license activators
+      - license-activator
+      - m3u list
+      - m3u lists
+      - m3u-list
+      - pirated movies
+      - pirated movieses
+      - pirated movy
+      - pirated-movies
+      - premium account hack
+      - premium account hacks
+      - premium-account-hack
+      - replica bag
+      - replica bags
+      - replica-bag
+      - torrent
+      - torrents
+      - warez
+      - warezes
+      - watch latest movie free
+      - watch latest movie frees
+      - watch-latest-movie-free
+    patterns:
+      - \bcounterfeit(?:[\s\-_]*)rolex\b
+      - \bcounterfeit(?:[\s\-_]*)rolexes\b
+      - \bcracked(?:[\s\-_]*)software\b
+      - \bcracked(?:[\s\-_]*)softwares\b
+      - \bcracked\b
+      - \bcrackeds\b
+      - \bfake(?:[\s\-_]*)nike\b
+      - \bfake(?:[\s\-_]*)nikes\b
+      - \bfree(?:[\s\-_]*)copyright\b
+      - \bfree(?:[\s\-_]*)copyrights\b
+      - \bfree(?:[\s\-_]*)keygen\b
+      - \bfree(?:[\s\-_]*)keygens\b
+      - \bfree(?:[\s\-_]*)movies\b
+      - \bfree(?:[\s\-_]*)movieses\b
+      - \bfree(?:[\s\-_]*)movy\b
+      - \bfree(?:[\s\-_]*)spotify(?:[\s\-_]*)premium\b
+      - \bfree(?:[\s\-_]*)spotify(?:[\s\-_]*)premiums\b
+      - \bhacked(?:[\s\-_]*)account\b
+      - \bhacked(?:[\s\-_]*)accounts\b
+      - \billegal(?:[\s\-_]*)streaming\b
+      - \billegal(?:[\s\-_]*)streamings\b
+      - \bip(?:[\s\-_]*)infringement(?:[\s\-_]*)piracy(?:[\s\-_]*)copyright\b
+      - \bip(?:[\s\-_]*)infringement(?:[\s\-_]*)piracy(?:[\s\-_]*)copyrights\b
+      - \biptv(?:[\s\-_]*)code\b
+      - \biptv(?:[\s\-_]*)codes\b
+      - \biptv(?:[\s\-_]*)subscription\b
+      - \biptv(?:[\s\-_]*)subscriptions\b
+      - \bkeygen\b
+      - \bkeygens\b
+      - \bknockoff\b
+      - \bknockoffs\b
+      - \blicense(?:[\s\-_]*)activator\b
+      - \blicense(?:[\s\-_]*)activators\b
+      - \bm3u(?:[\s\-_]*)list\b
+      - \bm3u(?:[\s\-_]*)lists\b
+      - \bpirated(?:[\s\-_]*)movies\b
+      - \bpirated(?:[\s\-_]*)movieses\b
+      - \bpirated(?:[\s\-_]*)movy\b
+      - \bpremium(?:[\s\-_]*)account(?:[\s\-_]*)hack\b
+      - \bpremium(?:[\s\-_]*)account(?:[\s\-_]*)hacks\b
+      - \breplica(?:[\s\-_]*)bag\b
+      - \breplica(?:[\s\-_]*)bags\b
+      - \btorrent\b
+      - \btorrents\b
+      - \bwarez\b
+      - \bwarezes\b
+      - \bwatch(?:[\s\-_]*)latest(?:[\s\-_]*)movie(?:[\s\-_]*)free\b
+      - \bwatch(?:[\s\-_]*)latest(?:[\s\-_]*)movie(?:[\s\-_]*)frees\b
+
+
+  - term: vape
+    category: drugs
+    aliases:
+      - vape
+      - vaping
+      - e cig
+      - e-cig
+      - e cigarette
+      - e-cigarette
+      - vape pen
+      - pods
+    patterns:
+      - \bv[a@]p[e3]\b
+      - \be[-\s]?cig(arette)?s?\b
+  - term: cbd
+    category: drugs
+    aliases:
+      - cbd
+      - hemp oil
+      - cannabidiol
+    patterns:
+      - \bcbd\b
+      - \bcanna(binoid|bidiol)?\b
+  - term: cannabis (IN/GCC)
+    category: drugs
+    aliases:
+      - ganja
+      - weed
+      - charas
+      - hash
+      - hashish
+      - bhang
+      - marijuana
+    patterns:
+      - \bga[nm]ja\b
+      - \bhash(ish)?\b
+      - \bmarij?uana\b
+      - \bبنگ\b
+      - \bحشيش\b
+      - \bقنب\b
+  - term: kratom
+    category: drugs
+    aliases:
+      - kratom
+      - mitragyna
+    patterns:
+      - \bkr[a@]tom\b
+      - \bmitragyna\b
+  - term: opioids
+    category: drugs
+    aliases:
+      - opioid
+      - opium
+      - morphine
+      - codeine
+      - tramadol
+      - oxycodone
+      - fentanyl
+      - afeem
+    patterns:
+      - \bfent[ai]nyl\b
+      - \btramadol\b
+      - \boxy[-\s]?codone\b
+      - \bafeem\b
+  - term: steroids (brands)
+    category: steroids
+    aliases:
+      - anabolic steroid
+      - steroids
+    brands:
+      - trenbolone
+      - stanozolol
+      - oxandrolone
+      - winstrol
+      - dianabol
+      - deca durabolin
+      - nandrolone
+      - primobolan
+      - masteron
+      - anavar
+      - sustanon
+      - test e
+      - test c
+    patterns:
+      - \banabolic(s)?\b
+      - \b(test\s?(e|c)|sustanon|nandrolone|stanozolol|trenbolone|oxandrolone|winstrol|dianabol)\b
+  - term: counterfeit
+    category: adult
+    aliases:
+      - counterfeit
+      - replica
+      - first copy
+    patterns:
+      - \b(first\s?copy|replica|counter[-\s]?feit)\b
+  - term: fake medicine
+    category: pharma
+    aliases:
+      - fake medicine
+      - unapproved drug
+      - unregistered medication
+      - rx without prescription
+    patterns:
+      - \b(no\s?rx|without\s?prescription)\b
+      - \bunapproved\s?drug\b
+  - term: pharma (brands abused)
+    category: pharma
+    brands:
+      - viagra
+      - cialis
+      - levitra
+      - tramadol
+      - alprazolam
+      - xanax
+      - modafinil
+      - olanzapine
+      - zopiclone
+      - clenbuterol
+    patterns:
+      - \b(viagra|cialis|levitra|xanax|tramadol|modafinil|zopiclone|clenbuterol)\s+(no\s*rx|without\s*prescription)\b
+  - term: gambling
+    category: gambling
+    aliases:
+      - betting
+      - sportsbook
+      - casino
+      - online casino
+      - ipl betting
+      - teen patti cash
+      - satta
+      - matka
+    brands:
+      - parimatch
+      - 1xbet
+      - bet365
+      - dafabet
+      - melbet
+      - 10cric
+      - mostbet
+      - betway
+      - fairplay
+      - rummycircle
+      - dream11
+    patterns:
+      - \b(ipl|cricket)\s+bet(t)?ing\b
+      - \bonline\s+casino\b
+      - \b(satta|matka)\b
+  - term: adult services
+    category: adult
+    aliases:
+      - escort
+      - call girl
+      - prostitution
+      - adult services
+      - xxx
+    patterns:
+      - \bescorts?\b
+      - \bcall\s?girls?\b
+      - \bXXX\b
+  - term: weapons
+    category: weapons
+    aliases:
+      - firearm
+      - gun for sale
+      - buy weapon
+      - pistol
+      - revolver
+    patterns:
+      - \bbuy\s+(gun|pistol|revolver)\b
+  - term: explosives
+    category: explosives
+    aliases:
+      - bomb
+      - explosives
+      - detonator
+    patterns:
+      - \b(detonator|explosive)s?\b
+  - term: fake id
+    category: adult
+    aliases:
+      - fake id
+      - counterfeit id
+      - make passport
+      - fake aadhaar
+    patterns:
+      - \bfake\s+(id|aadhaar|passport)\b
+  - term: arabic drugs
+    category: drugs
+    aliases:
+      - مخدرات
+      - حشيش
+      - حبة ترامادول
+      - ترامادول
+      - هيروين
+      - قنب
+    patterns:
+      - \bمخدرات\b
+      - \bحشيش\b
+      - \bترامادول\b
+      - \bهيروين\b
+  - term: arabic adult
+    category: adult
+    aliases:
+      - خدمات مرافقة
+      - دردشة جنسية
+      - مواعدة للكبار
+    patterns:
+      - مرافقة
+      - للكبار
+  - term: arabic weapons
+    category: weapons
+    aliases:
+      - سلاح للبيع
+      - مسدس للبيع
+    patterns:
+      - \bسلاح\s+للبيع\b
+      - \bمسدس\s+للبيع\b
+  - term: upi payment handle
+    category: payments
+    aliases:
+      - "@upi"
+      - "@paytm"
+      - "@ybl"
+      - "@okicici"
+      - "@oksbi"
+      - "@okaxis"
+      - "@okhdfcbank"
+      - "@ibl"
+      - "@axl"
+      - "@idfcbank"
+      - "@apl"
+      - "@payu"
+      - "@pingpay"
+      - "@barodampay"
+      - "@boi"
+      - "@zomato"
+    patterns:
+      - \b[a-zA-Z0-9._-]{2,}@(upi|paytm|ybl|okicici|oksbi|okaxis|okhdfcbank|ibl|axl|idfcbank|apl|payu|pingpay|barodampay|boi|zomato)\b
+  - term: crypto wallets
+    category: crypto
+    aliases:
+      - bitcoin address
+      - ETH address
+    patterns:
+      - \b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\b
+      - \b0x[a-fA-F0-9]{40}\b
+  - term: CC_ADULT_PORN_SEX_WORK
+    category: adult / porn / sex work
+    aliases:
+      - adult / porn / sex work
+      - adult / porn / sex works
+      - adult-/-porn-/-sex-work
+      - bdsm
+      - bdsms
+      - cam girl
+      - cam girls
+      - cam-girl
+      - erotic massage
+      - erotic massages
+      - erotic-massage
+      - escort
+      - escorts
+      - fetish
+      - fetishes
+      - nude cam
+      - nude cams
+      - nude-cam
+      - onlyfans leak
+      - onlyfans leaks
+      - onlyfans-leak
+      - porn
+      - porns
+      - prostitution
+      - prostitutions
+      - sex toy
+      - sex toys
+      - sex-toy
+      - sugar daddies
+      - sugar daddy
+      - sugar-daddy
+      - xxx
+      - xxxes
+    patterns:
+      - \badult(?:[\s\-_]*)porn(?:[\s\-_]*)sex(?:[\s\-_]*)work\b
+      - \badult(?:[\s\-_]*)porn(?:[\s\-_]*)sex(?:[\s\-_]*)works\b
+      - \bbdsm\b
+      - \bbdsms\b
+      - \bcam(?:[\s\-_]*)girl\b
+      - \bcam(?:[\s\-_]*)girls\b
+      - \berotic(?:[\s\-_]*)massage\b
+      - \berotic(?:[\s\-_]*)massages\b
+      - \bescort\b
+      - \bescorts\b
+      - \bfetish\b
+      - \bfetishes\b
+      - \bnude(?:[\s\-_]*)cam\b
+      - \bnude(?:[\s\-_]*)cams\b
+      - \bonlyfans(?:[\s\-_]*)leak\b
+      - \bonlyfans(?:[\s\-_]*)leaks\b
+      - \bporn\b
+      - \bporns\b
+      - \bprostitution\b
+      - \bprostitutions\b
+      - \bsex(?:[\s\-_]*)toy\b
+      - \bsex(?:[\s\-_]*)toys\b
+      - \bsugar(?:[\s\-_]*)daddies\b
+      - \bsugar(?:[\s\-_]*)daddy\b
+      - \bxxx\b
+      - \bxxxes\b
+  - term: CC_AGE_RESTRICTED_SALES_WITHOUT_VERIFICATION
+    category: age-restricted sales without verification
+    aliases:
+      - 18+ not verified
+      - 18+ not verifieds
+      - 18+-not-verified
+      - age restricted sales without verification
+      - age restricted sales without verifications
+      - age-restricted sales without verification
+      - age-restricted sales without verifications
+      - no age check
+      - no age checks
+      - no age verification
+      - no age verifications
+      - no-age-check
+      - no-age-verification
+      - sell to minor
+      - sell to minors
+      - sell to minorses
+      - sell-to-minors
+      - underage allowed
+      - underage alloweds
+      - underage-allowed
+    patterns:
+      - \b18(?:[\s\-_]*)\+(?:[\s\-_]*)not(?:[\s\-_]*)verified\b
+      - \b18(?:[\s\-_]*)\+(?:[\s\-_]*)not(?:[\s\-_]*)verifieds\b
+      - \bage(?:[\s\-_]*)restricted(?:[\s\-_]*)sales(?:[\s\-_]*)without(?:[\s\-_]*)verification\b
+      - \bage(?:[\s\-_]*)restricted(?:[\s\-_]*)sales(?:[\s\-_]*)without(?:[\s\-_]*)verifications\b
+      - \bno(?:[\s\-_]*)age(?:[\s\-_]*)check\b
+      - \bno(?:[\s\-_]*)age(?:[\s\-_]*)checks\b
+      - \bno(?:[\s\-_]*)age(?:[\s\-_]*)verification\b
+      - \bno(?:[\s\-_]*)age(?:[\s\-_]*)verifications\b
+      - \bsell(?:[\s\-_]*)to(?:[\s\-_]*)minor\b
+      - \bsell(?:[\s\-_]*)to(?:[\s\-_]*)minors\b
+      - \bsell(?:[\s\-_]*)to(?:[\s\-_]*)minorses\b
+      - \bunderage(?:[\s\-_]*)allowed\b
+      - \bunderage(?:[\s\-_]*)alloweds\b
+  - term: CC_BANNED_CONTROLLED_DRUGS
+    category: banned / controlled drugs
+    aliases:
+      - a me
+      - a mes
+      - a-me
+      - banned / controlled drug
+      - banned / controlled drugs
+      - banned / controlled drugses
+      - banned-/-controlled-drugs
+      - bath salt
+      - bath salts
+      - bath saltses
+      - bath-salts
+      - bitcoin only deal
+      - bitcoin only deals
+      - bitcoin-only-deal
+      - cash on delivery anonymou
+      - cash on delivery anonymous
+      - cash on delivery anonymouses
+      - cash-on-delivery-anonymous
+      - cocaine
+      - cocaines
+      - crack
+      - cracks
+      - crypto only deal
+      - crypto only deals
+      - crypto-only-deal
+      - designer drug
+      - designer drugs
+      - designer drugses
+      - designer-drugs
+      - discreet shipping
+      - discreet shippings
+      - discreet-shipping
+      - dm to order
+      - dm to orders
+      - dm-to-order
+      - dmt
+      - dmts
+      - ecstasies
+      - ecstasy
+      - fentanyl
+      - fentanyls
+      - heroin
+      - heroins
+      - ketamine
+      - ketamines
+      - local delivery tonight
+      - local delivery tonights
+      - local-delivery-tonight
+      - lsd
+      - lsds
+      - meet up drop
+      - meet up drops
+      - meet-up-drop
+      - meth
+      - meths
+      - no rx needed
+      - no rx neededs
+      - no-rx-needed
+      - opioid
+      - opioids
+      - opioidses
+      - parcel sealed no smell
+      - parcel sealed no smells
+      - parcel-sealed-no-smell
+      - plug available
+      - plug availables
+      - plug-available
+      - shroom
+      - shrooms
+      - shroomses
+      - spice
+      - spices
+      - stealth shipping
+      - stealth shippings
+      - stealth-shipping
+      - telegram drop
+      - telegram drops
+      - telegram-drop
+      - whatsapp me for price
+      - whatsapp me for prices
+    patterns:
+      - \ba(?:[\s\-_]*)me\b
+      - \ba(?:[\s\-_]*)mes\b
+      - \bbanned(?:[\s\-_]*)controlled(?:[\s\-_]*)drug\b
+      - \bbanned(?:[\s\-_]*)controlled(?:[\s\-_]*)drugs\b
+      - \bbanned(?:[\s\-_]*)controlled(?:[\s\-_]*)drugses\b
+      - \bbath(?:[\s\-_]*)salt\b
+      - \bbath(?:[\s\-_]*)salts\b
+      - \bbath(?:[\s\-_]*)saltses\b
+      - \bbitcoin(?:[\s\-_]*)only(?:[\s\-_]*)deal\b
+      - \bbitcoin(?:[\s\-_]*)only(?:[\s\-_]*)deals\b
+      - \bcash(?:[\s\-_]*)on(?:[\s\-_]*)delivery(?:[\s\-_]*)anonymou\b
+      - \bcash(?:[\s\-_]*)on(?:[\s\-_]*)delivery(?:[\s\-_]*)anonymous\b
+      - \bcash(?:[\s\-_]*)on(?:[\s\-_]*)delivery(?:[\s\-_]*)anonymouses\b
+      - \bcocaine\b
+      - \bcocaines\b
+      - \bcrack\b
+      - \bcracks\b
+      - \bcrypto(?:[\s\-_]*)only(?:[\s\-_]*)deal\b
+      - \bcrypto(?:[\s\-_]*)only(?:[\s\-_]*)deals\b
+      - \bdesigner(?:[\s\-_]*)drug\b
+      - \bdesigner(?:[\s\-_]*)drugs\b
+      - \bdesigner(?:[\s\-_]*)drugses\b
+      - \bdiscreet(?:[\s\-_]*)shipping\b
+      - \bdiscreet(?:[\s\-_]*)shippings\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)order\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)orders\b
+      - \bdmt\b
+      - \bdmts\b
+      - \becstasies\b
+      - \becstasy\b
+      - \bfentanyl\b
+      - \bfentanyls\b
+      - \bheroin\b
+      - \bheroins\b
+      - \bketamine\b
+      - \bketamines\b
+      - \blocal(?:[\s\-_]*)delivery(?:[\s\-_]*)tonight\b
+      - \blocal(?:[\s\-_]*)delivery(?:[\s\-_]*)tonights\b
+      - \blsd\b
+      - \blsds\b
+      - \bmeet(?:[\s\-_]*)up(?:[\s\-_]*)drop\b
+      - \bmeet(?:[\s\-_]*)up(?:[\s\-_]*)drops\b
+      - \bmeth\b
+      - \bmeths\b
+      - \bno(?:[\s\-_]*)rx(?:[\s\-_]*)needed\b
+      - \bno(?:[\s\-_]*)rx(?:[\s\-_]*)neededs\b
+      - \bopioid\b
+      - \bopioids\b
+      - \bopioidses\b
+      - \bparcel(?:[\s\-_]*)sealed(?:[\s\-_]*)no(?:[\s\-_]*)smell\b
+      - \bparcel(?:[\s\-_]*)sealed(?:[\s\-_]*)no(?:[\s\-_]*)smells\b
+      - \bplug(?:[\s\-_]*)available\b
+      - \bplug(?:[\s\-_]*)availables\b
+      - \bshroom\b
+      - \bshrooms\b
+      - \bshroomses\b
+      - \bspice\b
+      - \bspices\b
+      - \bstealth(?:[\s\-_]*)shipping\b
+      - \bstealth(?:[\s\-_]*)shippings\b
+      - \btelegram(?:[\s\-_]*)drop\b
+      - \btelegram(?:[\s\-_]*)drops\b
+      - \bwhatsapp(?:[\s\-_]*)me(?:[\s\-_]*)for(?:[\s\-_]*)price\b
+      - \bwhatsapp(?:[\s\-_]*)me(?:[\s\-_]*)for(?:[\s\-_]*)prices\b
+  - term: CC_DARKNET_DEEP_WEB
+    category: darknet / deep web
+    aliases:
+      - darknet / deep web
+      - darknet / deep webs
+      - darknet market
+      - darknet markets
+      - darknet-/-deep-web
+      - darknet-market
+      - darkweb drug
+      - darkweb drugs
+      - darkweb drugses
+      - darkweb-drugs
+      - onion
+      - onion sites
+      - onion-site
+      - ransomware
+      - ransomware service
+      - ransomware services
+      - ransomware-
+      - ransomware-service
+      - tor hidden
+      - tor hidden service
+      - tor hidden services
+      - tor-hidden-
+      - tor-hidden-service
+    patterns:
+      - \bdarknet(?:[\s\-_]*)deep(?:[\s\-_]*)web\b
+      - \bdarknet(?:[\s\-_]*)deep(?:[\s\-_]*)webs\b
+      - \bdarknet(?:[\s\-_]*)market\b
+      - \bdarknet(?:[\s\-_]*)markets\b
+      - \bdarkweb(?:[\s\-_]*)drug\b
+      - \bdarkweb(?:[\s\-_]*)drugs\b
+      - \bdarkweb(?:[\s\-_]*)drugses\b
+      - \bonion(?:[\s\-_]*)site\b
+      - \bonion(?:[\s\-_]*)sites\b
+      - \bonion\b
+      - \bransomware(?:[\s\-_]*)service\b
+      - \bransomware(?:[\s\-_]*)services\b
+      - \bransomware\b
+      - \btor(?:[\s\-_]*)hidden(?:[\s\-_]*)service\b
+      - \btor(?:[\s\-_]*)hidden(?:[\s\-_]*)services\b
+      - \btor(?:[\s\-_]*)hidden\b
+  - term: CC_FINANCIAL_FRAUD_SCAMS
+    category: financial fraud / scams
+    aliases:
+      - buy cvv
+      - buy cvvs
+      - buy-cvv
+      - credit card dump
+      - credit card dumps
+      - credit-card-dump
+      - cvv
+      - cvv shop
+      - cvv shops
+      - cvv-
+      - cvv-shop
+      - double your money
+      - double your moneys
+      - double-your-money
+      - financial fraud / scam
+      - financial fraud / scams
+      - financial fraud / scamses
+      - financial-fraud-/-scams
+      - fullz
+      - fullzes
+      - get rich quick
+      - get rich quicks
+      - get-rich-quick
+      - guaranteed return
+      - guaranteed returns
+      - guaranteed returnses
+      - guaranteed-returns
+      - high yield investment
+      - high yield investments
+      - high-yield-investment
+      - hyip
+      - hyips
+      - investment without risk
+      - investment without risks
+      - investment-without-risk
+      - offshore investment
+      - offshore investments
+      - offshore-investment
+      - ponzi scheme
+      - ponzi schemes
+      - ponzi-scheme
+      - pyramid scheme
+      - pyramid schemes
+      - pyramid-scheme
+      - work from home earn dailies
+      - work from home earn daily
+      - work-from-home-earn-daily
+    patterns:
+      - \bbuy(?:[\s\-_]*)cvv\b
+      - \bbuy(?:[\s\-_]*)cvvs\b
+      - \bcredit(?:[\s\-_]*)card(?:[\s\-_]*)dump\b
+      - \bcredit(?:[\s\-_]*)card(?:[\s\-_]*)dumps\b
+      - \bcvv(?:[\s\-_]*)shop\b
+      - \bcvv(?:[\s\-_]*)shops\b
+      - \bcvv\b
+      - \bdouble(?:[\s\-_]*)your(?:[\s\-_]*)money\b
+      - \bdouble(?:[\s\-_]*)your(?:[\s\-_]*)moneys\b
+      - \bfinancial(?:[\s\-_]*)fraud(?:[\s\-_]*)scam\b
+      - \bfinancial(?:[\s\-_]*)fraud(?:[\s\-_]*)scams\b
+      - \bfinancial(?:[\s\-_]*)fraud(?:[\s\-_]*)scamses\b
+      - \bfullz\b
+      - \bfullzes\b
+      - \bget(?:[\s\-_]*)rich(?:[\s\-_]*)quick\b
+      - \bget(?:[\s\-_]*)rich(?:[\s\-_]*)quicks\b
+      - \bguaranteed(?:[\s\-_]*)return\b
+      - \bguaranteed(?:[\s\-_]*)returns\b
+      - \bguaranteed(?:[\s\-_]*)returnses\b
+      - \bhigh(?:[\s\-_]*)yield(?:[\s\-_]*)investment\b
+      - \bhigh(?:[\s\-_]*)yield(?:[\s\-_]*)investments\b
+      - \bhyip\b
+      - \bhyips\b
+      - \binvestment(?:[\s\-_]*)without(?:[\s\-_]*)risk\b
+      - \binvestment(?:[\s\-_]*)without(?:[\s\-_]*)risks\b
+      - \boffshore(?:[\s\-_]*)investment\b
+      - \boffshore(?:[\s\-_]*)investments\b
+      - \bponzi(?:[\s\-_]*)scheme\b
+      - \bponzi(?:[\s\-_]*)schemes\b
+      - \bpyramid(?:[\s\-_]*)scheme\b
+      - \bpyramid(?:[\s\-_]*)schemes\b
+      - \bwork(?:[\s\-_]*)from(?:[\s\-_]*)home(?:[\s\-_]*)earn(?:[\s\-_]*)dailies\b
+      - \bwork(?:[\s\-_]*)from(?:[\s\-_]*)home(?:[\s\-_]*)earn(?:[\s\-_]*)daily\b
+  - term: CC_GAMING_BETTING_PAYMENTS
+    category: gaming / betting payments
+    aliases:
+      - add cash
+      - add cashes
+      - add-cash
+      - bet transfer
+      - bet transfers
+      - bet-transfer
+      - cash out to upi
+      - cash out to upis
+      - cash-out-to-upi
+      - chips top up
+      - chips top ups
+      - chips-top-up
+      - crypto deposit for gaming
+      - crypto deposit for gamings
+      - crypto-deposit-for-gaming
+      - deposit for rummies
+      - deposit for rummy
+      - deposit-for-rummy
+      - discord bet payment
+      - discord bet payments
+      - discord-bet-payment
+      - dm to buy chip
+      - dm to buy chips
+      - dm to buy chipses
+      - dm-to-buy-chips
+      - fantasy sports add cash
+      - fantasy sports add cashes
+      - fantasy-sports-add-cash
+      - game id topup
+      - game id topups
+      - game-id-topup
+      - gaming / betting payment
+      - gaming / betting payments
+      - gaming / betting paymentses
+      - gaming wallet
+      - gaming wallets
+      - gaming-/-betting-payments
+      - gaming-wallet
+      - gpay add cash
+      - gpay add cashes
+      - gpay-add-cash
+      - in game currency cashout
+      - in game currency cashouts
+      - in-game currency cashout
+      - in-game currency cashouts
+      - instagram bet payment
+      - instagram bet payments
+      - instagram-bet-payment
+      - phonepe gaming wallet
+      - phonepe gaming wallets
+      - phonepe-gaming-wallet
+      - poker chip
+      - poker chips
+      - poker chipses
+      - poker-chips
+      - real money gaming
+      - real money gamings
+      - real-money-gaming
+      - teen patti cash
+      - teen patti cashes
+      - teen-patti-cash
+      - telegram chip
+      - telegram chips
+      - telegram chipses
+      - telegram-chips
+      - upi for gaming
+      - upi for gamings
+      - upi-for-gaming
+      - whatsapp chip
+      - whatsapp chips
+      - whatsapp chipses
+      - whatsapp-chips
+      - withdraw winning
+      - withdraw winnings
+      - withdraw winningses
+      - withdraw-winnings
+    patterns:
+      - \badd(?:[\s\-_]*)cash\b
+      - \badd(?:[\s\-_]*)cashes\b
+      - \bbet(?:[\s\-_]*)transfer\b
+      - \bbet(?:[\s\-_]*)transfers\b
+      - \bcash(?:[\s\-_]*)out(?:[\s\-_]*)to(?:[\s\-_]*)upi\b
+      - \bcash(?:[\s\-_]*)out(?:[\s\-_]*)to(?:[\s\-_]*)upis\b
+      - \bchips(?:[\s\-_]*)top(?:[\s\-_]*)up\b
+      - \bchips(?:[\s\-_]*)top(?:[\s\-_]*)ups\b
+      - \bcrypto(?:[\s\-_]*)deposit(?:[\s\-_]*)for(?:[\s\-_]*)gaming\b
+      - \bcrypto(?:[\s\-_]*)deposit(?:[\s\-_]*)for(?:[\s\-_]*)gamings\b
+      - \bdeposit(?:[\s\-_]*)for(?:[\s\-_]*)rummies\b
+      - \bdeposit(?:[\s\-_]*)for(?:[\s\-_]*)rummy\b
+      - \bdiscord(?:[\s\-_]*)bet(?:[\s\-_]*)payment\b
+      - \bdiscord(?:[\s\-_]*)bet(?:[\s\-_]*)payments\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chip\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chips\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chipses\b
+      - \bfantasy(?:[\s\-_]*)sports(?:[\s\-_]*)add(?:[\s\-_]*)cash\b
+      - \bfantasy(?:[\s\-_]*)sports(?:[\s\-_]*)add(?:[\s\-_]*)cashes\b
+      - \bgame(?:[\s\-_]*)id(?:[\s\-_]*)topup\b
+      - \bgame(?:[\s\-_]*)id(?:[\s\-_]*)topups\b
+      - \bgaming(?:[\s\-_]*)betting(?:[\s\-_]*)payment\b
+      - \bgaming(?:[\s\-_]*)betting(?:[\s\-_]*)payments\b
+      - \bgaming(?:[\s\-_]*)betting(?:[\s\-_]*)paymentses\b
+      - \bgaming(?:[\s\-_]*)wallet\b
+      - \bgaming(?:[\s\-_]*)wallets\b
+      - \bgpay(?:[\s\-_]*)add(?:[\s\-_]*)cash\b
+      - \bgpay(?:[\s\-_]*)add(?:[\s\-_]*)cashes\b
+      - \bin(?:[\s\-_]*)game(?:[\s\-_]*)currency(?:[\s\-_]*)cashout\b
+      - \bin(?:[\s\-_]*)game(?:[\s\-_]*)currency(?:[\s\-_]*)cashouts\b
+      - \binstagram(?:[\s\-_]*)bet(?:[\s\-_]*)payment\b
+      - \binstagram(?:[\s\-_]*)bet(?:[\s\-_]*)payments\b
+      - \bphonepe(?:[\s\-_]*)gaming(?:[\s\-_]*)wallet\b
+      - \bphonepe(?:[\s\-_]*)gaming(?:[\s\-_]*)wallets\b
+      - \bpoker(?:[\s\-_]*)chip\b
+      - \bpoker(?:[\s\-_]*)chips\b
+      - \bpoker(?:[\s\-_]*)chipses\b
+      - \breal(?:[\s\-_]*)money(?:[\s\-_]*)gaming\b
+      - \breal(?:[\s\-_]*)money(?:[\s\-_]*)gamings\b
+      - \bteen(?:[\s\-_]*)patti(?:[\s\-_]*)cash\b
+      - \bteen(?:[\s\-_]*)patti(?:[\s\-_]*)cashes\b
+      - \btelegram(?:[\s\-_]*)chip\b
+      - \btelegram(?:[\s\-_]*)chips\b
+      - \btelegram(?:[\s\-_]*)chipses\b
+      - \bupi(?:[\s\-_]*)for(?:[\s\-_]*)gaming\b
+      - \bupi(?:[\s\-_]*)for(?:[\s\-_]*)gamings\b
+      - \bwhatsapp(?:[\s\-_]*)chip\b
+      - \bwhatsapp(?:[\s\-_]*)chips\b
+      - \bwhatsapp(?:[\s\-_]*)chipses\b
+      - \bwithdraw(?:[\s\-_]*)winning\b
+      - \bwithdraw(?:[\s\-_]*)winnings\b
+      - \bwithdraw(?:[\s\-_]*)winningses\b
+  - term: CC_HATE_EXTREMISM
+    category: hate / extremism
+    aliases:
+      - calls for violence
+      - calls for violence against group
+      - calls for violence against groups
+      - calls for violences
+      - calls-for-violence
+      - calls-for-violence-against-group
+      - dehumanizing language
+      - dehumanizing languages
+      - dehumanizing-language
+      - doxxing minorities
+      - doxxing minoritieses
+      - doxxing minority
+      - doxxing-minorities
+      - ethnic cleansing
+      - ethnic cleansings
+      - ethnic hatred
+      - ethnic hatreds
+      - ethnic-cleansing
+      - ethnic-hatred
+      - extremist group
+      - extremist groups
+      - extremist propag&a
+      - extremist propag&as
+      - extremist propaganda
+      - extremist propagandas
+      - extremist recruitment
+      - extremist recruitments
+      - extremist-group
+      - extremist-propag&a
+      - extremist-propaganda
+      - extremist-recruitment
+      - genocide denial
+      - genocide denials
+      - genocide-denial
+      - hate / extremism
+      - hate / extremisms
+      - hate speech
+      - hate speeches
+      - hate-/-extremism
+      - hate-speech
+      - incite violence
+      - incite violences
+      - incite-violence
+      - isi
+      - isis
+      - isises
+      - jihad
+      - jihads
+      - martyrdom video
+      - martyrdom videos
+      - martyrdom-video
+      - neo nazi
+      - neo nazis
+      - neo-nazi
+      - organize hate rallies
+      - organize hate rally
+      - organize-hate-rally
+      - racial hatred
+      - racial hatreds
+      - racial-hatred
+      - radical forum
+      - radical forums
+      - radical-forum
+      - religious hatred
+      - religious hatreds
+      - religious-hatred
+      - report content hate speech
+      - report content hate speeches
+      - report-content-hate-speech
+      - slur usage
+      - slur usages
+      - slur-usage
+      - taliban
+      - talibans
+      - terrorist financing
+      - terrorist financings
+      - terrorist-financing
+      - violent extremist ideologies
+      - violent extremist ideology
+      - violent-extremist-ideology
+    patterns:
+      - \bcalls(?:[\s\-_]*)for(?:[\s\-_]*)violence(?:[\s\-_]*)against(?:[\s\-_]*)group\b
+      - \bcalls(?:[\s\-_]*)for(?:[\s\-_]*)violence(?:[\s\-_]*)against(?:[\s\-_]*)groups\b
+      - \bcalls(?:[\s\-_]*)for(?:[\s\-_]*)violence\b
+      - \bcalls(?:[\s\-_]*)for(?:[\s\-_]*)violences\b
+      - \bdehumanizing(?:[\s\-_]*)language\b
+      - \bdehumanizing(?:[\s\-_]*)languages\b
+      - \bdoxxing(?:[\s\-_]*)minorities\b
+      - \bdoxxing(?:[\s\-_]*)minoritieses\b
+      - \bdoxxing(?:[\s\-_]*)minority\b
+      - \bethnic(?:[\s\-_]*)cleansing\b
+      - \bethnic(?:[\s\-_]*)cleansings\b
+      - \bethnic(?:[\s\-_]*)hatred\b
+      - \bethnic(?:[\s\-_]*)hatreds\b
+      - \bextremist(?:[\s\-_]*)group\b
+      - \bextremist(?:[\s\-_]*)groups\b
+      - \bextremist(?:[\s\-_]*)propag(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)a\b
+      - \bextremist(?:[\s\-_]*)propag(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)as\b
+      - \bextremist(?:[\s\-_]*)propaganda\b
+      - \bextremist(?:[\s\-_]*)propagandas\b
+      - \bextremist(?:[\s\-_]*)recruitment\b
+      - \bextremist(?:[\s\-_]*)recruitments\b
+      - \bgenocide(?:[\s\-_]*)denial\b
+      - \bgenocide(?:[\s\-_]*)denials\b
+      - \bhate(?:[\s\-_]*)extremism\b
+      - \bhate(?:[\s\-_]*)extremisms\b
+      - \bhate(?:[\s\-_]*)speech\b
+      - \bhate(?:[\s\-_]*)speeches\b
+      - \bincite(?:[\s\-_]*)violence\b
+      - \bincite(?:[\s\-_]*)violences\b
+      - \bisi\b
+      - \bisis\b
+      - \bisises\b
+      - \bjihad\b
+      - \bjihads\b
+      - \bmartyrdom(?:[\s\-_]*)video\b
+      - \bmartyrdom(?:[\s\-_]*)videos\b
+      - \bneo(?:[\s\-_]*)nazi\b
+      - \bneo(?:[\s\-_]*)nazis\b
+      - \borganize(?:[\s\-_]*)hate(?:[\s\-_]*)rallies\b
+      - \borganize(?:[\s\-_]*)hate(?:[\s\-_]*)rally\b
+      - \bracial(?:[\s\-_]*)hatred\b
+      - \bracial(?:[\s\-_]*)hatreds\b
+      - \bradical(?:[\s\-_]*)forum\b
+      - \bradical(?:[\s\-_]*)forums\b
+      - \breligious(?:[\s\-_]*)hatred\b
+      - \breligious(?:[\s\-_]*)hatreds\b
+      - \breport(?:[\s\-_]*)content(?:[\s\-_]*)hate(?:[\s\-_]*)speech\b
+      - \breport(?:[\s\-_]*)content(?:[\s\-_]*)hate(?:[\s\-_]*)speeches\b
+      - \bslur(?:[\s\-_]*)usage\b
+      - \bslur(?:[\s\-_]*)usages\b
+      - \btaliban\b
+      - \btalibans\b
+      - \bterrorist(?:[\s\-_]*)financing\b
+      - \bterrorist(?:[\s\-_]*)financings\b
+      - \bviolent(?:[\s\-_]*)extremist(?:[\s\-_]*)ideologies\b
+      - \bviolent(?:[\s\-_]*)extremist(?:[\s\-_]*)ideology\b
+      - \bwhite(?:[\s\-_]*)supremacies\b
+      - \bwhite(?:[\s\-_]*)supremacy\b
+  - term: CC_HATE_SPEECH_SOCIAL_MEDIA_SIGNALS
+    category: hate speech (social media signals)
+    aliases:
+      - boycott minority hashtag
+      - boycott minority hashtags
+      - boycott-minority-hashtag
+      - brigading
+      - brigadings
+      - call to harass
+      - call to harasses
+      - call-to-harass
+      - coded language
+      - coded languages
+      - coded-language
+      - dogpile
+      - dogpiles
+      - dogwhistle
+      - dogwhistles
+      - doxx
+      - doxxes
+      - extremist channel
+      - extremist channels
+      - extremist-channel
+      - forward to telegram channel
+      - forward to telegram channels
+      - forward-to-telegram-channel
+      - hate raid
+      - hate raids
+      - hate speech (social media signals)
+      - hate-raid
+      - hate-speech-(social-media-signals)
+      - invite only hate chat
+      - invite only hate chats
+      - invite-only hate chat
+      - invite-only hate chats
+      - private hate group
+      - private hate groups
+      - private-hate-group
+      - share hate meme
+      - share hate memes
+      - share-hate-meme
+      - targeted harassment
+      - targeted harassments
+      - targeted-harassment
+      - trending hate hashtag
+      - trending hate hashtags
+      - trending-hate-hashtag
+      - viral hate clip
+      - viral hate clips
+      - viral-hate-clip
+    patterns:
+      - \bboycott(?:[\s\-_]*)minority(?:[\s\-_]*)hashtag\b
+      - \bboycott(?:[\s\-_]*)minority(?:[\s\-_]*)hashtags\b
+      - \bbrigading\b
+      - \bbrigadings\b
+      - \bcall(?:[\s\-_]*)to(?:[\s\-_]*)harass\b
+      - \bcall(?:[\s\-_]*)to(?:[\s\-_]*)harasses\b
+      - \bcoded(?:[\s\-_]*)language\b
+      - \bcoded(?:[\s\-_]*)languages\b
+      - \bdogpile\b
+      - \bdogpiles\b
+      - \bdogwhistle\b
+      - \bdogwhistles\b
+      - \bdoxx\b
+      - \bdoxxes\b
+      - \bextremist(?:[\s\-_]*)channel\b
+      - \bextremist(?:[\s\-_]*)channels\b
+      - \bforward(?:[\s\-_]*)to(?:[\s\-_]*)telegram(?:[\s\-_]*)channel\b
+      - \bforward(?:[\s\-_]*)to(?:[\s\-_]*)telegram(?:[\s\-_]*)channels\b
+      - \bhate(?:[\s\-_]*)raid\b
+      - \bhate(?:[\s\-_]*)raids\b
+      - \bhate(?:[\s\-_]*)speech(?:[\s\-_]*)social(?:[\s\-_]*)media(?:[\s\-_]*)signals\b
+      - \binvite(?:[\s\-_]*)only(?:[\s\-_]*)hate(?:[\s\-_]*)chat\b
+      - \binvite(?:[\s\-_]*)only(?:[\s\-_]*)hate(?:[\s\-_]*)chats\b
+      - \bprivate(?:[\s\-_]*)hate(?:[\s\-_]*)group\b
+      - \bprivate(?:[\s\-_]*)hate(?:[\s\-_]*)groups\b
+      - \bshare(?:[\s\-_]*)hate(?:[\s\-_]*)meme\b
+      - \bshare(?:[\s\-_]*)hate(?:[\s\-_]*)memes\b
+      - \btargeted(?:[\s\-_]*)harassment\b
+      - \btargeted(?:[\s\-_]*)harassments\b
+      - \btrending(?:[\s\-_]*)hate(?:[\s\-_]*)hashtag\b
+      - \btrending(?:[\s\-_]*)hate(?:[\s\-_]*)hashtags\b
+      - \bviral(?:[\s\-_]*)hate(?:[\s\-_]*)clip\b
+      - \bviral(?:[\s\-_]*)hate(?:[\s\-_]*)clips\b
+  - term: CC_HUMAN_TRAFFICKING_ILLEGAL_SERVICES
+    category: human trafficking / illegal services
+    aliases:
+      - buy passport
+      - buy passports
+      - buy-passport
+      - fake id
+      - fake ids
+      - fake visa
+      - fake visas
+      - fake-id
+      - fake-visa
+      - forged document
+      - forged documents
+      - forged documentses
+      - forged-documents
+      - human trafficking
+      - human trafficking / illegal
+      - human trafficking / illegal service
+      - human trafficking / illegal services
+      - human trafficking / illegal serviceses
+      - human traffickings
+      - human-trafficking
+      - human-trafficking-/-illegal-
+      - human-trafficking-/-illegal-services
+      - illegal immigration
+      - illegal immigration service
+      - illegal immigration services
+      - illegal-immigration-
+      - illegal-immigration-service
+      - mule account
+      - mule accounts
+      - mule-account
+      - rent bank account
+      - rent bank accounts
+      - rent-bank-account
+      - smuggling
+      - smuggling service
+      - smuggling services
+      - smuggling-
+      - smuggling-service
+    patterns:
+      - \bbuy(?:[\s\-_]*)passport\b
+      - \bbuy(?:[\s\-_]*)passports\b
+      - \bfake(?:[\s\-_]*)id\b
+      - \bfake(?:[\s\-_]*)ids\b
+      - \bfake(?:[\s\-_]*)visa\b
+      - \bfake(?:[\s\-_]*)visas\b
+      - \bforged(?:[\s\-_]*)document\b
+      - \bforged(?:[\s\-_]*)documents\b
+      - \bforged(?:[\s\-_]*)documentses\b
+      - \bhuman(?:[\s\-_]*)trafficking(?:[\s\-_]*)illegal(?:[\s\-_]*)service\b
+      - \bhuman(?:[\s\-_]*)trafficking(?:[\s\-_]*)illegal(?:[\s\-_]*)services\b
+      - \bhuman(?:[\s\-_]*)trafficking(?:[\s\-_]*)illegal(?:[\s\-_]*)serviceses\b
+      - \bhuman(?:[\s\-_]*)trafficking(?:[\s\-_]*)illegal\b
+      - \bhuman(?:[\s\-_]*)trafficking\b
+      - \bhuman(?:[\s\-_]*)traffickings\b
+      - \billegal(?:[\s\-_]*)immigration(?:[\s\-_]*)service\b
+      - \billegal(?:[\s\-_]*)immigration(?:[\s\-_]*)services\b
+      - \billegal(?:[\s\-_]*)immigration\b
+      - \bmule(?:[\s\-_]*)account\b
+      - \bmule(?:[\s\-_]*)accounts\b
+      - \brent(?:[\s\-_]*)bank(?:[\s\-_]*)account\b
+      - \brent(?:[\s\-_]*)bank(?:[\s\-_]*)accounts\b
+      - \bsmuggling(?:[\s\-_]*)service\b
+      - \bsmuggling(?:[\s\-_]*)services\b
+      - \bsmuggling\b
+
+
+      
+  - term: CC_MALWARE_HACKING_SERVICES
+    category: malware / hacking services
+    aliases:
+      - botnet rental
+      - botnet rentals
+      - botnet-rental
+      - ddos for hire
+      - ddos for hires
+      - ddos-for-hire
+      - hacking
+      - hacking service
+      - hacking services
+      - hacking-
+      - hacking-service
+      - keylogger
+      - keyloggers
+      - malware / hacking
+      - malware / hacking service
+      - malware / hacking services
+      - malware / hacking serviceses
+      - malware-/-hacking-
+      - malware-/-hacking-services
+      - phishing kit
+      - phishing kits
+      - phishing-kit
+      - rat tool
+      - rat tools
+      - rat-tool
+    patterns:
+      - \bbotnet(?:[\s\-_]*)rental\b
+      - \bbotnet(?:[\s\-_]*)rentals\b
+      - \bddos(?:[\s\-_]*)for(?:[\s\-_]*)hire\b
+      - \bddos(?:[\s\-_]*)for(?:[\s\-_]*)hires\b
+      - \bhacking(?:[\s\-_]*)service\b
+      - \bhacking(?:[\s\-_]*)services\b
+      - \bhacking\b
+      - \bkeylogger\b
+      - \bkeyloggers\b
+      - \bmalware(?:[\s\-_]*)hacking(?:[\s\-_]*)service\b
+      - \bmalware(?:[\s\-_]*)hacking(?:[\s\-_]*)services\b
+      - \bmalware(?:[\s\-_]*)hacking(?:[\s\-_]*)serviceses\b
+      - \bmalware(?:[\s\-_]*)hacking\b
+      - \bphishing(?:[\s\-_]*)kit\b
+      - \bphishing(?:[\s\-_]*)kits\b
+      - \brat(?:[\s\-_]*)tool\b
+      - \brat(?:[\s\-_]*)tools\b
+ 
+ 
+  - term: CC_MULTI_LEVEL_MARKETING_PYRAMID
+    category: multi-level marketing / pyramid
+    aliases:
+      - binary plan
+      - binary plans
+      - binary-plan
+      - chain referral
+      - chain referrals
+      - chain-referral
+      - downline
+      - downlines
+      - earn by recruiting
+      - earn by recruitings
+      - earn-by-recruiting
+      - joining kit
+      - joining kits
+      - joining-kit
+      - leg volume
+      - leg volumes
+      - leg-volume
+      - matrix plan
+      - matrix plans
+      - matrix-plan
+      - mlm
+      - mlms
+      - multi level marketing
+      - multi level marketing / pyramid
+      - multi level marketing / pyramids
+      - multi level marketings
+      - multi-level marketing / pyramid
+      - multi-level marketing / pyramids
+      - multi-level-marketing
+      - network marketing
+      - network marketings
+      - network-marketing
+      - pv bv point
+      - pv bv points
+      - pv bv pointses
+      - pv-bv-points
+      - pyramid scheme
+      - pyramid schemes
+      - pyramid-scheme
+      - recruitment bonu
+      - recruitment bonus
+      - recruitment bonuses
+      - recruitment-bonus
+      - starter pack
+      - starter packs
+      - starter-pack
+      - upline
+      - uplines
+    patterns:
+      - \bbinary(?:[\s\-_]*)plan\b
+      - \bbinary(?:[\s\-_]*)plans\b
+      - \bchain(?:[\s\-_]*)referral\b
+      - \bchain(?:[\s\-_]*)referrals\b
+      - \bdownline\b
+      - \bdownlines\b
+      - \bearn(?:[\s\-_]*)by(?:[\s\-_]*)recruiting\b
+      - \bearn(?:[\s\-_]*)by(?:[\s\-_]*)recruitings\b
+      - \bjoining(?:[\s\-_]*)kit\b
+      - \bjoining(?:[\s\-_]*)kits\b
+      - \bleg(?:[\s\-_]*)volume\b
+      - \bleg(?:[\s\-_]*)volumes\b
+      - \bmatrix(?:[\s\-_]*)plan\b
+      - \bmatrix(?:[\s\-_]*)plans\b
+      - \bmlm\b
+      - \bmlms\b
+      - \bmulti(?:[\s\-_]*)level(?:[\s\-_]*)marketing(?:[\s\-_]*)pyramid\b
+      - \bmulti(?:[\s\-_]*)level(?:[\s\-_]*)marketing(?:[\s\-_]*)pyramids\b
+      - \bmulti(?:[\s\-_]*)level(?:[\s\-_]*)marketing\b
+      - \bmulti(?:[\s\-_]*)level(?:[\s\-_]*)marketings\b
+      - \bnetwork(?:[\s\-_]*)marketing\b
+      - \bnetwork(?:[\s\-_]*)marketings\b
+      - \bpv(?:[\s\-_]*)bv(?:[\s\-_]*)point\b
+      - \bpv(?:[\s\-_]*)bv(?:[\s\-_]*)points\b
+      - \bpv(?:[\s\-_]*)bv(?:[\s\-_]*)pointses\b
+      - \bpyramid(?:[\s\-_]*)scheme\b
+      - \bpyramid(?:[\s\-_]*)schemes\b
+      - \brecruitment(?:[\s\-_]*)bonu\b
+      - \brecruitment(?:[\s\-_]*)bonus\b
+      - \brecruitment(?:[\s\-_]*)bonuses\b
+      - \bstarter(?:[\s\-_]*)pack\b
+      - \bstarter(?:[\s\-_]*)packs\b
+      - \bupline\b
+      - \buplines\b
+  - term: CC_ONLINE_GAMBLING_GAMING
+    category: online gambling / gaming
+    aliases:
+      - 18+
+      - 21+
+      - age gate
+      - age gates
+      - age verification required
+      - age verification requireds
+      - age-gate
+      - age-verification-required
+      - bet now
+      - bet nows
+      - bet-now
+      - betting odd
+      - betting odds
+      - betting oddses
+      - betting-odds
+      - bingo
+      - bingo onlines
+      - bingo-online
+      - buy chips telegram
+      - buy chips telegrams
+      - buy-chips-telegram
+      - cashout
+      - cashouts
+      - casino
+      - casinos
+      - crypto for bet
+      - crypto for bets
+      - crypto for betses
+      - crypto-for-bets
+      - deposit bonu
+      - deposit bonus
+      - deposit bonuses
+      - deposit-bonus
+      - discord betting
+      - discord bettings
+      - discord-betting
+      - dm to buy chip
+      - dm to buy chips
+      - dm to buy chipses
+      - dm-to-buy-chips
+      - fantasy cash contest
+      - fantasy cash contests
+      - fantasy league
+      - fantasy leagues
+      - fantasy-cash-contest
+      - fantasy-league
+      - gambling / gaming
+      - gambling / gamings
+      - gpay for rummies
+      - gpay for rummy
+      - gpay-for-rummy
+      - instagram betting
+      - instagram bettings
+      - instagram-betting
+      - kyc for play
+      - kyc for plays
+      - kyc-for-play
+      - live odd
+      - live odds
+      - live oddses
+      - live-odds
+      - lotteries
+      - lottery
+      - minor gambling
+      - minor gamblings
+      - minor-gambling
+      - online-gambling-/-gaming
+      - phonepe for teen patti
+      - phonepe for teen pattis
+      - phonepe-for-teen-patti
+      - poker
+      - poker chips via dm
+      - poker chips via dms
+      - poker-chips-via-dm
+      - pokers
+      - roulette
+      - roulettes
+      - send upi to add cash
+      - send upi to add cashes
+      - send-upi-to-add-cash
+    patterns:
+      - \b18(?:[\s\-_]*)\+\b
+      - \b21(?:[\s\-_]*)\+\b
+      - \bage(?:[\s\-_]*)gate\b
+      - \bage(?:[\s\-_]*)gates\b
+      - \bage(?:[\s\-_]*)verification(?:[\s\-_]*)required\b
+      - \bage(?:[\s\-_]*)verification(?:[\s\-_]*)requireds\b
+      - \bbet(?:[\s\-_]*)now\b
+      - \bbet(?:[\s\-_]*)nows\b
+      - \bbetting(?:[\s\-_]*)odd\b
+      - \bbetting(?:[\s\-_]*)odds\b
+      - \bbetting(?:[\s\-_]*)oddses\b
+      - \bbingo(?:[\s\-_]*)online\b
+      - \bbingo(?:[\s\-_]*)onlines\b
+      - \bbingo\b
+      - \bbuy(?:[\s\-_]*)chips(?:[\s\-_]*)telegram\b
+      - \bbuy(?:[\s\-_]*)chips(?:[\s\-_]*)telegrams\b
+      - \bcashout\b
+      - \bcashouts\b
+      - \bcasino\b
+      - \bcasinos\b
+      - \bcrypto(?:[\s\-_]*)for(?:[\s\-_]*)bet\b
+      - \bcrypto(?:[\s\-_]*)for(?:[\s\-_]*)bets\b
+      - \bcrypto(?:[\s\-_]*)for(?:[\s\-_]*)betses\b
+      - \bdeposit(?:[\s\-_]*)bonu\b
+      - \bdeposit(?:[\s\-_]*)bonus\b
+      - \bdeposit(?:[\s\-_]*)bonuses\b
+      - \bdiscord(?:[\s\-_]*)betting\b
+      - \bdiscord(?:[\s\-_]*)bettings\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chip\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chips\b
+      - \bdm(?:[\s\-_]*)to(?:[\s\-_]*)buy(?:[\s\-_]*)chipses\b
+      - \bfantasy(?:[\s\-_]*)cash(?:[\s\-_]*)contest\b
+      - \bfantasy(?:[\s\-_]*)cash(?:[\s\-_]*)contests\b
+      - \bfantasy(?:[\s\-_]*)league\b
+      - \bfantasy(?:[\s\-_]*)leagues\b
+      - \bgambling(?:[\s\-_]*)gaming\b
+      - \bgambling(?:[\s\-_]*)gamings\b
+      - \bgpay(?:[\s\-_]*)for(?:[\s\-_]*)rummies\b
+      - \bgpay(?:[\s\-_]*)for(?:[\s\-_]*)rummy\b
+      - \binstagram(?:[\s\-_]*)betting\b
+      - \binstagram(?:[\s\-_]*)bettings\b
+      - \bkyc(?:[\s\-_]*)for(?:[\s\-_]*)play\b
+      - \bkyc(?:[\s\-_]*)for(?:[\s\-_]*)plays\b
+      - \blive(?:[\s\-_]*)odd\b
+      - \blive(?:[\s\-_]*)odds\b
+      - \blive(?:[\s\-_]*)oddses\b
+      - \blotteries\b
+      - \blottery\b
+      - \bminor(?:[\s\-_]*)gambling\b
+      - \bminor(?:[\s\-_]*)gamblings\b
+      - \bonline(?:[\s\-_]*)gambling(?:[\s\-_]*)gaming\b
+      - \bphonepe(?:[\s\-_]*)for(?:[\s\-_]*)teen(?:[\s\-_]*)patti\b
+      - \bphonepe(?:[\s\-_]*)for(?:[\s\-_]*)teen(?:[\s\-_]*)pattis\b
+      - \bpoker(?:[\s\-_]*)chips(?:[\s\-_]*)via(?:[\s\-_]*)dm\b
+      - \bpoker(?:[\s\-_]*)chips(?:[\s\-_]*)via(?:[\s\-_]*)dms\b
+      - \bpoker\b
+      - \bpokers\b
+      - \broulette\b
+      - \broulettes\b
+      - \bsend(?:[\s\-_]*)upi(?:[\s\-_]*)to(?:[\s\-_]*)add(?:[\s\-_]*)cash\b
+      - \bsend(?:[\s\-_]*)upi(?:[\s\-_]*)to(?:[\s\-_]*)add(?:[\s\-_]*)cashes\b
+      - \bslot\b
+      - \bslots\b
+      - \bslotses\b
+      - \bsports(?:[\s\-_]*)betting\b
+      - \bsports(?:[\s\-_]*)bettings\b
+      - \bsportsbook\b
+      - \bsportsbooks\b
+      - \bsweepstake\b
+      - \bsweepstakes\b
+      - \btelegram(?:[\s\-_]*)id(?:[\s\-_]*)for(?:[\s\-_]*)deposit\b
+      - \btelegram(?:[\s\-_]*)id(?:[\s\-_]*)for(?:[\s\-_]*)deposits\b
+      - \bunderage(?:[\s\-_]*)gambling\b
+      - \bunderage(?:[\s\-_]*)gamblings\b
+      - \bupi(?:[\s\-_]*)for(?:[\s\-_]*)chip\b
+      - \bupi(?:[\s\-_]*)for(?:[\s\-_]*)chips\b
+      - \bupi(?:[\s\-_]*)for(?:[\s\-_]*)chipses\b
+      - \bverify(?:[\s\-_]*)age\b
+      - \bverify(?:[\s\-_]*)ages\b
+      - \bwagering\b
+      - \bwagerings\b
+      - \bwhatsapp(?:[\s\-_]*)betting\b
+      - \bwhatsapp(?:[\s\-_]*)bettings\b
+      - \bwithdraw(?:[\s\-_]*)winning\b
+      - \bwithdraw(?:[\s\-_]*)winnings\b
+      - \bwithdraw(?:[\s\-_]*)winningses\b
+  - term: CC_PHARMA_PRESCRIPTION_UNLICENSED
+    category: pharma / prescription (unlicensed)
+    aliases:
+      - anabolic steroid
+      - anabolic steroids
+      - anabolic-steroid
+      - cheap meds
+      - cheap meds onlines
+      - cheap pill
+      - cheap pills
+      - cheap pillses
+      - cheap-meds-online
+      - cheap-pills
+      - ciali
+      - cialis
+      - cialises
+      - doctor consultation waived
+      - doctor consultation waiveds
+      - doctor-consultation-waived
+      - hgh
+      - hghs
+      - insulin sale
+      - insulin sale onlines
+      - insulin-sale-online
+      - levitra
+      - levitras
+      - modafinil
+      - modafinils
+      - no prescription
+      - no prescription needed
+      - no prescription neededs
+      - no prescriptions
+      - no-prescription
+      - no-prescription-needed
+      - overnight pill
+      - overnight pills
+      - overnight pillses
+      - overnight-pills
+      - oxycontin
+      - oxycontins
+      - painkiller
+      - painkillers
+      - pharma / prescription (unlicensed)
+      - pharma-/-prescription-(unlicensed)
+      - pharmacy without license
+      - pharmacy without licenses
+      - pharmacy-without-license
+      - rx without prescription
+      - rx without prescriptions
+      - rx-without-prescription
+      - tramadol
+      - tramadols
+      - valium
+      - valiums
+      - viagra
+      - viagras
+      - xanax
+      - xanaxes
+    patterns:
+      - \banabolic(?:[\s\-_]*)steroid\b
+      - \banabolic(?:[\s\-_]*)steroids\b
+      - \bcheap(?:[\s\-_]*)meds(?:[\s\-_]*)online\b
+      - \bcheap(?:[\s\-_]*)meds(?:[\s\-_]*)onlines\b
+      - \bcheap(?:[\s\-_]*)meds\b
+      - \bcheap(?:[\s\-_]*)pill\b
+      - \bcheap(?:[\s\-_]*)pills\b
+      - \bcheap(?:[\s\-_]*)pillses\b
+      - \bciali\b
+      - \bcialis\b
+      - \bcialises\b
+      - \bdoctor(?:[\s\-_]*)consultation(?:[\s\-_]*)waived\b
+      - \bdoctor(?:[\s\-_]*)consultation(?:[\s\-_]*)waiveds\b
+      - \bhgh\b
+      - \bhghs\b
+      - \binsulin(?:[\s\-_]*)sale(?:[\s\-_]*)online\b
+      - \binsulin(?:[\s\-_]*)sale(?:[\s\-_]*)onlines\b
+      - \binsulin(?:[\s\-_]*)sale\b
+      - \blevitra\b
+      - \blevitras\b
+      - \bmodafinil\b
+      - \bmodafinils\b
+      - \bno(?:[\s\-_]*)prescription(?:[\s\-_]*)needed\b
+      - \bno(?:[\s\-_]*)prescription(?:[\s\-_]*)neededs\b
+      - \bno(?:[\s\-_]*)prescription\b
+      - \bno(?:[\s\-_]*)prescriptions\b
+      - \bovernight(?:[\s\-_]*)pill\b
+      - \bovernight(?:[\s\-_]*)pills\b
+      - \bovernight(?:[\s\-_]*)pillses\b
+      - \boxycontin\b
+      - \boxycontins\b
+      - \bpainkiller\b
+      - \bpainkillers\b
+      - \bpharma(?:[\s\-_]*)prescription(?:[\s\-_]*)unlicensed\b
+      - \bpharmacy(?:[\s\-_]*)without(?:[\s\-_]*)license\b
+      - \bpharmacy(?:[\s\-_]*)without(?:[\s\-_]*)licenses\b
+      - \brx(?:[\s\-_]*)without(?:[\s\-_]*)prescription\b
+      - \brx(?:[\s\-_]*)without(?:[\s\-_]*)prescriptions\b
+      - \btramadol\b
+      - \btramadols\b
+      - \bvalium\b
+      - \bvaliums\b
+      - \bviagra\b
+      - \bviagras\b
+      - \bxanax\b
+      - \bxanaxes\b
+  - term: CC_SANCTIONS_PEP
+    category: sanctions / pep
+    aliases:
+      - blacklisted entities
+      - blacklisted entity
+      - blacklisted-entity
+      - cuba
+      - cubas
+      - embargoed countries
+      - embargoed country
+      - embargoed-country
+      - iran
+      - irans
+      - north korea
+      - north koreas
+      - north-korea
+      - ofac list
+      - ofac lists
+      - ofac-list
+      - politically exposed person
+      - politically exposed persons
+      - politically-exposed-person
+      - sanctioned bank
+      - sanctioned banks
+      - sanctioned-bank
+      - sanctions / pep
+      - sanctions / peps
+      - sanctions-/-pep
+      - shell
+      - shell companies
+      - shell-company
+      - syria
+      - syrias
+      - terrorist financing
+      - terrorist financings
+      - terrorist-financing
+    patterns:
+      - \bblacklisted(?:[\s\-_]*)entities\b
+      - \bblacklisted(?:[\s\-_]*)entity\b
+      - \bcuba\b
+      - \bcubas\b
+      - \bembargoed(?:[\s\-_]*)countries\b
+      - \bembargoed(?:[\s\-_]*)country\b
+      - \biran\b
+      - \birans\b
+      - \bnorth(?:[\s\-_]*)korea\b
+      - \bnorth(?:[\s\-_]*)koreas\b
+      - \bofac(?:[\s\-_]*)list\b
+      - \bofac(?:[\s\-_]*)lists\b
+      - \bpolitically(?:[\s\-_]*)exposed(?:[\s\-_]*)person\b
+      - \bpolitically(?:[\s\-_]*)exposed(?:[\s\-_]*)persons\b
+      - \bsanctioned(?:[\s\-_]*)bank\b
+      - \bsanctioned(?:[\s\-_]*)banks\b
+      - \bsanctions(?:[\s\-_]*)pep\b
+      - \bsanctions(?:[\s\-_]*)peps\b
+      - \bshell(?:[\s\-_]*)companies\b
+      - \bshell(?:[\s\-_]*)company\b
+      - \bshell\b
+      - \bsyria\b
+      - \bsyrias\b
+      - \bterrorist(?:[\s\-_]*)financing\b
+      - \bterrorist(?:[\s\-_]*)financings\b
+  - term: CC_SCAMS_FRAUDULENT_SCHEMES
+    category: scams & fraudulent schemes
+    aliases:
+      - binary option
+      - binary options
+      - binary optionses
+      - binary-options
+      - forex scam
+      - forex scams
+      - forex-scam
+      - free money
+      - free moneys
+      - free-money
+      - hacking tool
+      - hacking tools
+      - hacking-tool
+      - insider trading
+      - insider tradings
+      - insider-trading
+      - phishing kit
+      - phishing kits
+      - phishing-kit
+      - scams & fraudulent scheme
+      - scams & fraudulent schemes
+      - scams & fraudulent schemeses
+      - scams and fraudulent scheme
+      - scams and fraudulent schemes
+      - scams and fraudulent schemeses
+      - scams-&-fraudulent-schemes
+      - scams-and-fraudulent-schemes
+    patterns:
+      - \bbinary(?:[\s\-_]*)option\b
+      - \bbinary(?:[\s\-_]*)options\b
+      - \bbinary(?:[\s\-_]*)optionses\b
+      - \bforex(?:[\s\-_]*)scam\b
+      - \bforex(?:[\s\-_]*)scams\b
+      - \bfree(?:[\s\-_]*)money\b
+      - \bfree(?:[\s\-_]*)moneys\b
+      - \bhacking(?:[\s\-_]*)tool\b
+      - \bhacking(?:[\s\-_]*)tools\b
+      - \binsider(?:[\s\-_]*)trading\b
+      - \binsider(?:[\s\-_]*)tradings\b
+      - \bphishing(?:[\s\-_]*)kit\b
+      - \bphishing(?:[\s\-_]*)kits\b
+      - \bscams(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)fraudulent(?:[\s\-_]*)scheme\b
+      - \bscams(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)fraudulent(?:[\s\-_]*)schemes\b
+      - \bscams(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)fraudulent(?:[\s\-_]*)schemeses\b
+      - \bscams(?:[\s\-_]*)and(?:[\s\-_]*)fraudulent(?:[\s\-_]*)scheme\b
+      - \bscams(?:[\s\-_]*)and(?:[\s\-_]*)fraudulent(?:[\s\-_]*)schemes\b
+      - \bscams(?:[\s\-_]*)and(?:[\s\-_]*)fraudulent(?:[\s\-_]*)schemeses\b
+  - term: CC_UNLICENSED_LENDING_LOANS
+    category: unlicensed lending / loans
+    aliases:
+      - bnpl without kyc
+      - bnpl without kycs
+      - bnpl-without-kyc
+      - cash advance
+      - cash advance onlines
+      - cash-advance-online
+      - chit fund loan
+      - chit fund loans
+      - chit-fund-loan
+      - committee loan
+      - committee loans
+      - committee-loan
+      - credit line app
+      - credit line apps
+      - credit-line-app
+      - guaranteed approval loan
+      - guaranteed approval loans
+      - guaranteed-approval-loan
+      - instant emi offer
+      - instant emi offers
+      - instant loan
+      - instant loans
+      - instant-emi-offer
+      - instant-loan
+      - loan broker not nbfc
+      - loan broker not nbfcs
+      - loan without license
+      - loan without licenses
+      - loan without pan
+      - loan without pans
+      - loan-broker-not-nbfc
+      - loan-without-license
+      - loan-without-pan
+      - microfinance loan
+      - microfinance loans
+      - microfinance-loan
+      - money lender
+      - money lenders
+      - money-lender
+      - no credit check loan
+      - no credit check loans
+      - no kyc loan
+      - no kyc loans
+      - no-credit-check-loan
+      - no-kyc-loan
+      - payday loan
+      - payday loans
+      - payday-loan
+      - personal loan app
+      - personal loan apps
+      - personal-loan-app
+      - private lender
+      - private lenders
+      - private-lender
+      - quick loan
+      - quick loans
+      - quick-loan
+      - salary loan
+      - salary loans
+      - salary-loan
+      - same day loan
+      - same day loans
+      - same-day loan
+      - same-day loans
+      - unlicensed lending / loan
+      - unlicensed lending / loans
+      - unlicensed lending / loanses
+      - unlicensed-lending-/-loans
+    patterns:
+      - \bbnpl(?:[\s\-_]*)without(?:[\s\-_]*)kyc\b
+      - \bbnpl(?:[\s\-_]*)without(?:[\s\-_]*)kycs\b
+      - \bcash(?:[\s\-_]*)advance(?:[\s\-_]*)online\b
+      - \bcash(?:[\s\-_]*)advance(?:[\s\-_]*)onlines\b
+      - \bcash(?:[\s\-_]*)advance\b
+      - \bchit(?:[\s\-_]*)fund(?:[\s\-_]*)loan\b
+      - \bchit(?:[\s\-_]*)fund(?:[\s\-_]*)loans\b
+      - \bcommittee(?:[\s\-_]*)loan\b
+      - \bcommittee(?:[\s\-_]*)loans\b
+      - \bcredit(?:[\s\-_]*)line(?:[\s\-_]*)app\b
+      - \bcredit(?:[\s\-_]*)line(?:[\s\-_]*)apps\b
+      - \bguaranteed(?:[\s\-_]*)approval(?:[\s\-_]*)loan\b
+      - \bguaranteed(?:[\s\-_]*)approval(?:[\s\-_]*)loans\b
+      - \binstant(?:[\s\-_]*)emi(?:[\s\-_]*)offer\b
+      - \binstant(?:[\s\-_]*)emi(?:[\s\-_]*)offers\b
+      - \binstant(?:[\s\-_]*)loan\b
+      - \binstant(?:[\s\-_]*)loans\b
+      - \bloan(?:[\s\-_]*)broker(?:[\s\-_]*)not(?:[\s\-_]*)nbfc\b
+      - \bloan(?:[\s\-_]*)broker(?:[\s\-_]*)not(?:[\s\-_]*)nbfcs\b
+      - \bloan(?:[\s\-_]*)without(?:[\s\-_]*)license\b
+      - \bloan(?:[\s\-_]*)without(?:[\s\-_]*)licenses\b
+      - \bloan(?:[\s\-_]*)without(?:[\s\-_]*)pan\b
+      - \bloan(?:[\s\-_]*)without(?:[\s\-_]*)pans\b
+      - \bmicrofinance(?:[\s\-_]*)loan\b
+      - \bmicrofinance(?:[\s\-_]*)loans\b
+      - \bmoney(?:[\s\-_]*)lender\b
+      - \bmoney(?:[\s\-_]*)lenders\b
+      - \bno(?:[\s\-_]*)credit(?:[\s\-_]*)check(?:[\s\-_]*)loan\b
+      - \bno(?:[\s\-_]*)credit(?:[\s\-_]*)check(?:[\s\-_]*)loans\b
+      - \bno(?:[\s\-_]*)kyc(?:[\s\-_]*)loan\b
+      - \bno(?:[\s\-_]*)kyc(?:[\s\-_]*)loans\b
+      - \bpayday(?:[\s\-_]*)loan\b
+      - \bpayday(?:[\s\-_]*)loans\b
+      - \bpersonal(?:[\s\-_]*)loan(?:[\s\-_]*)app\b
+      - \bpersonal(?:[\s\-_]*)loan(?:[\s\-_]*)apps\b
+      - \bprivate(?:[\s\-_]*)lender\b
+      - \bprivate(?:[\s\-_]*)lenders\b
+      - \bquick(?:[\s\-_]*)loan\b
+      - \bquick(?:[\s\-_]*)loans\b
+      - \bsalary(?:[\s\-_]*)loan\b
+      - \bsalary(?:[\s\-_]*)loans\b
+      - \bsame(?:[\s\-_]*)day(?:[\s\-_]*)loan\b
+      - \bsame(?:[\s\-_]*)day(?:[\s\-_]*)loans\b
+      - \bunlicensed(?:[\s\-_]*)lending(?:[\s\-_]*)loan\b
+      - \bunlicensed(?:[\s\-_]*)lending(?:[\s\-_]*)loans\b
+      - \bunlicensed(?:[\s\-_]*)lending(?:[\s\-_]*)loanses\b
+  - term: CC_WEAPONS
+    category: weapons
+    aliases:
+      - ak 47
+      - ak-47
+      - ammo
+      - ammos
+      - ar 15
+      - ar-15
+      - assault rifle
+      - assault rifles
+      - assault-rifle
+      - bomb making manual
+      - bomb making manuals
+      - bomb-making manual
+      - bomb-making manuals
+      - brass knuckle
+      - brass knuckles
+      - brass knuckleses
+      - brass-knuckles
+      - bullet
+      - bullets
+      - bulletses
+      - buy gun
+      - buy gun onlines
+      - buy-gun-online
+      - explosive powder
+      - explosive powders
+      - explosive-powder
+      - glock
+      - glocks
+      - grenade
+      - grenades
+      - gun for sale
+      - gun for sales
+      - gun-for-sale
+      - ied
+      - ieds
+      - machine gun
+      - machine guns
+      - machine-gun
+      - magazine
+      - magazines
+      - nunchuck
+      - nunchucks
+      - pepper spray
+      - pepper sprays
+      - pepper-spray
+      - scope
+      - scopes
+      - silencer
+      - silencer kit
+      - silencer kits
+      - silencer-kit
+      - silencers
+      - suppressor
+      - suppressors
+      - switchblade
+      - switchblades
+      - tactical knife
+      - tactical knifes
+      - tactical-knife
+      - taser
+      - tasers
+      - weapon
+      - weapons
+      - weaponses
+    patterns:
+      - \bak(?:[\s\-_]*)47\b
+      - \bammo\b
+      - \bammos\b
+      - \bar(?:[\s\-_]*)15\b
+      - \bassault(?:[\s\-_]*)rifle\b
+      - \bassault(?:[\s\-_]*)rifles\b
+      - \bbomb(?:[\s\-_]*)making(?:[\s\-_]*)manual\b
+      - \bbomb(?:[\s\-_]*)making(?:[\s\-_]*)manuals\b
+      - \bbrass(?:[\s\-_]*)knuckle\b
+      - \bbrass(?:[\s\-_]*)knuckles\b
+      - \bbrass(?:[\s\-_]*)knuckleses\b
+      - \bbullet\b
+      - \bbullets\b
+      - \bbulletses\b
+      - \bbuy(?:[\s\-_]*)gun(?:[\s\-_]*)online\b
+      - \bbuy(?:[\s\-_]*)gun(?:[\s\-_]*)onlines\b
+      - \bbuy(?:[\s\-_]*)gun\b
+      - \bexplosive(?:[\s\-_]*)powder\b
+      - \bexplosive(?:[\s\-_]*)powders\b
+      - \bglock\b
+      - \bglocks\b
+      - \bgrenade\b
+      - \bgrenades\b
+      - \bgun(?:[\s\-_]*)for(?:[\s\-_]*)sale\b
+      - \bgun(?:[\s\-_]*)for(?:[\s\-_]*)sales\b
+      - \bied\b
+      - \bieds\b
+      - \bmachine(?:[\s\-_]*)gun\b
+      - \bmachine(?:[\s\-_]*)guns\b
+      - \bmagazine\b
+      - \bmagazines\b
+      - \bnunchuck\b
+      - \bnunchucks\b
+      - \bpepper(?:[\s\-_]*)spray\b
+      - \bpepper(?:[\s\-_]*)sprays\b
+      - \bscope\b
+      - \bscopes\b
+      - \bsilencer(?:[\s\-_]*)kit\b
+      - \bsilencer(?:[\s\-_]*)kits\b
+      - \bsilencer\b
+      - \bsilencers\b
+      - \bsuppressor\b
+      - \bsuppressors\b
+      - \bswitchblade\b
+      - \bswitchblades\b
+      - \btactical(?:[\s\-_]*)knife\b
+      - \btactical(?:[\s\-_]*)knifes\b
+      - \btaser\b
+      - \btasers\b
+      - \bweapon\b
+      - \bweapons\b
+      - \bweaponses\b
+  - term: CC_WILDLIFE_ENVIRONMENTAL_CRIMES
+    category: wildlife & environmental crimes
+    aliases:
+      - endangered animal part
+      - endangered animal parts
+      - endangered animal partses
+      - endangered species trade
+      - endangered species trades
+      - endangered-animal-parts
+      - endangered-species-trade
+      - exotic animals for sale
+      - exotic animals for sales
+      - exotic pet for sale
+      - exotic pet for sales
+      - exotic-animals-for-sale
+      - exotic-pet-for-sale
+      - ivories
+      - ivory
+      - ivory for sale
+      - ivory for sales
+      - ivory-for-sale
+      - rhino horn
+      - rhino horn for sale
+      - rhino horn for sales
+      - rhino horns
+      - rhino-horn
+      - rhino-horn-for-sale
+      - tiger bone
+      - tiger bones
+      - tiger skin
+      - tiger skins
+      - tiger-bone
+      - tiger-skin
+      - wildlife & environmental crime
+      - wildlife & environmental crimes
+      - wildlife & environmental crimeses
+      - wildlife and environmental crime
+      - wildlife and environmental crimes
+      - wildlife and environmental crimeses
+      - wildlife-&-environmental-crimes
+      - wildlife-and-environmental-crimes
+    patterns:
+      - \bendangered(?:[\s\-_]*)animal(?:[\s\-_]*)part\b
+      - \bendangered(?:[\s\-_]*)animal(?:[\s\-_]*)parts\b
+      - \bendangered(?:[\s\-_]*)animal(?:[\s\-_]*)partses\b
+      - \bendangered(?:[\s\-_]*)species(?:[\s\-_]*)trade\b
+      - \bendangered(?:[\s\-_]*)species(?:[\s\-_]*)trades\b
+      - \bexotic(?:[\s\-_]*)animals(?:[\s\-_]*)for(?:[\s\-_]*)sale\b
+      - \bexotic(?:[\s\-_]*)animals(?:[\s\-_]*)for(?:[\s\-_]*)sales\b
+      - \bexotic(?:[\s\-_]*)pet(?:[\s\-_]*)for(?:[\s\-_]*)sale\b
+      - \bexotic(?:[\s\-_]*)pet(?:[\s\-_]*)for(?:[\s\-_]*)sales\b
+      - \bivories\b
+      - \bivory(?:[\s\-_]*)for(?:[\s\-_]*)sale\b
+      - \bivory(?:[\s\-_]*)for(?:[\s\-_]*)sales\b
+      - \bivory\b
+      - \brhino(?:[\s\-_]*)horn(?:[\s\-_]*)for(?:[\s\-_]*)sale\b
+      - \brhino(?:[\s\-_]*)horn(?:[\s\-_]*)for(?:[\s\-_]*)sales\b
+      - \brhino(?:[\s\-_]*)horn\b
+      - \brhino(?:[\s\-_]*)horns\b
+      - \btiger(?:[\s\-_]*)bone\b
+      - \btiger(?:[\s\-_]*)bones\b
+      - \btiger(?:[\s\-_]*)skin\b
+      - \btiger(?:[\s\-_]*)skins\b
+      - \bwildlife(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)environmental(?:[\s\-_]*)crime\b
+      - \bwildlife(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)environmental(?:[\s\-_]*)crimes\b
+      - \bwildlife(?:[\s\-_]*)(?:&|and)(?:[\s\-_]*)environmental(?:[\s\-_]*)crimeses\b
+      - \bwildlife(?:[\s\-_]*)and(?:[\s\-_]*)environmental(?:[\s\-_]*)crime\b
+      - \bwildlife(?:[\s\-_]*)and(?:[\s\-_]*)environmental(?:[\s\-_]*)crimes\b
+      - \bwildlife(?:[\s\-_]*)and(?:[\s\-_]*)environmental(?:[\s\-_]*)crimeses\b
+  - term: CC_ALCOHOL
+    category: alcohol
+    aliases:
+      - alcohol
+      - alcohols
+      - fatima crusader
+      - fatima crusaders
+      - fatima-crusader
+      - heil hitler
+      - heil hitlers
+      - heil-hitler
+      - hitler salute
+      - hitler salutes
+      - hitler-salute
+      - in the spirit of chartres committee
+      - in the spirit of chartres committees
+      - in-the-spirit-of-chartres-committee
+      - itsub
+      - itsubs
+      - pioneer fund
+      - pioneer funds
+      - pioneer-fund
+      - political cesspool
+      - political cesspools
+      - political-cesspool
+      - red october
+      - red octobers
+      - red-october
+      - runic
+      - runics
+      - ruth institute
+      - ruth institutes
+      - ruth-institute
+      - spider web tattoo
+      - spider web tattoos
+      - spider-web-tattoo
+      - the white network
+      - the white networks
+      - the white voice
+      - the white voices
+      - the-white-network
+      - the-white-voice
+      - triskele
+      - triskeles
+      - true invisible empire knight
+      - true invisible empire knights
+      - true invisible empire knightses
+      - true-invisible-empire-knights
+      - tyr rune
+      - tyr runes
+      - tyr-rune
+      - volksfront
+      - volksfronts
+      - white boy societies
+      - white boy society
+      - white genocide
+      - white genocides
+      - white lace
+      - white laces
+      - white laceses
+      - white man's march
+      - white man's marches
+      - white rabbit radio
+      - white rabbit radios
+      - white-boy-society
+      - white-genocide
+      - white-laces
+      - white-man's-march
+      - white-rabbit-radio
+      - wotansvolk alliance
+      - wotansvolk alliances
+      - wotansvolk-alliance
+    patterns:
+      - \balcohol\b
+      - \balcohols\b
+      - \bfatima(?:[\s\-_]*)crusader\b
+      - \bfatima(?:[\s\-_]*)crusaders\b
+      - \bheil(?:[\s\-_]*)hitler\b
+      - \bheil(?:[\s\-_]*)hitlers\b
+      - \bhitler(?:[\s\-_]*)salute\b
+      - \bhitler(?:[\s\-_]*)salutes\b
+      - \bin(?:[\s\-_]*)the(?:[\s\-_]*)spirit(?:[\s\-_]*)of(?:[\s\-_]*)chartres(?:[\s\-_]*)committee\b
+      - \bin(?:[\s\-_]*)the(?:[\s\-_]*)spirit(?:[\s\-_]*)of(?:[\s\-_]*)chartres(?:[\s\-_]*)committees\b
+      - \bitsub\b
+      - \bitsubs\b
+      - \bpioneer(?:[\s\-_]*)fund\b
+      - \bpioneer(?:[\s\-_]*)funds\b
+      - \bpolitical(?:[\s\-_]*)cesspool\b
+      - \bpolitical(?:[\s\-_]*)cesspools\b
+      - \bred(?:[\s\-_]*)october\b
+      - \bred(?:[\s\-_]*)octobers\b
+      - \brunic\b
+      - \brunics\b
+      - \bruth(?:[\s\-_]*)institute\b
+      - \bruth(?:[\s\-_]*)institutes\b
+      - \bspider(?:[\s\-_]*)web(?:[\s\-_]*)tattoo\b
+      - \bspider(?:[\s\-_]*)web(?:[\s\-_]*)tattoos\b
+      - \bthe(?:[\s\-_]*)white(?:[\s\-_]*)network\b
+      - \bthe(?:[\s\-_]*)white(?:[\s\-_]*)networks\b
+      - \bthe(?:[\s\-_]*)white(?:[\s\-_]*)voice\b
+      - \bthe(?:[\s\-_]*)white(?:[\s\-_]*)voices\b
+      - \btriskele\b
+      - \btriskeles\b
+      - \btrue(?:[\s\-_]*)invisible(?:[\s\-_]*)empire(?:[\s\-_]*)knight\b
+      - \btrue(?:[\s\-_]*)invisible(?:[\s\-_]*)empire(?:[\s\-_]*)knights\b
+      - \btrue(?:[\s\-_]*)invisible(?:[\s\-_]*)empire(?:[\s\-_]*)knightses\b
+      - \btyr(?:[\s\-_]*)rune\b
+      - \btyr(?:[\s\-_]*)runes\b
+      - \bvolksfront\b
+      - \bvolksfronts\b
+      - \bwhite(?:[\s\-_]*)boy(?:[\s\-_]*)societies\b
+      - \bwhite(?:[\s\-_]*)boy(?:[\s\-_]*)society\b
+      - \bwhite(?:[\s\-_]*)genocide\b
+      - \bwhite(?:[\s\-_]*)genocides\b
+      - \bwhite(?:[\s\-_]*)lace\b
+      - \bwhite(?:[\s\-_]*)laces\b
+      - \bwhite(?:[\s\-_]*)laceses\b
+      - \bwhite(?:[\s\-_]*)man(?:[\s\-_]*)s(?:[\s\-_]*)march\b
+      - \bwhite(?:[\s\-_]*)man(?:[\s\-_]*)s(?:[\s\-_]*)marches\b
+      - \bwhite(?:[\s\-_]*)rabbit(?:[\s\-_]*)radio\b
+      - \bwhite(?:[\s\-_]*)rabbit(?:[\s\-_]*)radios\b
+      - \bwotansvolk(?:[\s\-_]*)alliance\b
+      - \bwotansvolk(?:[\s\-_]*)alliances\b
+  - term: CC_CBD_CANNABIS_LIGHT
+    category: cbd / cannabis light
+    aliases:
+      - cannabis seed
+      - cannabis seeds
+      - cannabis-seed
+      - cbd / cannabis light
+      - cbd / cannabis lights
+      - cbd oil
+      - cbd oils
+      - cbd-/-cannabis-light
+      - cbd-oil
+      - hemp cream
+      - hemp creams
+      - hemp gummies
+      - hemp gummieses
+      - hemp gummy
+      - hemp-cream
+      - hemp-gummies
+      - thc free
+      - thc frees
+      - thc-free
+    patterns:
+      - \bcannabis(?:[\s\-_]*)seed\b
+      - \bcannabis(?:[\s\-_]*)seeds\b
+      - \bcbd(?:[\s\-_]*)cannabis(?:[\s\-_]*)light\b
+      - \bcbd(?:[\s\-_]*)cannabis(?:[\s\-_]*)lights\b
+      - \bcbd(?:[\s\-_]*)oil\b
+      - \bcbd(?:[\s\-_]*)oils\b
+      - \bhemp(?:[\s\-_]*)cream\b
+      - \bhemp(?:[\s\-_]*)creams\b
+      - \bhemp(?:[\s\-_]*)gummies\b
+      - \bhemp(?:[\s\-_]*)gummieses\b
+      - \bhemp(?:[\s\-_]*)gummy\b
+      - \bthc(?:[\s\-_]*)free\b
+      - \bthc(?:[\s\-_]*)frees\b
+  - term: CC_CANNABIS_THC_LOW_THC
+    category: cannabis / thc / low-thc
+    aliases:
+      - cannabis / thc / low thc
+      - cannabis / thc / low thcs
+      - cannabis / thc / low-thc
+      - cannabis oil
+      - cannabis oils
+      - cannabis-oil
+      - cbd with thc
+      - cbd with thcs
+      - cbd-with-thc
+      - delta 8
+      - delta 9
+      - delta-8
+      - delta-9
+      - full spectrum thc
+      - full spectrum thcs
+      - full-spectrum-thc
+      - hemp derived thc
+      - hemp derived thcs
+      - hemp-derived-thc
+      - low thc
+      - low thcs
+      - low-thc
+      - marijuana seed
+      - marijuana seeds
+      - marijuana seedses
+      - marijuana-seeds
+      - thc
+      - thc gummies
+      - thc gummieses
+      - thc gummy
+      - thc vape
+      - thc vapes
+      - thc-gummies
+      - thc-vape
+      - thcs
+      - weed edible
+      - weed edibles
+      - weed-edible
+    patterns:
+      - \bcannabis(?:[\s\-_]*)oil\b
+      - \bcannabis(?:[\s\-_]*)oils\b
+      - \bcannabis(?:[\s\-_]*)thc(?:[\s\-_]*)low(?:[\s\-_]*)thc\b
+      - \bcannabis(?:[\s\-_]*)thc(?:[\s\-_]*)low(?:[\s\-_]*)thcs\b
+      - \bcbd(?:[\s\-_]*)with(?:[\s\-_]*)thc\b
+      - \bcbd(?:[\s\-_]*)with(?:[\s\-_]*)thcs\b
+      - \bdelta(?:[\s\-_]*)8\b
+      - \bdelta(?:[\s\-_]*)9\b
+      - \bfull(?:[\s\-_]*)spectrum(?:[\s\-_]*)thc\b
+      - \bfull(?:[\s\-_]*)spectrum(?:[\s\-_]*)thcs\b
+      - \bhemp(?:[\s\-_]*)derived(?:[\s\-_]*)thc\b
+      - \bhemp(?:[\s\-_]*)derived(?:[\s\-_]*)thcs\b
+      - \blow(?:[\s\-_]*)thc\b
+      - \blow(?:[\s\-_]*)thcs\b
+      - \bmarijuana(?:[\s\-_]*)seed\b
+      - \bmarijuana(?:[\s\-_]*)seeds\b
+      - \bmarijuana(?:[\s\-_]*)seedses\b
+      - \bthc(?:[\s\-_]*)gummies\b
+      - \bthc(?:[\s\-_]*)gummieses\b
+      - \bthc(?:[\s\-_]*)gummy\b
+      - \bthc(?:[\s\-_]*)vape\b
+      - \bthc(?:[\s\-_]*)vapes\b
+      - \bthc\b
+      - \bthcs\b
+      - \bweed(?:[\s\-_]*)edible\b
+      - \bweed(?:[\s\-_]*)edibles\b
+  - term: CC_MISSING_DISCLOSURES_POLICY_GAPS
+    category: missing disclosures / policy gaps
+    aliases:
+      - missing disclosures / policy gap
+      - missing disclosures / policy gaps
+      - missing disclosures / policy gapses
+      - missing-disclosures-/-policy-gaps
+      - no cancellation policies
+      - no cancellation policy
+      - no privacy policies
+      - no privacy policy
+      - no refund policies
+      - no refund policy
+      - no return policies
+      - no return policy
+      - no shipping policies
+      - no shipping policy
+      - no subscription term
+      - no subscription terms
+      - no subscription termses
+      - no terms of
+      - no terms of service
+      - no terms of services
+      - no-cancellation-policy
+      - no-privacy-policy
+      - no-refund-policy
+      - no-return-policy
+      - no-shipping-policy
+      - no-subscription-terms
+      - no-terms-of-
+      - no-terms-of-service
+      - unclear recurring charge
+      - unclear recurring charges
+      - unclear recurring chargeses
+      - unclear-recurring-charges
+    patterns:
+      - \bmissing(?:[\s\-_]*)disclosures(?:[\s\-_]*)policy(?:[\s\-_]*)gap\b
+      - \bmissing(?:[\s\-_]*)disclosures(?:[\s\-_]*)policy(?:[\s\-_]*)gaps\b
+      - \bmissing(?:[\s\-_]*)disclosures(?:[\s\-_]*)policy(?:[\s\-_]*)gapses\b
+      - \bno(?:[\s\-_]*)cancellation(?:[\s\-_]*)policies\b
+      - \bno(?:[\s\-_]*)cancellation(?:[\s\-_]*)policy\b
+      - \bno(?:[\s\-_]*)privacy(?:[\s\-_]*)policies\b
+      - \bno(?:[\s\-_]*)privacy(?:[\s\-_]*)policy\b
+      - \bno(?:[\s\-_]*)refund(?:[\s\-_]*)policies\b
+      - \bno(?:[\s\-_]*)refund(?:[\s\-_]*)policy\b
+      - \bno(?:[\s\-_]*)return(?:[\s\-_]*)policies\b
+      - \bno(?:[\s\-_]*)return(?:[\s\-_]*)policy\b
+      - \bno(?:[\s\-_]*)shipping(?:[\s\-_]*)policies\b
+      - \bno(?:[\s\-_]*)shipping(?:[\s\-_]*)policy\b
+      - \bno(?:[\s\-_]*)subscription(?:[\s\-_]*)term\b
+      - \bno(?:[\s\-_]*)subscription(?:[\s\-_]*)terms\b
+      - \bno(?:[\s\-_]*)subscription(?:[\s\-_]*)termses\b
+      - \bno(?:[\s\-_]*)terms(?:[\s\-_]*)of(?:[\s\-_]*)service\b
+      - \bno(?:[\s\-_]*)terms(?:[\s\-_]*)of(?:[\s\-_]*)services\b
+      - \bno(?:[\s\-_]*)terms(?:[\s\-_]*)of\b
+      - \bunclear(?:[\s\-_]*)recurring(?:[\s\-_]*)charge\b
+      - \bunclear(?:[\s\-_]*)recurring(?:[\s\-_]*)charges\b
+      - \bunclear(?:[\s\-_]*)recurring(?:[\s\-_]*)chargeses\b
+  - term: CC_NEGATIVE_OPTION_BILLING_FREE_TRIAL
+    category: negative option billing / free trial
+    aliases:
+      - auto billing
+      - auto billings
+      - auto renew
+      - auto renews
+      - auto-billing
+      - auto-renew
+      - cancel anytime
+      - cancel anytimes
+      - cancel-anytime
+      - card on file
+      - card on files
+      - card-on-file
+      - continuity program
+      - continuity programs
+      - continuity-program
+      - free trial
+      - free trials
+      - free-trial
+      - membership renew
+      - membership renews
+      - membership renewses
+      - membership-renews
+      - negative option billing / free trial
+      - negative option billing / free trials
+      - negative-option-billing-/-free-trial
+      - rebill
+      - rebills
+      - recurring charge
+      - recurring charges
+      - recurring-charge
+      - risk free trial
+      - risk free trials
+      - risk-free-trial
+      - small print billing
+      - small print billings
+      - small-print-billing
+      - subscription renews automaticallies
+      - subscription renews automatically
+      - subscription-renews-automatically
+      - trial ends then billed
+      - trial ends then billeds
+      - trial-ends-then-billed
+      - unless you cancel
+      - unless you cancels
+      - unless-you-cancel
+    patterns:
+      - \bauto(?:[\s\-_]*)billing\b
+      - \bauto(?:[\s\-_]*)billings\b
+      - \bauto(?:[\s\-_]*)renew\b
+      - \bauto(?:[\s\-_]*)renews\b
+      - \bcancel(?:[\s\-_]*)anytime\b
+      - \bcancel(?:[\s\-_]*)anytimes\b
+      - \bcard(?:[\s\-_]*)on(?:[\s\-_]*)file\b
+      - \bcard(?:[\s\-_]*)on(?:[\s\-_]*)files\b
+      - \bcontinuity(?:[\s\-_]*)program\b
+      - \bcontinuity(?:[\s\-_]*)programs\b
+      - \bfree(?:[\s\-_]*)trial\b
+      - \bfree(?:[\s\-_]*)trials\b
+      - \bmembership(?:[\s\-_]*)renew\b
+      - \bmembership(?:[\s\-_]*)renews\b
+      - \bmembership(?:[\s\-_]*)renewses\b
+      - \bnegative(?:[\s\-_]*)option(?:[\s\-_]*)billing(?:[\s\-_]*)free(?:[\s\-_]*)trial\b
+      - \bnegative(?:[\s\-_]*)option(?:[\s\-_]*)billing(?:[\s\-_]*)free(?:[\s\-_]*)trials\b
+      - \brebill\b
+      - \brebills\b
+      - \brecurring(?:[\s\-_]*)charge\b
+      - \brecurring(?:[\s\-_]*)charges\b
+      - \brisk(?:[\s\-_]*)free(?:[\s\-_]*)trial\b
+      - \brisk(?:[\s\-_]*)free(?:[\s\-_]*)trials\b
+      - \bsmall(?:[\s\-_]*)print(?:[\s\-_]*)billing\b
+      - \bsmall(?:[\s\-_]*)print(?:[\s\-_]*)billings\b
+      - \bsubscription(?:[\s\-_]*)renews(?:[\s\-_]*)automaticallies\b
+      - \bsubscription(?:[\s\-_]*)renews(?:[\s\-_]*)automatically\b
+      - \btrial(?:[\s\-_]*)ends(?:[\s\-_]*)then(?:[\s\-_]*)billed\b
+      - \btrial(?:[\s\-_]*)ends(?:[\s\-_]*)then(?:[\s\-_]*)billeds\b
+      - \bunless(?:[\s\-_]*)you(?:[\s\-_]*)cancel\b
+      - \bunless(?:[\s\-_]*)you(?:[\s\-_]*)cancels\b
+  - term: CC_SUPPLEMENTS_NUTRACEUTICALS
+    category: supplements / nutraceuticals
+    aliases:
+      - anti aging pill
+      - anti aging pills
+      - anti-aging pill
+      - anti-aging pills
+      - herbal steroid
+      - herbal steroids
+      - herbal-steroid
+      - kratom
+      - kratoms
+      - male enhancement
+      - male enhancements
+      - male-enhancement
+      - miracle cure
+      - miracle cures
+      - miracle-cure
+      - sarm
+      - sarms
+      - sarmses
+      - supplements / nutraceutical
+      - supplements / nutraceuticals
+      - supplements / nutraceuticalses
+      - supplements-/-nutraceuticals
+      - testosterone booster
+      - testosterone boosters
+      - testosterone-booster
+      - weight loss pill
+      - weight loss pills
+      - weight loss pillses
+      - weight-loss-pills
+    patterns:
+      - \banti(?:[\s\-_]*)aging(?:[\s\-_]*)pill\b
+      - \banti(?:[\s\-_]*)aging(?:[\s\-_]*)pills\b
+      - \bherbal(?:[\s\-_]*)steroid\b
+      - \bherbal(?:[\s\-_]*)steroids\b
+      - \bkratom\b
+      - \bkratoms\b
+      - \bmale(?:[\s\-_]*)enhancement\b
+      - \bmale(?:[\s\-_]*)enhancements\b
+      - \bmiracle(?:[\s\-_]*)cure\b
+      - \bmiracle(?:[\s\-_]*)cures\b
+      - \bsarm\b
+      - \bsarms\b
+      - \bsarmses\b
+      - \bsupplements(?:[\s\-_]*)nutraceutical\b
+      - \bsupplements(?:[\s\-_]*)nutraceuticals\b
+      - \bsupplements(?:[\s\-_]*)nutraceuticalses\b
+      - \btestosterone(?:[\s\-_]*)booster\b
+      - \btestosterone(?:[\s\-_]*)boosters\b
+      - \bweight(?:[\s\-_]*)loss(?:[\s\-_]*)pill\b
+      - \bweight(?:[\s\-_]*)loss(?:[\s\-_]*)pills\b
+      - \bweight(?:[\s\-_]*)loss(?:[\s\-_]*)pillses\b
+  - term: CC_TOBACCO_VAPING
+    category: tobacco / vaping
+    aliases:
+      - buy cigarettes
+      - buy cigarettes onlines
+      - buy-cigarettes-online
+      - cigar
+      - cigar shop
+      - cigar shops
+      - cigar-
+      - cigar-shop
+      - cigarettes
+      - cigarettes onlines
+      - cigarettes-online
+      - disposable vape
+      - disposable vapes
+      - disposable-vape
+      - hookah
+      - hookah flavor
+      - hookah flavors
+      - hookah flavorses
+      - hookah-flavors
+      - hookahs
+      - juul pod
+      - juul pods
+      - juul podses
+      - juul-pods
+      - nicotine
+      - nicotine salt
+      - nicotine salts
+      - nicotine-salt
+      - nicotines
+      - shisha
+      - shisha deliveries
+      - shisha delivery
+      - shisha-delivery
+      - shishas
+      - smoke
+      - smoke shop
+      - smoke shops
+      - smoke-
+      - smoke-shop
+      - tobacco / vaping
+      - tobacco / vapings
+      - tobacco-/-vaping
+      - vape juice
+      - vape juices
+      - vape-juice
+      - vaping liquid
+      - vaping liquids
+      - vaping-liquid
+    patterns:
+      - \bbuy(?:[\s\-_]*)cigarettes(?:[\s\-_]*)online\b
+      - \bbuy(?:[\s\-_]*)cigarettes(?:[\s\-_]*)onlines\b
+      - \bbuy(?:[\s\-_]*)cigarettes\b
+      - \bcigar(?:[\s\-_]*)shop\b
+      - \bcigar(?:[\s\-_]*)shops\b
+      - \bcigar\b
+      - \bcigarettes(?:[\s\-_]*)online\b
+      - \bcigarettes(?:[\s\-_]*)onlines\b
+      - \bcigarettes\b
+      - \bdisposable(?:[\s\-_]*)vape\b
+      - \bdisposable(?:[\s\-_]*)vapes\b
+      - \bhookah(?:[\s\-_]*)flavor\b
+      - \bhookah(?:[\s\-_]*)flavors\b
+      - \bhookah(?:[\s\-_]*)flavorses\b
+      - \bhookah\b
+      - \bhookahs\b
+      - \bjuul(?:[\s\-_]*)pod\b
+      - \bjuul(?:[\s\-_]*)pods\b
+      - \bjuul(?:[\s\-_]*)podses\b
+      - \bnicotine(?:[\s\-_]*)salt\b
+      - \bnicotine(?:[\s\-_]*)salts\b
+      - \bnicotine\b
+      - \bnicotines\b
+      - \bshisha(?:[\s\-_]*)deliveries\b
+      - \bshisha(?:[\s\-_]*)delivery\b
+      - \bshisha\b
+      - \bshishas\b
+      - \bsmoke(?:[\s\-_]*)shop\b
+      - \bsmoke(?:[\s\-_]*)shops\b
+      - \bsmoke\b
+      - \btobacco(?:[\s\-_]*)vaping\b
+      - \btobacco(?:[\s\-_]*)vapings\b
+      - \bvape(?:[\s\-_]*)juice\b
+      - \bvape(?:[\s\-_]*)juices\b
+      - \bvaping(?:[\s\-_]*)liquid\b
+      - \bvaping(?:[\s\-_]*)liquids\b
+  - term: CC_ADULT_CONTENT
+    category: adult content
+    aliases:
+      - adult content
+      - adult contents
+      - adult-content
+      - c fam
+      - c fams
+      - c-fam
+      - fgrn
+      - fgrns
+      - nyice
+      - nyices
+      - save california
+      - save californias
+      - save-california
+      - the dakota voice
+      - the dakota voices
+      - the-dakota-voice
+    patterns:
+      - \badult(?:[\s\-_]*)content\b
+      - \badult(?:[\s\-_]*)contents\b
+      - \bc(?:[\s\-_]*)fam\b
+      - \bc(?:[\s\-_]*)fams\b
+      - \bfgrn\b
+      - \bfgrns\b
+      - \bnyice\b
+      - \bnyices\b
+      - \bsave(?:[\s\-_]*)california\b
+      - \bsave(?:[\s\-_]*)californias\b
+      - \bthe(?:[\s\-_]*)dakota(?:[\s\-_]*)voice\b
+      - \bthe(?:[\s\-_]*)dakota(?:[\s\-_]*)voices\b
+  - term: CC_BANNED_DRUGS
+    category: banned drugs
+    aliases:
+      - 11th hour remnant messenger
+      - 11th hour remnant messengers
+      - 11th-hour-remnant-messenger
+      - a sacred principle
+      - a sacred principles
+      - a-sacred-principle
+      - banned drug
+      - banned drugs
+      - banned drugses
+      - banned-drugs
+      - but other
+      - but others
+      - but otherses
+      - but-others
+      - caoc
+      - caocs
+      - d oc
+      - d ocs
+      - d-oc
+      - destinies
+      - destiny
+      - european kindred
+      - european kindreds
+      - european-kindred
+      - faith
+      - faith freedom
+      - faith freedoms
+      - faith-freedom
+      - faiths
+      - h l mencken club
+      - h l mencken clubs
+      - h-l-mencken-club
+      - heritage
+      - heritages
+      - isd record
+      - isd records
+      - isd recordses
+      - isd-records
+      - jamaat al muslimeen
+      - jamaat al muslimeens
+      - jamaat al-muslimeen
+      - jewish task force
+      - jewish task forces
+      - jewish-task-force
+      - keeper
+      - keepers
+      - keeperses
+      - klannish loyalties
+      - klannish loyalty
+      - klannish-loyalty
+      - malevolent freedom
+      - malevolent freedoms
+      - malevolent-freedom
+      - masjid al islam
+      - masjid al islams
+      - masjid-al-islam
+      - meine ehre heisst treue
+      - meine ehre heisst treues
+      - meine-ehre-heisst-treue
+      - not self
+      - not selfs
+      - not-self
+      - oath
+      - oaths
+      - othala rune
+      - othala runes
+      - othala-rune
+      - proenglish
+      - proenglishes
+      - r marten
+      - r martens
+      - r martenses
+      - r-martens
+      - red lace
+      - red laces
+      - red laceses
+      - red-laces
+      - scott townsend publisher
+      - scott townsend publishers
+      - scott townsend publisherses
+    patterns:
+      - \b11th(?:[\s\-_]*)hour(?:[\s\-_]*)remnant(?:[\s\-_]*)messenger\b
+      - \b11th(?:[\s\-_]*)hour(?:[\s\-_]*)remnant(?:[\s\-_]*)messengers\b
+      - \ba(?:[\s\-_]*)sacred(?:[\s\-_]*)principle\b
+      - \ba(?:[\s\-_]*)sacred(?:[\s\-_]*)principles\b
+      - \bbanned(?:[\s\-_]*)drug\b
+      - \bbanned(?:[\s\-_]*)drugs\b
+      - \bbanned(?:[\s\-_]*)drugses\b
+      - \bbut(?:[\s\-_]*)other\b
+      - \bbut(?:[\s\-_]*)others\b
+      - \bbut(?:[\s\-_]*)otherses\b
+      - \bcaoc\b
+      - \bcaocs\b
+      - \bd(?:[\s\-_]*)oc\b
+      - \bd(?:[\s\-_]*)ocs\b
+      - \bdestinies\b
+      - \bdestiny\b
+      - \beuropean(?:[\s\-_]*)kindred\b
+      - \beuropean(?:[\s\-_]*)kindreds\b
+      - \bfaith(?:[\s\-_]*)freedom\b
+      - \bfaith(?:[\s\-_]*)freedoms\b
+      - \bfaith\b
+      - \bfaiths\b
+      - \bh(?:[\s\-_]*)l(?:[\s\-_]*)mencken(?:[\s\-_]*)club\b
+      - \bh(?:[\s\-_]*)l(?:[\s\-_]*)mencken(?:[\s\-_]*)clubs\b
+      - \bheritage\b
+      - \bheritages\b
+      - \bisd(?:[\s\-_]*)record\b
+      - \bisd(?:[\s\-_]*)records\b
+      - \bisd(?:[\s\-_]*)recordses\b
+      - \bjamaat(?:[\s\-_]*)al(?:[\s\-_]*)muslimeen\b
+      - \bjamaat(?:[\s\-_]*)al(?:[\s\-_]*)muslimeens\b
+      - \bjewish(?:[\s\-_]*)task(?:[\s\-_]*)force\b
+      - \bjewish(?:[\s\-_]*)task(?:[\s\-_]*)forces\b
+      - \bkeeper\b
+      - \bkeepers\b
+      - \bkeeperses\b
+      - \bklannish(?:[\s\-_]*)loyalties\b
+      - \bklannish(?:[\s\-_]*)loyalty\b
+      - \bmalevolent(?:[\s\-_]*)freedom\b
+      - \bmalevolent(?:[\s\-_]*)freedoms\b
+      - \bmasjid(?:[\s\-_]*)al(?:[\s\-_]*)islam\b
+      - \bmasjid(?:[\s\-_]*)al(?:[\s\-_]*)islams\b
+      - \bmeine(?:[\s\-_]*)ehre(?:[\s\-_]*)heisst(?:[\s\-_]*)treue\b
+      - \bmeine(?:[\s\-_]*)ehre(?:[\s\-_]*)heisst(?:[\s\-_]*)treues\b
+      - \bnot(?:[\s\-_]*)self\b
+      - \bnot(?:[\s\-_]*)selfs\b
+      - \boath\b
+      - \boaths\b
+      - \bothala(?:[\s\-_]*)rune\b
+      - \bothala(?:[\s\-_]*)runes\b
+      - \bproenglish\b
+      - \bproenglishes\b
+      - \br(?:[\s\-_]*)marten\b
+      - \br(?:[\s\-_]*)martens\b
+      - \br(?:[\s\-_]*)martenses\b
+      - \bred(?:[\s\-_]*)lace\b
+      - \bred(?:[\s\-_]*)laces\b
+      - \bred(?:[\s\-_]*)laceses\b
+      - \bscott(?:[\s\-_]*)townsend(?:[\s\-_]*)publisher\b
+      - \bscott(?:[\s\-_]*)townsend(?:[\s\-_]*)publishers\b
+      - \bscott(?:[\s\-_]*)townsend(?:[\s\-_]*)publisherses\b
+      - \bslaves(?:[\s\-_]*)of(?:[\s\-_]*)the(?:[\s\-_]*)immactulate(?:[\s\-_]*)heart(?:[\s\-_]*)of(?:[\s\-_]*)maries\b
+      - \bslaves(?:[\s\-_]*)of(?:[\s\-_]*)the(?:[\s\-_]*)immactulate(?:[\s\-_]*)heart(?:[\s\-_]*)of(?:[\s\-_]*)mary\b
+      - \bst(?:[\s\-_]*)michael(?:[\s\-_]*)s(?:[\s\-_]*)parish\b
+      - \bst(?:[\s\-_]*)michael(?:[\s\-_]*)s(?:[\s\-_]*)parishes\b
+      - \bthe(?:[\s\-_]*)united(?:[\s\-_]*)west\b
+      - \bthe(?:[\s\-_]*)united(?:[\s\-_]*)wests\b
+      - \btriumph(?:[\s\-_]*)of(?:[\s\-_]*)the(?:[\s\-_]*)will\b
+      - \btriumph(?:[\s\-_]*)of(?:[\s\-_]*)the(?:[\s\-_]*)wills\b
+      - \btruth(?:[\s\-_]*)at(?:[\s\-_]*)last\b
+      - \btruth(?:[\s\-_]*)at(?:[\s\-_]*)lasts\b
+      - \bweiss(?:[\s\-_]*)macht\b
+      - \bweiss(?:[\s\-_]*)machts\b
+      - \byou(?:[\s\-_]*)can(?:[\s\-_]*)run(?:[\s\-_]*)but(?:[\s\-_]*)you(?:[\s\-_]*)cannot(?:[\s\-_]*)hide\b
+      - \byou(?:[\s\-_]*)can(?:[\s\-_]*)run(?:[\s\-_]*)but(?:[\s\-_]*)you(?:[\s\-_]*)cannot(?:[\s\-_]*)hides\b
+  - term: CC_CHILD_EXPLOITATION_CSEM
+    category: child exploitation (csem)
+    aliases:
+      - child exploitation (csem)
+      - child porn
+      - child porns
+      - child-exploitation-(csem)
+      - child-porn
+      - illegal minor content
+      - illegal minor contents
+      - illegal-minor-content
+      - lolita
+      - lolitas
+      - preteen
+      - preteens
+      - teen sex
+      - teen sexes
+      - teen-sex
+      - underage sex
+      - underage sexes
+      - underage-sex
+      - young teen nude
+      - young teen nudes
+      - young-teen-nude
+    patterns:
+      - \bchild(?:[\s\-_]*)exploitation(?:[\s\-_]*)csem\b
+      - \bchild(?:[\s\-_]*)porn\b
+      - \bchild(?:[\s\-_]*)porns\b
+      - \billegal(?:[\s\-_]*)minor(?:[\s\-_]*)content\b
+      - \billegal(?:[\s\-_]*)minor(?:[\s\-_]*)contents\b
+      - \blolita\b
+      - \blolitas\b
+      - \bpreteen\b
+      - \bpreteens\b
+      - \bteen(?:[\s\-_]*)sex\b
+      - \bteen(?:[\s\-_]*)sexes\b
+      - \bunderage(?:[\s\-_]*)sex\b
+      - \bunderage(?:[\s\-_]*)sexes\b
+      - \byoung(?:[\s\-_]*)teen(?:[\s\-_]*)nude\b
+      - \byoung(?:[\s\-_]*)teen(?:[\s\-_]*)nudes\b
