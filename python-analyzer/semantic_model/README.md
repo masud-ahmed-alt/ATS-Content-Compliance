@@ -5,35 +5,40 @@ tags:
 - feature-extraction
 - dense
 - generated_from_trainer
-- dataset_size:44
+- dataset_size:2400
 - loss:CosineSimilarityLoss
 base_model: sentence-transformers/all-MiniLM-L6-v2
 widget:
-- source_sentence: 'ip infringement / piracy / copyright: fake nikes'
+- source_sentence: 'banned / controlled drugs: heroin'
   sentences:
-  - Article about spotting fake Nikes easily
-  - Latest Hollywood movies available on torrent
-  - How m3u lists structure multimedia playlists
-- source_sentence: 'ip infringement / piracy / copyright: warez'
+  - This webpage mentions 'jihad' in a context related to hate / extremism.
+  - This webpage mentions 'no kyc loan' in a context related to unlicensed lending
+    / loans.
+  - This webpage mentions 'heroin' in a context related to banned / controlled drugs.
+- source_sentence: 'online gambling / gaming: satta'
   sentences:
-  - Share IPTV codes for all channels here
-  - Study on warez group history in the 2000s
-  - Free IPTV subscription codes leaked
-- source_sentence: 'ip infringement / piracy / copyright: watch latest movie free'
+  - This webpage mentions 'xxx' in a context related to adult / porn / sex work.
+  - This webpage mentions 'torrent' in a context related to ip infringement / piracy
+    / copyright.
+  - This webpage mentions 'satta' in a context related to online gambling / gaming.
+- source_sentence: 'adult / porn / sex work: cam girl'
   sentences:
-  - Streaming platforms offering legal free movies
-  - Website selling fake Nike sneakers
-  - News on Netflix security updates against hacks
-- source_sentence: 'ip infringement / piracy / copyright: license activator'
+  - This webpage mentions 'cam girl' in a context related to adult / porn / sex work.
+  - This webpage mentions 'meth' in a context related to banned / controlled drugs.
+  - This webpage mentions 'ak-47' in a context related to weapons.
+- source_sentence: 'financial fraud / scams: get rich quick'
   sentences:
-  - Use this license activator to unlock Adobe software
-  - Explaining how IPTV technology works
-  - Download free keygen for Photoshop 2025
-- source_sentence: 'ip infringement / piracy / copyright: replica bags'
+  - This webpage mentions 'heroin' in a context related to banned / controlled drugs.
+  - This webpage mentions 'satta' in a context related to online gambling / gaming.
+  - This webpage mentions 'get rich quick' in a context related to financial fraud
+    / scams.
+- source_sentence: 'banned / controlled drugs: cocaine'
   sentences:
-  - Join private torrent tracker for latest releases
-  - Security researchers analyze keygen malware
-  - Buy replica bags from top designer brands
+  - This webpage mentions 'cocaine' in a context related to banned / controlled drugs.
+  - This webpage mentions 'cracked software' in a context related to ip infringement
+    / piracy / copyright.
+  - This webpage mentions 'get rich quick' in a context related to financial fraud
+    / scams.
 pipeline_tag: sentence-similarity
 library_name: sentence-transformers
 ---
@@ -88,9 +93,9 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("sentence_transformers_model_id")
 # Run inference
 sentences = [
-    'ip infringement / piracy / copyright: replica bags',
-    'Buy replica bags from top designer brands',
-    'Join private torrent tracker for latest releases',
+    'banned / controlled drugs: cocaine',
+    "This webpage mentions 'cocaine' in a context related to banned / controlled drugs.",
+    "This webpage mentions 'get rich quick' in a context related to financial fraud / scams.",
 ]
 embeddings = model.encode(sentences)
 print(embeddings.shape)
@@ -99,9 +104,9 @@ print(embeddings.shape)
 # Get the similarity scores for the embeddings
 similarities = model.similarity(embeddings, embeddings)
 print(similarities)
-# tensor([[1.0000, 0.7610, 0.1868],
-#         [0.7610, 1.0000, 0.0476],
-#         [0.1868, 0.0476, 1.0000]])
+# tensor([[1.0000, 0.9125, 0.0765],
+#         [0.9125, 1.0000, 0.2072],
+#         [0.0765, 0.2072, 1.0000]])
 ```
 
 <!--
@@ -146,19 +151,19 @@ You can finetune this model on your own dataset.
 
 #### Unnamed Dataset
 
-* Size: 44 training samples
+* Size: 2,400 training samples
 * Columns: <code>sentence_0</code>, <code>sentence_1</code>, and <code>label</code>
-* Approximate statistics based on the first 44 samples:
-  |         | sentence_0                                                                         | sentence_1                                                                       | label                                                          |
-  |:--------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------------------------|:---------------------------------------------------------------|
-  | type    | string                                                                             | string                                                                           | float                                                          |
-  | details | <ul><li>min: 10 tokens</li><li>mean: 11.64 tokens</li><li>max: 13 tokens</li></ul> | <ul><li>min: 7 tokens</li><li>mean: 9.07 tokens</li><li>max: 12 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.52</li><li>max: 1.0</li></ul> |
+* Approximate statistics based on the first 1000 samples:
+  |         | sentence_0                                                                        | sentence_1                                                                         | label                                                          |
+  |:--------|:----------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------|
+  | type    | string                                                                            | string                                                                             | float                                                          |
+  | details | <ul><li>min: 5 tokens</li><li>mean: 10.54 tokens</li><li>max: 17 tokens</li></ul> | <ul><li>min: 16 tokens</li><li>mean: 21.54 tokens</li><li>max: 28 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.85</li><li>max: 1.0</li></ul> |
 * Samples:
-  | sentence_0                                                           | sentence_1                                                     | label            |
-  |:---------------------------------------------------------------------|:---------------------------------------------------------------|:-----------------|
-  | <code>ip infringement / piracy / copyright: replica bag</code>       | <code>Replica bag sale: luxury brands at discount</code>       | <code>1.0</code> |
-  | <code>ip infringement / piracy / copyright: cracked</code>           | <code>Download cracked version of Microsoft Office</code>      | <code>1.0</code> |
-  | <code>ip infringement / piracy / copyright: counterfeit rolex</code> | <code>Article discussing fake vs real Rolex differences</code> | <code>0.0</code> |
+  | sentence_0                                                          | sentence_1                                                                                                          | label            |
+  |:--------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------|:-----------------|
+  | <code>weapons: buy gun online</code>                                | <code>This webpage mentions 'buy gun online' in a context related to weapons.</code>                                | <code>1.0</code> |
+  | <code>pharma / prescription (unlicensed): cheap pills online</code> | <code>This webpage mentions 'cheap pills online' in a context related to pharma / prescription (unlicensed).</code> | <code>1.0</code> |
+  | <code>ip infringement / piracy / copyright: fake rolex</code>       | <code>This webpage mentions 'fake rolex' in a context related to ip infringement / piracy / copyright.</code>       | <code>1.0</code> |
 * Loss: [<code>CosineSimilarityLoss</code>](https://sbert.net/docs/package_reference/sentence_transformer/losses.html#cosinesimilarityloss) with these parameters:
   ```json
   {
