@@ -1,118 +1,190 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { API_CONFIG } from "../utils/apiConfig";
 
+const MAX_URLS_PER_FILE = 10000;
+const BATCH_SIZE = 1000;
+
 function Dashboard() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [fileStats, setFileStats] = useState({ count: 0, valid: false });
+  const abortRef = useRef(null);
 
-  // ✅ Fetch recent tasks
-  const fetchRecentTasks = async () => {
+  // ==========================
+  // Fetch recent tasks
+  // ==========================
+  const fetchRecentTasks = async (signal) => {
     try {
-      const response = await fetch(`${API_CONFIG.fetcherBaseUrl}/tasks`);
-      if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+      const response = await fetch(`${API_CONFIG.fetcherBaseUrl}/tasks`, { signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       setTasks(data);
     } catch (err) {
-      console.error("Error fetching recent tasks:", err);
+      if (err.name !== "AbortError") console.error("Fetch tasks failed:", err);
     }
   };
 
   useEffect(() => {
-    fetchRecentTasks();
-    const interval = setInterval(fetchRecentTasks, 10000);
-    return () => clearInterval(interval);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    fetchRecentTasks(controller.signal);
+    const interval = setInterval(() => fetchRecentTasks(controller.signal), 10000);
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
   }, []);
 
-  // ✅ Validate and store file
+  // ==========================
+  // File selection + preview
+  // ==========================
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && !file.name.match(/\.(xlsx|csv)$/i)) {
-      alert("Invalid file type! Please select an XLSX or CSV file.");
+    if (!file) return;
+
+    if (!/\.(xlsx|csv)$/i.test(file.name)) {
+      alert("❌ Invalid file type! Please select an XLSX or CSV file.");
       e.target.value = "";
       setSelectedFile(null);
+      setFileStats({ count: 0, valid: false });
       return;
     }
+
     setSelectedFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        let urls = [];
+        if (file.name.endsWith(".csv")) {
+          const text = ev.target.result;
+          urls = text
+            .split(/\r?\n/)
+            .map((l) => l.trim())
+            .filter((l) => l && l.startsWith("http"));
+        } else {
+          const data = new Uint8Array(ev.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+          urls = rows.flat().filter((u) => typeof u === "string" && u.startsWith("http"));
+        }
+
+        const count = urls.length;
+        const valid = count > 0 && count <= MAX_URLS_PER_FILE;
+        setFileStats({ count, valid });
+      } catch (err) {
+        console.error("Preview error:", err);
+        setFileStats({ count: 0, valid: false });
+      }
+    };
+
+    if (file.name.endsWith(".csv")) reader.readAsText(file);
+    else reader.readAsArrayBuffer(file);
   };
 
-  // ✅ Read URLs from CSV/XLSX and upload to Go Fetcher
+  // ==========================
+  // Upload in Batches
+  // ==========================
+  const uploadBatch = async (batchUrls, batchIndex, totalBatches) => {
+    const payload = { urls: batchUrls };
+    const response = await fetch(`${API_CONFIG.fetcherBaseUrl}/fetch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Batch ${batchIndex} failed: ${text}`);
+    }
+
+    const result = await response.json();
+    console.log(`✅ Batch ${batchIndex}/${totalBatches} uploaded:`, result);
+    return result;
+  };
+
   const handleUpload = async () => {
     if (!selectedFile) return alert("Please select a file first.");
+    if (!fileStats.valid) return alert(`❌ Invalid file or exceeds ${MAX_URLS_PER_FILE} URLs.`);
+
     setUploading(true);
+    setProgress({ current: 0, total: 0 });
 
-    try {
-      const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
-      const reader = new FileReader();
+    const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+    const reader = new FileReader();
 
-      reader.onload = async (e) => {
+    reader.onload = async (e) => {
+      try {
         let urls = [];
 
-        try {
-          if (fileExtension === "csv") {
-            // Parse CSV manually
-            const text = e.target.result;
-            urls = text
-              .split(/\r?\n/)
-              .map((line) => line.trim())
-              .filter((line) => line && line.startsWith("http"));
-          } else {
-            // Parse XLSX
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-            urls = rows.flat().filter((url) => typeof url === "string" && url.startsWith("http"));
-          }
-
-          if (urls.length === 0) {
-            alert("No valid URLs found in the file.");
-            setUploading(false);
-            return;
-          }
-
-          console.log("Uploading URLs:", urls);
-
-          const payload = { urls };
-          const response = await fetch(`${API_CONFIG.fetcherBaseUrl}/fetch`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!response.ok) {
-            const text = await response.text();
-            throw new Error(`Upload failed: ${text}`);
-          }
-
-          const result = await response.json();
-          console.log("Upload result:", result);
-          alert(`Uploaded ${urls.length} URLs successfully!`);
-          fetchRecentTasks();
-        } catch (error) {
-          console.error("Error parsing/uploading file:", error);
-          alert("Error uploading file. Check console for details.");
-        } finally {
-          setUploading(false);
-          setSelectedFile(null);
+        // ✅ Parse CSV or XLSX
+        if (fileExtension === "csv") {
+          const text = e.target.result;
+          urls = text
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter((line) => line && line.startsWith("http"));
+        } else {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+          urls = rows.flat().filter((url) => typeof url === "string" && url.startsWith("http"));
         }
-      };
 
-      if (fileExtension === "csv") {
-        reader.readAsText(selectedFile);
-      } else {
-        reader.readAsArrayBuffer(selectedFile);
+        if (urls.length === 0) {
+          alert("⚠️ No valid URLs found in file.");
+          setUploading(false);
+          return;
+        }
+
+        if (urls.length > MAX_URLS_PER_FILE) {
+          alert(`🚫 Maximum ${MAX_URLS_PER_FILE} URLs per upload.`);
+          setUploading(false);
+          return;
+        }
+
+        // ✅ Split into batches
+        const batches = [];
+        for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+          batches.push(urls.slice(i, i + BATCH_SIZE));
+        }
+
+        setProgress({ current: 0, total: batches.length });
+        console.log(`Uploading ${urls.length} URLs in ${batches.length} batches...`);
+
+        // Sequential upload (safe for backend)
+        for (let i = 0; i < batches.length; i++) {
+          await uploadBatch(batches[i], i + 1, batches.length);
+          setProgress({ current: i + 1, total: batches.length });
+        }
+
+        alert(`✅ Uploaded ${urls.length} URLs (${batches.length} batches) successfully!`);
+        fetchRecentTasks();
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("❌ Upload failed. Check console for details.");
+      } finally {
+        setUploading(false);
+        setSelectedFile(null);
+        setFileStats({ count: 0, valid: false });
+        setProgress({ current: 0, total: 0 });
       }
-    } catch (err) {
-      console.error(err);
-      alert("Unexpected error while uploading.");
-      setUploading(false);
-    }
+    };
+
+    if (fileExtension === "csv") reader.readAsText(selectedFile);
+    else reader.readAsArrayBuffer(selectedFile);
   };
 
+  // ==========================
+  // Render
+  // ==========================
   return (
     <div className="d-flex flex-column flex-lg-row">
       <Sidebar />
@@ -133,7 +205,8 @@ function Dashboard() {
                   Upload Data File
                 </h5>
                 <p className="text-danger fw-semibold small text-center text-lg-start">
-                  ⚠️ Only <strong>.xlsx</strong> or <strong>.csv</strong> files are allowed.
+                  ⚠️ Supports <strong>.xlsx</strong> and <strong>.csv</strong> files.
+                  <br /> Max {MAX_URLS_PER_FILE} URLs per upload.
                 </p>
 
                 <input
@@ -141,12 +214,13 @@ function Dashboard() {
                   className="form-control mb-3"
                   accept=".xlsx,.csv"
                   onChange={handleFileChange}
+                  disabled={uploading}
                 />
 
                 <button
                   onClick={handleUpload}
                   className="btn btn-primary w-100"
-                  disabled={!selectedFile || uploading}
+                  disabled={!selectedFile || uploading || !fileStats.valid}
                 >
                   {uploading ? (
                     <>
@@ -155,7 +229,7 @@ function Dashboard() {
                         role="status"
                         aria-hidden="true"
                       ></span>
-                      Uploading...
+                      Uploading ({progress.current}/{progress.total})
                     </>
                   ) : (
                     <>
@@ -164,15 +238,32 @@ function Dashboard() {
                   )}
                 </button>
 
+                {/* File Info */}
                 {selectedFile && !uploading && (
-                  <div className="alert alert-info mt-3 mb-0 p-2 small text-center text-lg-start">
-                    Selected File: <strong>{selectedFile.name}</strong>
+                  <div
+                    className={`alert mt-3 mb-0 p-2 small text-center text-lg-start ${
+                      fileStats.valid ? "alert-info" : "alert-warning"
+                    }`}
+                  >
+                    <strong>{selectedFile.name}</strong> —{" "}
+                    {fileStats.count} URLs detected{" "}
+                    {!fileStats.valid && "(Invalid or too many)"}
+                  </div>
+                )}
+
+                {/* Progress Bar */}
+                {uploading && progress.total > 0 && (
+                  <div className="progress mt-3" style={{ height: "6px" }}>
+                    <div
+                      className="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                      style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                    ></div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* RIGHT: Recent Tasks Section */}
+            {/* RIGHT: Recent Tasks */}
             <div className="col-12 col-lg-7">
               <div className="card shadow-sm border-0 h-100">
                 <div className="card-body p-3 p-md-4">
@@ -181,8 +272,9 @@ function Dashboard() {
                       Recent Tasks
                     </h5>
                     <button
-                      onClick={fetchRecentTasks}
+                      onClick={() => fetchRecentTasks()}
                       className="btn btn-sm btn-outline-secondary"
+                      disabled={uploading}
                     >
                       <i className="bi bi-arrow-clockwise me-1"></i> Refresh
                     </button>
@@ -244,7 +336,7 @@ function Dashboard() {
             </div>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   );
 }

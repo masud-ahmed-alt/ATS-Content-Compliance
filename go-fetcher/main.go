@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -51,6 +50,7 @@ type CrawlTask struct {
 var (
 	ctx       = context.Background()
 	redisConn *redis.Client
+	pageLimit = 50
 	timeout   = 10 * time.Second
 
 	analyzerEndpoint = "http://python-analyzer:8000/ingest"
@@ -81,7 +81,7 @@ func main() {
 	http.HandleFunc("/tasks", withCORS(handleTaskList))
 
 	port := getEnv("PORT", "8080")
-	log.Printf("go-crawler running on port %s (UNLIMITED CRAWL)", port)
+	log.Printf("go-crawler running on port %s", port)
 
 	go queueWorker() // background worker
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -237,7 +237,7 @@ func processCrawlTask(taskID string) {
 	queue := []string{task.MainURL}
 	results := []PageContent{}
 
-	for len(queue) > 0 {
+	for len(queue) > 0 && len(results) < pageLimit {
 		current := queue[0]
 		queue = queue[1:]
 
@@ -252,18 +252,15 @@ func processCrawlTask(taskID string) {
 		if page.Error == "" {
 			links := extractSameDomainLinks(page.HTML, current)
 			for _, link := range links {
-				if !visited[link] {
+				if !visited[link] && len(results)+len(queue) < pageLimit {
 					queue = append(queue, link)
 				}
 			}
 		}
-
-		// Update Redis progress after each page
-		task.Pages = results
-		task.TotalPages = len(results)
-		saveTask(taskID, &task)
 	}
 
+	task.Pages = results
+	task.TotalPages = len(results)
 	task.Status = "completed"
 	task.EndedAt = time.Now()
 	saveTask(taskID, &task)
