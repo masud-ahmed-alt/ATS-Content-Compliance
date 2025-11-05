@@ -2,16 +2,19 @@
 """
 core_analyzer_async.py  –  scalable analyzer (>1000 URLs)
 
-• Async + thread-pool hybrid (regex/semantic/OCR offloaded)
+• Async + thread/IO pool hybrid (regex/semantic/OCR offloaded)
 • Guarded pyzbar/libzbar import
-• Memory-safe (drops HTML once parsed)
-• Batched OpenSearch bulk writes
-• Async screenshot queue with worker pool
-• Optional semantic similarity
+• Memory-safe (drops HTML once parsed, bounded queues)
+• Streaming/batched OpenSearch + PostgreSQL writes (async flushers)
+• Per-match recording (Hit) with resilient backpressure (lossless)
+• Async screenshot queue with worker pool (bounded)
+• Optional semantic similarity (cached)
 • uvloop (optional) for faster asyncio
 """
 
 from __future__ import annotations
+
+# ========= Imports =========
 import os, re, io, time, json, asyncio, requests, gc, threading
 from typing import Dict, Any, List, Tuple
 from collections import defaultdict
@@ -51,43 +54,53 @@ try:
 except Exception:
     _HAS_CV2 = False
 
-# --- Config / env ---
+# ========= Config / env =========
 DATA_DIR = os.environ.get("DATA_DIR", "/data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-from config.settings import (  # your existing config
+from config.settings import (
     MAX_IMGS, MAX_IMG_BYTES, FUZZ_THRESHOLD,
     OPENSEARCH_HOST, PW_DOMAINS as CFG_PW_DOMAINS, SessionLocal
 )
-from models.hit_model import Result, Hit  # noqa: F401 (Hit kept for future use)
+from models.hit_model import Result, Hit  # Hit used for per-match DB writes
 from libs.screenshot import capture_screenshot
 
-# --- Tunables (with sensible defaults) ---
+# ========= Tunables =========
 MAX_CONCURRENT_PAGES   = int(os.environ.get("MAX_CONCURRENT_PAGES", "50"))
-MAX_EXECUTOR_THREADS   = int(os.environ.get("MAX_EXECUTOR_THREADS", "12"))
+CPU_WORKERS            = int(os.environ.get("CPU_WORKERS", str(os.cpu_count() or 8)))
+IO_WORKERS             = int(os.environ.get("IO_WORKERS", "32"))
 MAX_SCREENSHOT_WORKERS = int(os.environ.get("MAX_SCREENSHOT_WORKERS", "5"))
-ES_BATCH_SIZE          = int(os.environ.get("ES_BATCH_SIZE", "300"))
-OCR_MIN_DIM            = int(os.environ.get("OCR_MIN_DIM", "200"))  # skip tiny images
+ES_BATCH_SIZE          = int(os.environ.get("ES_BATCH_SIZE", "250"))
+ES_FLUSH_INTERVAL_SEC  = float(os.environ.get("ES_FLUSH_INTERVAL_SEC", "1.0"))
+OCR_MIN_DIM            = int(os.environ.get("OCR_MIN_DIM", "200"))
 IMG_HTTP_TIMEOUT_SEC   = float(os.environ.get("IMG_HTTP_TIMEOUT_SEC", "8"))
+HIT_BATCH_SIZE         = int(os.environ.get("HIT_BATCH_SIZE", "200"))
+PG_FLUSH_INTERVAL_SEC  = float(os.environ.get("PG_FLUSH_INTERVAL_SEC", "1.0"))
+ES_QUEUE_MAXSIZE       = int(os.environ.get("ES_QUEUE_MAXSIZE", "4000"))
+PG_QUEUE_MAXSIZE       = int(os.environ.get("PG_QUEUE_MAXSIZE", "4000"))
+SS_QUEUE_MAXSIZE       = int(os.environ.get("SS_QUEUE_MAXSIZE", "1000"))
 
-# --- HTTP session ---
+# ========= HTTP session =========
 _SESS = requests.Session()
-_ADAPTER = requests.adapters.HTTPAdapter(pool_connections=32, pool_maxsize=64, max_retries=2)
+_ADAPTER = requests.adapters.HTTPAdapter(pool_connections=64, pool_maxsize=128, max_retries=2)
 _SESS.mount("http://", _ADAPTER)
 _SESS.mount("https://", _ADAPTER)
-_SESS.headers.update({"User-Agent": "ats-ocr/2.1"})
+_SESS.headers.update({"User-Agent": "ats-ocr/2.2"})
 
-# --- Async control ---
-EXECUTOR = ThreadPoolExecutor(max_workers=MAX_EXECUTOR_THREADS)
+# ========= Executors & GC tuning =========
+CPU_POOL: ThreadPoolExecutor = ThreadPoolExecutor(max_workers=CPU_WORKERS)
+IO_POOL:  ThreadPoolExecutor = ThreadPoolExecutor(max_workers=IO_WORKERS)
 
-# --- Semantic model ---
-USE_SEMANTIC = os.environ.get("USE_SEMANTIC", "false").lower() in ("1", "true", "yes")
+# Tuned GC: reduce full GC frequency, keep young-gen quick
+gc.set_threshold(700, 10, 5)
+
+# ========= Semantic model (optional) =========
+USE_SEMANTIC = os.environ.get("USE_SEMANTIC", "true").lower() in ("1", "true", "yes")
 _SEMANTIC_MODEL = None
-_SEMANTIC_THRESHOLD = float(os.environ.get("SEMANTIC_THRESHOLD", "0.75"))
+_SEMANTIC_THRESHOLD = float(os.environ.get("SEMANTIC_THRESHOLD", "0.70"))
 _SEM_CACHE: dict[str, float] = {}
 
 def load_semantic_model(path: str):
-    """Call once on startup if you want semantics."""
     global _SEMANTIC_MODEL
     if not USE_SEMANTIC:
         print("[semantic:disabled]", flush=True); return
@@ -102,7 +115,9 @@ def semantic_validate(keyword: str, snippet: str, category: str) -> float:
     if not USE_SEMANTIC or not _SEMANTIC_MODEL:
         return 1.0
     key = f"{category}|{keyword}|{snippet[:200]}"
-    if key in _SEM_CACHE: return _SEM_CACHE[key]
+    v = _SEM_CACHE.get(key)
+    if v is not None:
+        return v
     try:
         from sentence_transformers import util  # type: ignore
         q = f"{category}: {keyword}"
@@ -110,18 +125,17 @@ def semantic_validate(keyword: str, snippet: str, category: str) -> float:
         emb_s = _SEMANTIC_MODEL.encode(snippet, convert_to_tensor=True, normalize_embeddings=True)
         sim = float(util.cos_sim(emb_q, emb_s))
         _SEM_CACHE[key] = sim
-        if len(_SEM_CACHE) > 100_000:  # simple cap
+        if len(_SEM_CACHE) > 100_000:
             _SEM_CACHE.clear()
         return sim
     except Exception:
         return 0.0
 
-# --- Regex / cleaning ---
-_CLEAN_NEWLINES = re.compile(r"[\t\r\n]+")
-_CLEAN_SPACES   = re.compile(r"\s{2,}")
-_CLEAN_NONASCII = re.compile(r"[^\x20-\x7E]+")
+# ========= Fast cleaners & regex =========
+_trans_table = str.maketrans({"\r": " ", "\n": " ", "\t": " "})
 def _clean(s: str) -> str:
-    return _CLEAN_NONASCII.sub(" ", _CLEAN_SPACES.sub(" ", _CLEAN_NEWLINES.sub(" ", s))).strip()
+    s = s.translate(_trans_table)
+    return " ".join(s.split())
 
 _UPI_CONTEXT_RE = regx.compile(
     r"\b[a-zA-Z0-9._-]{2,}@(upi|paytm|ybl|okicici|oksbi|okaxis|okhdfcbank|ibl|axl|idfcbank|apl|payu|pingpay|barodampay|boi|zomato)\b",
@@ -134,7 +148,7 @@ _PAYMENT_TOKENS = (
     "phonepe","paytm","payment","merchant","qr","amount","send","transfer"
 )
 
-# --- Renderer integration ---
+# ========= Renderer integration =========
 RENDERER_HTML = os.environ.get("RENDERER_URL", "http://playwright-renderer:9000/render-html")
 
 def domain_of(url: str) -> str:
@@ -152,11 +166,10 @@ def fetch_rendered_html(url: str) -> str:
         print(f"[render:fail] {url} -> {e}", flush=True)
         return ""
 
-# --- Text extraction ---
+# ========= Text extraction =========
 def extract_text(html: str) -> tuple[str, HTMLParser]:
     tree = HTMLParser(html)
-    parts = []
-    # quickly skip heavy nodes
+    parts: List[str] = []
     for node in tree.css("body :not(script):not(style):not(nav):not(footer)"):
         try:
             t = node.text(separator=" ", strip=True)
@@ -164,9 +177,11 @@ def extract_text(html: str) -> tuple[str, HTMLParser]:
                 parts.append(t)
         except Exception:
             continue
+        if len(parts) >= 20000:
+            break
     return " ".join(parts), tree
 
-# --- UPI normalization ---
+# ========= UPI normalization =========
 import re as _re
 def normalize_upi_from_payload(data: str):
     try:
@@ -181,7 +196,7 @@ def normalize_upi_from_payload(data: str):
         pass
     return None
 
-# --- OCR + QR helpers ---
+# ========= OCR + QR helpers =========
 def _absolute_img_src(page_url: str, src: str) -> str:
     if not src: return ""
     if src.startswith("//"): return "https:" + src
@@ -202,7 +217,7 @@ def _ocr_image(img: Image.Image) -> str:
         g = img.convert("L")
         w, h = g.size
         if w < OCR_MIN_DIM or h < OCR_MIN_DIM:
-            return ""  # skip tiny images
+            return ""
         if w < 300 or h < 300:
             g = g.resize((w*2, h*2))
         conf = "--psm 6 -c tessedit_char_whitelist=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._-"
@@ -219,13 +234,13 @@ def _try_qr_opencv(img: Image.Image) -> List[str]:
     except Exception:
         return []
 
-# --- OpenSearch robust init ---
+# ========= OpenSearch robust init =========
 def _es_host_from_cfg() -> str:
     env_url = os.environ.get("OPENSEARCH_URL")
     if env_url:
         return env_url
     try:
-        host = OPENSEARCH_HOST  # from config.settings
+        host = OPENSEARCH_HOST
         if isinstance(host, str):
             return host if host.startswith("http") else "http://" + host
     except Exception:
@@ -241,34 +256,75 @@ es = OpenSearch(
     connection_class=RequestsHttpConnection,
 )
 
-# --- Bulk ES buffer (thread-safe) ---
-_es_buffer: List[dict] = []
-_es_lock = threading.Lock()
+# ========= Async queues & background flushers (lossless, minimal logs) =========
+MAIN_LOOP: asyncio.AbstractEventLoop | None = None  # captured once
 
-def _es_add(doc: dict):
-    global _es_buffer
-    with _es_lock:
-        _es_buffer.append(doc)
-        if len(_es_buffer) >= ES_BATCH_SIZE:
-            _es_flush_locked()
+hit_queue: asyncio.Queue[Hit]  = asyncio.Queue(maxsize=PG_QUEUE_MAXSIZE)
+es_queue:  asyncio.Queue[dict] = asyncio.Queue(maxsize=ES_QUEUE_MAXSIZE)
 
-def _es_flush_locked():
-    """Flush must be called under _es_lock."""
-    global _es_buffer
-    if not _es_buffer:
+async def pg_flusher():
+    buf: List[Hit] = []
+    last = time.time()
+    while True:
+        try:
+            hit = await hit_queue.get()
+            buf.append(hit)
+            hit_queue.task_done()
+            now = time.time()
+            if len(buf) >= HIT_BATCH_SIZE or (now - last) >= PG_FLUSH_INTERVAL_SEC:
+                await _flush_pg(buf)
+                buf.clear()
+                last = now
+        except Exception as e:
+            print(f"[pg_flusher:error] {e}", flush=True)
+            await asyncio.sleep(0.3)
+
+async def es_flusher():
+    buf: List[dict] = []
+    last = time.time()
+    while True:
+        try:
+            doc = await es_queue.get()
+            buf.append(doc)
+            es_queue.task_done()
+            now = time.time()
+            if len(buf) >= ES_BATCH_SIZE or (now - last) >= ES_FLUSH_INTERVAL_SEC:
+                await _flush_es(buf)
+                buf.clear()
+                last = now
+        except Exception as e:
+            print(f"[es_flusher:error] {e}", flush=True)
+            await asyncio.sleep(0.3)
+
+async def _flush_pg(batch: List[Hit]):
+    if not batch:
         return
     try:
-        success, _ = bulk(es, _es_buffer)
-        print(f"[es:bulk] indexed {success} docs", flush=True)
+        db = SessionLocal()
+        db.bulk_save_objects(batch)
+        db.commit()
+        print(f"[pg:bulk] {len(batch)} hits", flush=True)
+    except Exception as e:
+        print(f"[pg:error] bulk insert -> {e}", flush=True)
+        try: db.rollback()
+        except Exception: pass
+    finally:
+        try: db.close()
+        except Exception: pass
+
+async def _flush_es(batch: List[dict]):
+    if not batch:
+        return
+    try:
+        success, _ = await asyncio.get_event_loop().run_in_executor(
+            IO_POOL, lambda: bulk(es, batch)
+        )
+        if success > 0:
+            print(f"[es:bulk] indexed {success} docs", flush=True)
     except Exception as e:
         print(f"[es:error] bulk -> {e}", flush=True)
-    _es_buffer.clear()
 
-def flush_es_buffer():
-    with _es_lock:
-        _es_flush_locked()
-
-# --- Screenshot queue (async) ---
+# ========= Screenshot queue (async) =========
 _screenshot_queue: asyncio.Queue[Tuple[str, str]] | None = None
 _screenshot_workers_started = False
 
@@ -276,9 +332,8 @@ async def _screenshot_worker():
     while True:
         url, keyword = await _screenshot_queue.get()  # type: ignore
         try:
-            # capture_screenshot is sync; offload to thread pool
             await asyncio.get_event_loop().run_in_executor(
-                EXECUTOR, lambda: capture_screenshot(url, keyword)
+                IO_POOL, lambda: capture_screenshot(url, keyword)
             )
         except Exception as e:
             print(f"[screenshot:err] {url}->{e}", flush=True)
@@ -289,17 +344,17 @@ async def _ensure_screenshot_workers():
     global _screenshot_queue, _screenshot_workers_started
     if _screenshot_workers_started:
         return
-    _screenshot_queue = asyncio.Queue(maxsize=2000)
+    _screenshot_queue = asyncio.Queue(maxsize=SS_QUEUE_MAXSIZE)
     for _ in range(MAX_SCREENSHOT_WORKERS):
         asyncio.create_task(_screenshot_worker())
     _screenshot_workers_started = True
     print(f"[screenshot:workers] started={MAX_SCREENSHOT_WORKERS}", flush=True)
 
-# --- Storage & buffers for matches (thread-safe) ---
+# ========= In-memory match bucket (lightweight dedupe) =========
 match_buffer: dict[str, dict] = defaultdict(lambda: {"sub_urls": set(), "matches": []})
-_match_lock = threading.Lock()  # protect match_buffer
+_match_lock = threading.Lock()
 
-# --- Keyword config (robust load) ---
+# ========= Keyword config (robust load) =========
 import yaml
 _KW_PATH = os.environ.get("KEYWORDS_FILE","/app/keywords/keywords2.yml")
 try:
@@ -317,13 +372,11 @@ _seen = set()
 for e in KW:
     term = (e.get("term") or "").strip()
     cat  = (e.get("category") or "uncat").strip()
-    # patterns
     for pat in (e.get("patterns") or []) or []:
         try:
             COMPILED.append((term, cat, regx.compile(pat, regx.I)))
         except Exception as ex:
             print(f"[regex:skip] {term}: {ex}", flush=True)
-    # aliases + brands normalization
     aliases = e.get("aliases") or []
     brands  = e.get("brands")  or []
     if isinstance(aliases, str): aliases = [aliases]
@@ -333,13 +386,41 @@ for e in KW:
         if a and len(a) >= 3 and (term, cat, a) not in _seen:
             ALIASES.append((term, cat, a)); _seen.add((term, cat, a))
 
-# --- Core record logic (thread-safe, bulk ES, async screenshots) ---
+# ========= Lossless enqueue helper (works from threads or main loop) =========
+def _lossless_put(q: asyncio.Queue, item):
+    """
+    Try fast path put_nowait(); if full, block via MAIN_LOOP until space is available.
+    Safe to call from threadpool threads.
+    """
+    global MAIN_LOOP
+    try:
+        q.put_nowait(item)
+        return
+    except asyncio.QueueFull:
+        pass
+    loop = MAIN_LOOP
+    if loop is None:
+        # Should not happen once background workers started; fallback to busy-wait
+        while True:
+            try:
+                q.put_nowait(item)
+                return
+            except asyncio.QueueFull:
+                time.sleep(0.01)
+    # Block until enqueued (lossless, applies backpressure)
+    fut = asyncio.run_coroutine_threadsafe(q.put(item), loop)
+    fut.result()
+
+# ========= Core record logic (ES + PG + screenshot) =========
 def record_hit(url:str, cat:str, k:str, snip:str, src:str,
-               master:str|None=None, confidence:float=1.0):
+               master:str|None=None, confidence:float=1.0,
+               task_id:str|None=None):
+    """Record a single match (lossless enqueue; minimal logs)."""
     if not master: master = url
     snip = _clean(snip)
+    ts = int(time.time())
 
-    # dedupe per master/url/keyword
+    # Deduplicate per master/url/keyword (light)
     with _match_lock:
         bucket = match_buffer[master]
         for e in bucket["matches"]:
@@ -348,33 +429,46 @@ def record_hit(url:str, cat:str, k:str, snip:str, src:str,
         bucket["sub_urls"].add(url)
         bucket["matches"].append({
             "url": url, "category": cat, "keyword": k, "snippet": snip,
-            "timestamp": int(time.time()), "source": src, "confidence": confidence
+            "timestamp": ts, "source": src, "confidence": confidence
         })
 
-    # enqueue screenshot asynchronously (don't block analysis)
-    if confidence >= 0.7:
-        try:
-            if _screenshot_queue is not None:
-                _screenshot_queue.put_nowait((url, k))
-        except Exception:
-            pass
+    # Screenshot enqueue (lossless backpressure if busy)
+    if confidence >= 0.7 and _screenshot_queue is not None:
+        _lossless_put(_screenshot_queue, (url, k))
 
-    # buffer ES bulk
-    _es_add({
+    # ES enqueue (lossless)
+    _lossless_put(es_queue, {
         "_index": "illegal_hits",
         "_source": {
             "url": url, "category": cat, "keyword": k, "snippet": snip,
-            "ts": int(time.time()), "source": src, "master_url": master,
-            "confidence": confidence
+            "ts": ts, "source": src, "master_url": master, "confidence": confidence
         }
     })
+    score = 0
+    if confidence and isinstance(confidence, (float, int)):
+        score = max(0, min(int(confidence * 100), 100))
 
-# --- Matching text (CPU-bound → run in executor as needed) ---
+    # PG enqueue (lossless)
+    hit = Hit(
+        task_id=task_id or "unknown",
+        main_url=master,
+        sub_url=url,
+        category=cat,
+        matched_keyword=k,
+        snippet=snip,
+        screenshot_path=None,
+        timestamp=ts,
+        source=src,
+        confident_score=score
+    )
+    _lossless_put(hit_queue, hit)
+
+# ========= Matching text =========
 def _context_score(text:str, idx:int) -> float:
     w = text[max(0,idx-80):idx+80].casefold()
     return min(sum(1 for t in _PAYMENT_TOKENS if t in w)/4, 1.0)
 
-def match_text(url:str, text:str, master:str|None=None) -> List[Tuple[str,str,str]]:
+def match_text(url:str, text:str, master:str|None=None, task_id:str|None=None) -> List[Tuple[str,str,str]]:
     if not text.strip():
         return []
     text = _clean(text)
@@ -391,7 +485,9 @@ def match_text(url:str, text:str, master:str|None=None) -> List[Tuple[str,str,st
             ctx  = _context_score(text, idx) if cat == "payments" else 1.0
             if cat == "payments" and ctx < 0.3:
                 continue
-            record_hit(url, cat, term, snip, "regex", master, sem * ctx)
+            # Pass raw semantic similarity (used for confident_score)
+            record_hit(url, cat, term, snip, "regex", master, sem, task_id=task_id)
+
             results.append((term, cat, snip))
 
     for term, cat, alias in ALIASES:
@@ -404,7 +500,7 @@ def match_text(url:str, text:str, master:str|None=None) -> List[Tuple[str,str,st
             ctx  = _context_score(text, idx) if cat == "payments" else 1.0
             if cat == "payments" and ctx < 0.25:
                 continue
-            record_hit(url, cat, term, snip, "alias", master, sem * ctx)
+            record_hit(url, cat, term, snip, "alias", master, sem, task_id=task_id)
             results.append((term, cat, snip))
 
     for m in _UPI_CONTEXT_RE.finditer(text):
@@ -412,108 +508,121 @@ def match_text(url:str, text:str, master:str|None=None) -> List[Tuple[str,str,st
         snip = text[max(0,idx-80):idx+80]
         ctx  = _context_score(text, idx)
         if ctx >= 0.3:
-            record_hit(url, "payments", "upi-handle", snip, "context", master, 0.85 * ctx)
+            record_hit(url, "payments", "upi-handle", snip, "context", master, 0.85 * ctx, task_id=task_id)
             results.append(("upi-handle", "payments", snip))
 
     for m in _BTC_RE.finditer(text):
         snip = text[max(0,m.start()-80):m.start()+80]
-        record_hit(url, "crypto", "bitcoin", snip, "regex", master, 0.95)
+        record_hit(url, "crypto", "bitcoin", snip, "regex", master, 0.95, task_id=task_id)
         results.append(("bitcoin", "crypto", snip))
 
     for m in _ETH_RE.finditer(text):
         snip = text[max(0,m.start()-80):m.start()+80]
-        record_hit(url, "crypto", "ethereum", snip, "regex", master, 0.95)
+        record_hit(url, "crypto", "ethereum", snip, "regex", master, 0.95, task_id=task_id)
         results.append(("ethereum", "crypto", snip))
 
-    # unique
+    # Unique compacted
     seen=set(); out=[]
     for t in results:
         if t not in seen:
             seen.add(t); out.append(t)
     return out
 
-# --- OCR + QR (I/O + CPU; called from executor via run_in_executor) ---
-def ocr_and_qr(url: str, tree: HTMLParser) -> List[Tuple[str, str, str]]:
+# ========= OCR + QR =========
+def ocr_and_qr(url: str, tree: HTMLParser, task_id:str|None=None, master:str|None=None) -> List[Tuple[str, str, str]]:
     results: List[Tuple[str,str,str]] = []
     for src in _iter_img_urls(url, tree):
         try:
             with _SESS.get(src, timeout=IMG_HTTP_TIMEOUT_SEC, stream=True) as r:
                 r.raise_for_status()
                 content = r.raw.read(MAX_IMG_BYTES, decode_content=True)
-            img = Image.open(io.BytesIO(content))
-            # QR (pyzbar + opencv fallback)
-            items = []
-            if _HAS_PYZBAR:
-                try:
-                    items.extend(qr_decode(img))
-                except Exception:
-                    pass
-            if _HAS_CV2:
-                try:
-                    for p in _try_qr_opencv(img):
-                        if p:
-                            items.append(type("X", (), {"data": p.encode()}))
-                except Exception:
-                    pass
-            for c in items:
-                payload = getattr(c, "data", b"").decode("utf-8", errors="ignore")
-                upi = normalize_upi_from_payload(payload)
-                if upi:
-                    snip = f"QR->UPI:{upi}"
-                    record_hit(url, "payments", "upi-qr", snip, "qr")
-                    results.append(("upi-qr","payments", snip))
+            with Image.open(io.BytesIO(content)) as img:
+                img.load()
+                items = []
+                if _HAS_PYZBAR:
+                    try:
+                        items.extend(qr_decode(img))
+                    except Exception:
+                        pass
+                if _HAS_CV2:
+                    try:
+                        for p in _try_qr_opencv(img):
+                            if p:
+                                items.append(type("X", (), {"data": p.encode()}))
+                    except Exception:
+                        pass
+                for c in items:
+                    payload = getattr(c, "data", b"").decode("utf-8", errors="ignore")
+                    upi = normalize_upi_from_payload(payload)
+                    if upi:
+                        snip = f"QR->UPI:{upi}"
+                        record_hit(url, "payments", "upi-qr", snip, "qr", master, 0.9, task_id=task_id)
+                        results.append(("upi-qr","payments", snip))
 
-            # OCR (only if no QR result yet)
-            if not results:
-                txt = _ocr_image(img)
-                if txt:
-                    # run match_text synchronously here; it's CPU but we're already in executor
-                    results += match_text(url, _clean(txt))
+                if not results:
+                    txt = _ocr_image(img)
+                    if txt:
+                        results += match_text(url, _clean(txt), master=master or url, task_id=task_id)
+            del content
         except Exception:
             continue
     return results
 
-# --- Page worker (async) ---
+# ========= Page worker (async) =========
 async def _process_page_async(p:dict, main_url:str, task_id:str) -> List[Tuple[str,str,str]]:
     url  = p.get("final_url") or p.get("url")
     html = p.get("html") or ""
     if not url or not html:
         return []
     try:
-        text, tree = extract_text(html)
-        del html  # free memory early
+        text, tree = await asyncio.get_event_loop().run_in_executor(
+            CPU_POOL, lambda: extract_text(html)
+        )
+        del html
         text_clean = _clean(text)
 
         loop = asyncio.get_event_loop()
-        # run regex+semantic matching in executor (CPU-ish)
-        results = await loop.run_in_executor(EXECUTOR, lambda: match_text(url, text_clean, master=main_url))
+        results = await loop.run_in_executor(
+            CPU_POOL, lambda: match_text(url, text_clean, master=main_url, task_id=task_id)
+        )
 
-        # If any payments hits, attempt OCR/QR in executor
         if any(c == "payments" for _, c, _ in results):
-            extra = await loop.run_in_executor(EXECUTOR, lambda: ocr_and_qr(url, tree))
+            extra = await loop.run_in_executor(
+                CPU_POOL, lambda: ocr_and_qr(url, tree, task_id=task_id, master=main_url)
+            )
             results += extra
         return results
     except Exception as e:
         print(f"[page:error]{url}->{e}", flush=True)
         return []
 
-# --- Entry point ---
-async def process_ingest_payload(payload:Dict[str,Any]) -> Dict[str,Any]:
+# ========= Startup guards for background workers =========
+_bg_workers_started = False
+async def _ensure_bg_workers():
+    global _bg_workers_started, MAIN_LOOP
+    if _bg_workers_started:
+        return
+    MAIN_LOOP = asyncio.get_running_loop()
+    # Start ES/PG flushers (add a bit of concurrency for ES)
+    asyncio.create_task(pg_flusher())
+    for _ in range(2):
+        asyncio.create_task(es_flusher())
+    # Start screenshot workers
     await _ensure_screenshot_workers()
+    _bg_workers_started = True
+    print("[background:workers] started", flush=True)
+
+# ========= Entry point =========
+async def process_ingest_payload(payload:Dict[str,Any]) -> Dict[str,Any]:
+    await _ensure_bg_workers()
 
     task_id  = payload.get("id") or payload.get("task_id") or "unknown"
     main_url = payload.get("main_url") or "unknown"
     pages    = payload.get("pages") or payload.get("Pages") or []
 
-    # print all the payload info and suburl catched
-    print(f"[ingest:start]{task_id}|main_url={main_url}", flush=True)
-    print(f"[ingest:pages]{task_id}|pages={len(pages)}", flush=True)
-    print(f"[ingest:payload]{task_id}|{json.dumps(payload)[:500]}", flush=True)
-    print(f"[ingest:suburls]{task_id}|{[p.get('final_url') or p.get('url') for p in pages]}", flush=True)
+    # Minimal, useful logs only
+    print(f"[ingest:start]{task_id}|pages={len(pages)}|main={main_url}", flush=True)
 
-    print(f"[batch:start]{task_id}|pages={len(pages)}", flush=True)
-
-    # reset match bucket for this main_url
     with _match_lock:
         match_buffer.pop(main_url, None)
         match_buffer[main_url]["task_id"] = task_id
@@ -535,14 +644,16 @@ async def process_ingest_payload(payload:Dict[str,Any]) -> Dict[str,Any]:
     cats = sorted({c for _, c, _ in all_results})
     kws  = [k for k, _, _ in all_results]
 
-    # wait for screenshots to finish for this batch (optional: you can remove if you want fire-and-forget)
+    # Drain screenshot queue
     if _screenshot_queue is not None:
         await _screenshot_queue.join()
 
-    # bulk flush ES
-    flush_es_buffer()
+    # Drain ES/PG queues, allow time-based flush of small remainders
+    await es_queue.join()
+    await hit_queue.join()
+    await asyncio.sleep(max(ES_FLUSH_INTERVAL_SEC, PG_FLUSH_INTERVAL_SEC))
 
-    # DB summary row (single row per batch)
+    # Persist Result row
     try:
         db = SessionLocal()
         db.bulk_save_objects([
@@ -555,15 +666,15 @@ async def process_ingest_payload(payload:Dict[str,Any]) -> Dict[str,Any]:
         print(f"[result:saved]{task_id}|pages={len(sub_urls)}|matches={len(kws)}", flush=True)
     except Exception as e:
         print(f"[db:error]{task_id}->{e}", flush=True)
-        if 'db' in locals(): db.rollback()
+        try: db.rollback()
+        except Exception: pass
     finally:
-        if 'db' in locals(): db.close()
+        try: db.close()
+        except Exception: pass
 
-    # GC hint for long runs
     if len(sub_urls) >= 200:
         gc.collect()
 
-    # clear match bucket
     with _match_lock:
         match_buffer.pop(main_url, None)
 

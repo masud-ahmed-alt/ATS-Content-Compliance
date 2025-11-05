@@ -48,7 +48,7 @@ services:
     restart: always
 
   # =======================================
-  # 4. Python Analyzer
+  # 4. Python Analyzer (optimized)
   # =======================================
   python-analyzer:
     build:
@@ -65,10 +65,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./python-analyzer:/app
+      - ./python-analyzer:/app           # For live code reload
       - ./keywords:/app/keywords
       - analyzer-data:/data
-      - ~/.cache/pip:/root/.cache/pip
+      - pip-cache:/root/.cache/pip       # ✅ Persistent pip cache (fast rebuilds)
     depends_on:
       - opensearch
       - playwright-renderer
@@ -186,3 +186,4 @@ volumes:
   analyzer-data:
   pgdata:
   minio-data:
+  pip-cache:     # ✅ new named volume for pip cache

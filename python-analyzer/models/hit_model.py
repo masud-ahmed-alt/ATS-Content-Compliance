@@ -33,6 +33,7 @@ class Hit(Base):
     screenshot_path = Column(Text, nullable=True)        # Path to cropped screenshot
     timestamp = Column(BigInteger, nullable=False)        # Unix epoch time
     source = Column(String(50), nullable=False)           # regex / alias / fuzzy / qr / context
+    confident_score = Column(Integer, nullable=True)        # Confidence score for fuzzy matches
 
     def __repr__(self):
         return f"<Hit(task={self.task_id}, keyword={self.matched_keyword}, source={self.source})>"

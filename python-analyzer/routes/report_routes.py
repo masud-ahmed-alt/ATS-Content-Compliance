@@ -145,6 +145,7 @@ def get_task_report(task_id: str):
             "screenshot_url": [row.screenshot_path or "" for row in result],
             "timestamp": [row.timestamp for row in result],
             "source": [row.source for row in result],
+            "confident_score": [row.confident_score for row in result],
         }
 
     except HTTPException:

@@ -1,10 +1,3 @@
-// main.go — scalable Go crawler (v2)
-// -----------------------------------
-// - Efficient Redis queue (BRPOP-based)
-// - Fixed task concurrency
-// - Safe for thousands of URLs
-// - Automatically posts results to analyzer
-
 package main
 
 import (
@@ -18,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -65,9 +57,9 @@ var (
 )
 
 const (
-	taskPrefix   = "crawl_task:"
-	taskListKey  = "crawl_tasks"
-	mainQueueKey = "crawl_queue:main"
+	taskPrefix  = "crawl_task:"
+	taskListKey = "crawl_tasks"
+	queuePrefix = "crawl_queue:"
 )
 
 // ============================
@@ -149,8 +141,10 @@ func handleFetch(w http.ResponseWriter, r *http.Request) {
 		redisConn.Set(ctx, taskPrefix+taskID, data, 0)
 		redisConn.LPush(ctx, taskListKey, taskID)
 
-		// Push to global queue (main)
-		redisConn.LPush(ctx, mainQueueKey, taskID)
+		// queue URL for worker
+		queueKey := queuePrefix + taskID
+		urlBytes, _ := json.Marshal([]string{u})
+		redisConn.LPush(ctx, queueKey, urlBytes)
 		taskIDs = append(taskIDs, taskID)
 	}
 
@@ -207,38 +201,20 @@ func handleTaskList(w http.ResponseWriter, r *http.Request) {
 }
 
 // ============================
-// Queue Worker (BRPOP model)
+// Core Crawl Worker
 // ============================
-
-const maxWorkers = 10
 
 func queueWorker() {
-	log.Println("Queue worker started (BRPOP mode)")
-	sem := make(chan struct{}, maxWorkers)
-
+	log.Println("Queue worker started")
 	for {
-		res, err := redisConn.BRPop(ctx, 0, mainQueueKey).Result()
-		if err != nil {
-			log.Printf("BRPOP error: %v", err)
-			continue
+		keys, _ := redisConn.Keys(ctx, queuePrefix+"*").Result()
+		for _, key := range keys {
+			taskID := strings.TrimPrefix(key, queuePrefix)
+			go processCrawlTask(taskID)
 		}
-		if len(res) < 2 {
-			continue
-		}
-		taskID := res[1]
-
-		// Limit concurrency
-		sem <- struct{}{}
-		go func(tid string) {
-			defer func() { <-sem }()
-			processCrawlTask(tid)
-		}(taskID)
+		time.Sleep(time.Second)
 	}
 }
-
-// ============================
-// Core Crawl Logic
-// ============================
 
 func processCrawlTask(taskID string) {
 	data, err := redisConn.Get(ctx, taskPrefix+taskID).Result()
