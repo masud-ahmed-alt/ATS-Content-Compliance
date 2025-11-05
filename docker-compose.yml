@@ -53,7 +53,7 @@ services:
   python-analyzer:
     build:
       context: ./python-analyzer
-      dockerfile: Dockerfile
+      target: dev
     container_name: python-analyzer
     environment:
       - OPENSEARCH_HOST=http://opensearch:9200
@@ -68,12 +68,11 @@ services:
       - ./python-analyzer:/app
       - ./keywords:/app/keywords
       - analyzer-data:/data
+      - ~/.cache/pip:/root/.cache/pip
     depends_on:
       - opensearch
       - playwright-renderer
       - redis
-    command: >
-      uvicorn app:app --host 0.0.0.0 --port 8000 --reload
     logging:
       driver: "json-file"
       options:
