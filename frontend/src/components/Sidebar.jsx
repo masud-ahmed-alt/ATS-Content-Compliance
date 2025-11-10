@@ -22,10 +22,10 @@ function Sidebar() {
         </li>
         <li className="nav-item mb-2">
           <button
-            onClick={() => navigate("/tasks")}
+            onClick={() => navigate("/events")}
             className="btn btn-link text-white text-start w-100"
           >
-            <i className="bi bi-list-task me-2"></i> Tasks
+            <i className="bi bi-list-task me-2"></i> Events
           </button>
         </li>
         <li className="nav-item mb-2">

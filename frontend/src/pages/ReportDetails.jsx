@@ -6,30 +6,41 @@ import { API_CONFIG } from "../utils/apiConfig";
 
 /**
  * ReportDetails.jsx
- * Enhanced detailed report viewer for a single task ID
+ * Detailed report viewer for a single main URL
+ * - Uses /report/tasks/{main_url}
  * - Handles semantic confidence score display
- * - Uses compact cards for matches on mobile
- * - Replaces internal MinIO URLs with public endpoints
  * - Shows categorized badges + semantic bars
+ * - Replaces internal MinIO URLs with public endpoints
  */
 function ReportDetails() {
-  const { taskId } = useParams();
+  const { mainUrl } = useParams(); // param name must match App.jsx route
+  const decodedMainUrl = mainUrl ? decodeURIComponent(mainUrl) : "";
+
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ Normalize screenshot URL (replace internal MinIO host)
+  // Normalize screenshot URL (replace internal MinIO host)
   const getPublicScreenshotUrl = (url) => {
     if (!url) return "";
     return url.replace(/^minio:7000/, API_CONFIG.minIoBaseUrl);
   };
 
-  // ✅ Fetch report details from backend
   const fetchReportDetails = async () => {
+    // guard: avoid calling backend with "undefined"
+    if (!decodedMainUrl) {
+      setError("Invalid URL parameter.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${API_CONFIG.analyzerBaseUrl}/report/tasks/${taskId}`);
+      const encodedUrl = encodeURIComponent(decodedMainUrl);
+      const response = await fetch(
+        `${API_CONFIG.analyzerBaseUrl}/report/tasks/${encodedUrl}`
+      );
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setReport(data);
@@ -43,9 +54,10 @@ function ReportDetails() {
 
   useEffect(() => {
     fetchReportDetails();
-  }, [taskId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainUrl]);
 
-  // ✅ Loading screen
+  // Loading
   if (loading) {
     return (
       <div className="d-flex flex-column flex-lg-row">
@@ -61,7 +73,7 @@ function ReportDetails() {
     );
   }
 
-  // ✅ Error screen
+  // Error
   if (error) {
     return (
       <div className="d-flex flex-column flex-lg-row">
@@ -80,7 +92,7 @@ function ReportDetails() {
     );
   }
 
-  // ✅ No data found
+  // No data
   if (!report) {
     return (
       <div className="d-flex flex-column flex-lg-row">
@@ -89,7 +101,7 @@ function ReportDetails() {
           <Topbar />
           <div className="text-center text-muted py-5">
             <i className="bi bi-exclamation-triangle fs-3 d-block mb-2"></i>
-            <p>No report data found for this task.</p>
+            <p>No report data found for this URL.</p>
             <Link to="/report" className="btn btn-outline-secondary mt-3">
               <i className="bi bi-arrow-left me-1"></i> Back to Reports
             </Link>
@@ -111,6 +123,13 @@ function ReportDetails() {
     confident_score = [],
   } = details;
 
+  const toLocalString = (t) => {
+    // supports epoch seconds or ISO strings
+    if (typeof t === "number") return new Date(t * 1000).toLocaleString();
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? String(t) : d.toLocaleString();
+    };
+
   return (
     <div className="d-flex flex-column flex-lg-row">
       <Sidebar />
@@ -124,7 +143,7 @@ function ReportDetails() {
             <div>
               <h3 className="fw-bold text-primary mb-0">Report Details</h3>
               <p className="text-muted small mb-0">
-                Task ID: <code>{taskId}</code>
+                Main URL: <code>{decodedMainUrl}</code>
               </p>
             </div>
             <Link to="/report" className="btn btn-sm btn-outline-secondary">
@@ -192,9 +211,7 @@ function ReportDetails() {
                           <td>
                             <span className="badge bg-info text-dark">{category[i]}</span>
                           </td>
-                          <td>
-                            <code>{matched_keyword[i]}</code>
-                          </td>
+                          <td><code>{matched_keyword[i]}</code></td>
                           <td
                             className="small text-muted"
                             style={{
@@ -262,9 +279,7 @@ function ReportDetails() {
                               <span className="text-muted small">N/A</span>
                             )}
                           </td>
-                          <td className="text-muted small">
-                            {new Date(timestamp[i] * 1000).toLocaleString()}
-                          </td>
+                          <td className="text-muted small">{toLocalString(timestamp[i])}</td>
                         </tr>
                       );
                     })}
@@ -275,7 +290,7 @@ function ReportDetails() {
               {/* Empty state */}
               {sub_url.length === 0 && (
                 <div className="text-center py-4 text-muted">
-                  <i className="bi bi-info-circle me-2"></i>No detected matches for this task.
+                  <i className="bi bi-info-circle me-2"></i>No detected matches for this URL.
                 </div>
               )}
             </div>

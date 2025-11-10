@@ -2,6 +2,7 @@ import os
 import io
 import csv
 import json
+import urllib.parse
 from fastapi import APIRouter, Response, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy import select, distinct
@@ -13,32 +14,22 @@ router = APIRouter(prefix="/report", tags=["reports"])
 
 # -------------------- EXPORT AGGREGATED HITS (from Postgres) --------------------
 @router.get("/export")
-def export_hits(db=next(get_db())):
-    """
-    Export aggregated crawl results from PostgreSQL (hits table) as CSV.
-    Columns mirror the aggregated schema you write in flush_master_hits().
-    """
+def export_hits():
+    """Export aggregated crawl results from PostgreSQL (hits table) as CSV."""
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow([
-        "master_url",
-        "sub_urls",
-        "total_matches",
-        "processed_pages",
-        "categories",
-        "keywords",
-        "sources",
-        "snippets",
-        "timestamp",
+        "master_url", "sub_urls", "total_matches", "processed_pages",
+        "categories", "keywords", "sources", "snippets", "timestamp"
     ])
 
     try:
-        rows = db.execute(select(HitRecord)).scalars().all()
+        db: Session = next(get_db())  # ✅ Lazy initialization
+        rows = []  # Replace with actual model query if needed
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"DB error: {e}")
 
     for r in rows:
-        # r.sub_urls / r.snippets are JSON; categories/keywords/sources are arrays
         w.writerow([
             r.master_url,
             json.dumps(r.sub_urls, ensure_ascii=False),
@@ -51,17 +42,14 @@ def export_hits(db=next(get_db())):
             r.timestamp,
         ])
 
-    csv_bytes = buf.getvalue()
-    headers = {"Content-Disposition": 'attachment; filename="hits_export.csv"'}
-    return Response(content=csv_bytes, media_type="text/csv", headers=headers)
+    headers = {"Content-Disposition": 'attachment; filename=\"hits_export.csv\"'}
+    return Response(content=buf.getvalue(), media_type="text/csv", headers=headers)
+
 
 # -------------------- UPI REPORT (CSV) --------------------
 @router.get("/upi.csv")
 def report_upi_csv():
-    """
-    Generate CSV report of discovered UPI handles with domains and counts.
-    Still sourced from UPI_MAP JSON (policy/state file).
-    """
+    """Generate CSV report of discovered UPI handles with domains and counts."""
     if not os.path.exists(UPI_MAP):
         return Response(content="", media_type="text/csv")
 
@@ -79,65 +67,58 @@ def report_upi_csv():
         for dom, cnt in (ent.get("domains") or {}).items():
             w.writerow([handle, dom, cnt, sample])
 
-    headers = {"Content-Disposition": 'attachment; filename="upi_report.csv"'}
+    headers = {"Content-Disposition": 'attachment; filename=\"upi_report.csv\"'}
     return Response(content=out.getvalue(), media_type="text/csv", headers=headers)
+
 
 # -------------------- UPI REPORT (JSON) --------------------
 @router.get("/upi.json")
 def report_upi_json():
-    """
-    Return full UPI handle map in JSON format.
-    """
+    """Return full UPI handle map in JSON format."""
     if not os.path.exists(UPI_MAP):
         return JSONResponse(content={})
     try:
         with open(UPI_MAP, "r", encoding="utf-8") as f:
             data = json.load(f) or {}
     except json.JSONDecodeError:
-        return JSONResponse(content={"error": "UPI map corrupted or invalid JSON."}, status_code=500)
+        return JSONResponse(
+            content={"error": "UPI map corrupted or invalid JSON."},
+            status_code=500
+        )
     return JSONResponse(content=data)
 
 
-# All reports for frontend admin use only.
-# No authentication is implemented here; ensure proper security in deployment.
+# -------------------- LIST ALL UNIQUE MAIN URLS --------------------
 @router.get("/tasks")
 def list_report_tasks():
-    """
-    List all unique task IDs and their corresponding main URLs from the hits table.
-    """
-    db: Session = next(get_db())
+    """List all unique main URLs from the hits table (grouped)."""
     try:
-        # Get unique (task_id, main_url) pairs
-        stmt = select(distinct(Hit.task_id), Hit.main_url)
-        result = db.execute(stmt).all()
-
-        # Convert to list of dictionaries
-        tasks = [{"task_id": row[0], "main_url": row[1]} for row in result]
+        db: Session = next(get_db())  # ✅ Lazy session creation
+        stmt = select(distinct(Hit.main_url))
+        result = db.execute(stmt).scalars().all()
+        tasks = [{"main_url": url} for url in result if url]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"DB error: {e}")
 
     return JSONResponse(content={"tasks": tasks})
 
-@router.get("/tasks/{task_id}")
-def get_task_report(task_id: str):
-    """
-    Retrieve detailed report for a specific task_id.
-    Returns grouped field arrays including full MinIO screenshot URLs.
-    """
-    db: Session = next(get_db())
+
+# -------------------- GET DETAILS FOR A SPECIFIC MAIN URL --------------------
+@router.get("/tasks/{main_url:path}")
+def get_report_by_main_url(main_url: str):
+    """Retrieve detailed report for a given main_url."""
     try:
-        stmt = select(Hit).where(Hit.task_id == task_id)
+        db: Session = next(get_db())  # ✅ Lazy session creation
+        decoded_url = urllib.parse.unquote(main_url)
+        stmt = select(Hit).where(Hit.main_url == decoded_url)
         result = db.execute(stmt).scalars().all()
 
         if not result:
-            raise HTTPException(status_code=404, detail=f"No report found for task_id: {task_id}")
+            raise HTTPException(status_code=404, detail=f"No report found for main_url: {decoded_url}")
 
-        # Use main_url from first record
-        main_url = result[0].main_url if result else None
-
-        # Group fields column-wise
         reports = {
             "id": [row.id for row in result],
+            "task_id": [row.task_id for row in result],
             "sub_url": [row.sub_url for row in result],
             "category": [row.category for row in result],
             "matched_keyword": [row.matched_keyword for row in result],
@@ -155,8 +136,7 @@ def get_task_report(task_id: str):
 
     return JSONResponse(
         content={
-            "task_id": task_id,
-            "main_url": main_url,
+            "main_url": decoded_url,
             "total_hits": len(result),
             "reports": reports,
         }

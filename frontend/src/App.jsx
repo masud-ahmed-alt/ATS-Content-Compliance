@@ -1,19 +1,29 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Tasks from "./pages/Tasks";
 import Report from "./pages/Report";
 import ReportDetails from "./pages/ReportDetails";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Events from "./pages/Events";
 
 function App() {
   return (
     <Routes>
-      {/* 🔓 Public Route */}
+      {/* Public route */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* 🔒 Protected Routes */}
+      {/* Home route */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected routes */}
       <Route
         path="/dashboard"
         element={
@@ -22,14 +32,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
-        path="/tasks"
+        path="/events"
         element={
           <ProtectedRoute>
-            <Tasks />
+            <Events />
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/report"
         element={
@@ -38,8 +50,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ✅ details by main URL (encoded) */}
       <Route
-        path="/report/:taskId"
+        path="/report/:mainUrl"
         element={
           <ProtectedRoute>
             <ReportDetails />
@@ -47,6 +61,7 @@ function App() {
         }
       />
 
+      {/* Fallback route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

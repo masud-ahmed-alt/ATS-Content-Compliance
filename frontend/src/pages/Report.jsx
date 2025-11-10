@@ -7,7 +7,7 @@ function Report() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch all report tasks
+  // ✅ Fetch all grouped report tasks
   const fetchReportTasks = async () => {
     setLoading(true);
     try {
@@ -58,19 +58,15 @@ function Report() {
                   <table className="table table-striped align-middle">
                     <thead className="table-light">
                       <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Task ID</th>
-                        <th scope="col">Main URL</th>
-                        <th scope="col">Action</th>
+                        <th style={{ width: "60px" }}>#</th>
+                        <th>Main URL</th>
+                        <th style={{ width: "120px" }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {tasks.map((task, index) => (
-                        <tr key={task.task_id}>
+                        <tr key={task.main_url}>
                           <td>{index + 1}</td>
-                          <td className="text-truncate" style={{ maxWidth: "220px" }}>
-                            {task.task_id}
-                          </td>
                           <td className="text-break">
                             <a
                               href={task.main_url}
@@ -83,7 +79,7 @@ function Report() {
                           </td>
                           <td>
                             <a
-                              href={`/report/${task.task_id}`}
+                              href={`/report/${encodeURIComponent(task.main_url)}`}
                               className="btn btn-sm btn-outline-primary"
                             >
                               <i className="bi bi-eye me-1"></i> View Details
