@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,7 +21,11 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
+
+// ===== Data Structures =====
 
 type FetchRequest struct {
 	Urls []string `json:"urls"`
@@ -55,11 +60,12 @@ type ProgressEvent struct {
 
 var (
 	timeout             = time.Duration(envInt("TIMEOUT_SECS", 20)) * time.Second
-	maxPageBytes  int64 = int64(envInt("MAX_PAGE_BYTES", 2*1024*1024)) // 2MB limit
+	maxPageBytes  int64 = int64(envInt("MAX_PAGE_BYTES", 2*1024*1024))
 	batchSize           = envInt("BATCH_SIZE", 50)
 	progressEveryN      = envInt("PROGRESS_EVERY_N", 10)
 	maxGlobalCrawls     = envInt("WORKERS", 128)
 	perSeedWorkers      = envInt("PER_SEED_WORKERS", 16)
+	maxPagesPerSeed     = envInt("MAX_PAGES_PER_SEED", 100)
 	analyzerURL         = getEnv("ANALYZER_URL", "http://python-analyzer:8000/ingest")
 	analyzerConc        = envInt("ANALYZER_CONCURRENCY", 8)
 	analyzerGzip        = envInt("ANALYZER_GZIP", 1) == 1
@@ -84,7 +90,9 @@ var (
 	globalCrawlSem = make(chan struct{}, maxGlobalCrawls)
 	analyzerSem    = make(chan struct{}, analyzerConc)
 
-	hub = newEventHub()
+	hub         = newEventHub()
+	minioClient *minio.Client
+	minioBucket string
 )
 
 // ===== SSE Hub =====
@@ -143,17 +151,52 @@ func (h *eventHub) publish(ev ProgressEvent) {
 	}
 }
 
+// ===== Initialization =====
+
+func init() {
+	// Adjusted for your Docker setup:
+	// - Inside Docker: use "minio:7000"
+	// - On host: use "localhost:7000"
+	endpoint := getEnv("MINIO_ENDPOINT", "minio:7000")
+	accessKey := getEnv("MINIO_ACCESS_KEY", "admin")
+	secretKey := getEnv("MINIO_SECRET_KEY", "minioadmin")
+	useSSL := getEnv("MINIO_USE_SSL", "false") == "true"
+	minioBucket = getEnv("MINIO_BUCKET", "crawler-pages")
+
+	var err error
+	minioClient, err = minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure: useSSL,
+	})
+	if err != nil {
+		log.Fatalf("MinIO init failed: %v", err)
+	}
+
+	ctx := context.Background()
+	exists, err := minioClient.BucketExists(ctx, minioBucket)
+	if err != nil {
+		log.Fatalf("MinIO connection failed: %v", err)
+	}
+	if !exists {
+		err = minioClient.MakeBucket(ctx, minioBucket, minio.MakeBucketOptions{})
+		if err != nil {
+			log.Fatalf("Failed to create MinIO bucket: %v", err)
+		}
+	}
+	log.Printf("Connected to MinIO endpoint=%s bucket=%s", endpoint, minioBucket)
+}
+
 // ===== HTTP Handlers =====
 
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/fetch", withCORS(handleFetch))
-	mux.HandleFunc("/events", withCORS(handleSSEAll))         // all requests
-	mux.HandleFunc("/events/", withCORS(handleSSEByRequest))   // specific request
+	mux.HandleFunc("/events", withCORS(handleSSEAll))
+	mux.HandleFunc("/events/", withCORS(handleSSEByRequest))
 
 	port := getEnv("PORT", "8080")
-	log.Printf("go-crawler (SSE) running on :%s [workers=%d, per_seed=%d, batch=%d, analyzer_conc=%d]",
-		port, maxGlobalCrawls, perSeedWorkers, batchSize, analyzerConc)
+	log.Printf("go-crawler (SSE) running on :%s [workers=%d, per_seed=%d, batch=%d, max_pages=%d, analyzer_conc=%d]",
+		port, maxGlobalCrawls, perSeedWorkers, batchSize, maxPagesPerSeed, analyzerConc)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
 
@@ -170,7 +213,6 @@ func withCORS(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// POST /fetch
 func handleFetch(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -194,12 +236,10 @@ func handleFetch(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GET /events → global feed
 func handleSSEAll(w http.ResponseWriter, r *http.Request) {
 	streamSSE(w, r, "")
 }
 
-// GET /events/{request_id}
 func handleSSEByRequest(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/events/")
 	if id == "" {
@@ -280,6 +320,7 @@ type crawlState struct {
 
 	processed int64
 	enqueued  int64
+	maxPages  int
 }
 
 func crawlOneSeed(requestID, seed string) error {
@@ -293,7 +334,9 @@ func crawlOneSeed(requestID, seed string) error {
 		mainHost:     strings.ToLower(u.Host),
 		visited:      make(map[string]struct{}),
 		currentBatch: make([]PageContent, 0, batchSize),
+		maxPages:     maxPagesPerSeed,
 	}
+
 	urlQueue := make(chan string, 1024)
 	var wg sync.WaitGroup
 
@@ -306,13 +349,18 @@ func crawlOneSeed(requestID, seed string) error {
 		if err != nil || !sameHost(st.mainHost, lu.Host) {
 			return
 		}
+
 		st.muVisited.Lock()
+		defer st.muVisited.Unlock()
+
+		if len(st.visited) >= st.maxPages {
+			return
+		}
+
 		if _, ok := st.visited[link]; ok {
-			st.muVisited.Unlock()
 			return
 		}
 		st.visited[link] = struct{}{}
-		st.muVisited.Unlock()
 		wg.Add(1)
 		atomic.AddInt64(&st.enqueued, 1)
 		urlQueue <- link
@@ -332,9 +380,21 @@ func crawlOneSeed(requestID, seed string) error {
 						RequestID: requestID,
 						URL:       seed,
 						Done:      done, Total: total,
-						Percent: percent(done, total),
+						Percent:   percent(done, total),
 					})
 				}
+
+				if done >= st.maxPages {
+					hub.publish(ProgressEvent{
+						Type:      "limit_reached",
+						RequestID: requestID,
+						URL:       seed,
+						Message:   fmt.Sprintf("Reached max crawl limit of %d pages", st.maxPages),
+					})
+					wg.Done()
+					return
+				}
+
 				if pc.Error == "" && strings.HasPrefix(pc.ContentType, "text/html") {
 					for _, l := range extractSameDomainLinks(pc.HTML, u) {
 						enqueue(l)
@@ -351,8 +411,12 @@ func crawlOneSeed(requestID, seed string) error {
 	done := int(atomic.LoadInt64(&st.processed))
 	total := int(atomic.LoadInt64(&st.enqueued))
 	hub.publish(ProgressEvent{
-		Type: "complete", RequestID: requestID, URL: seed,
-		Done: done, Total: total, Percent: percent(done, total),
+		Type:    "complete",
+		RequestID: requestID,
+		URL:     seed,
+		Done:    done,
+		Total:   total,
+		Percent: percent(done, total),
 	})
 	return nil
 }
@@ -399,11 +463,11 @@ func sendBatchToAnalyzer(batch PageBatch) {
 
 	if analyzerGzip {
 		gzw := gzip.NewWriter(&buf)
-		json.NewEncoder(gzw).Encode(batch)
-		gzw.Close()
+		_ = json.NewEncoder(gzw).Encode(batch)
+		_ = gzw.Close()
 		body = bytes.NewReader(buf.Bytes())
 	} else {
-		json.NewEncoder(&buf).Encode(batch)
+		_ = json.NewEncoder(&buf).Encode(batch)
 		body = bytes.NewReader(buf.Bytes())
 	}
 
@@ -414,8 +478,8 @@ func sendBatchToAnalyzer(batch PageBatch) {
 	}
 	resp, err := analyzerClient.Do(req)
 	if err == nil && resp != nil {
-		io.Copy(io.Discard, resp.Body)
-		resp.Body.Close()
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
 	}
 }
 
@@ -429,15 +493,63 @@ func fetchPage(target string) PageContent {
 		return PageContent{URL: target, Error: err.Error()}
 	}
 	defer resp.Body.Close()
+
 	ct := strings.ToLower(resp.Header.Get("Content-Type"))
 	if ct != "" {
 		if mediatype, _, err := mime.ParseMediaType(ct); err == nil {
 			ct = mediatype
 		}
 	}
+
 	var buf bytes.Buffer
-	io.Copy(&buf, io.LimitReader(resp.Body, maxPageBytes))
-	return PageContent{URL: target, HTML: buf.String(), ContentType: ct}
+	_, _ = io.Copy(&buf, io.LimitReader(resp.Body, maxPageBytes))
+	html := buf.String()
+
+	if strings.HasPrefix(ct, "text/html") && minioClient != nil {
+		go uploadToMinIO(target, []byte(html))
+	}
+
+	return PageContent{URL: target, HTML: html, ContentType: ct}
+}
+
+func uploadToMinIO(u string, data []byte) {
+	ctx := context.Background()
+	objectName := fmt.Sprintf("%s_%d.html.gz", sanitizeFilename(u), time.Now().UnixNano())
+
+	var gzBuf bytes.Buffer
+	gzw := gzip.NewWriter(&gzBuf)
+	if _, err := gzw.Write(data); err != nil {
+		log.Printf("gzip error for %s: %v", u, err)
+		_ = gzw.Close()
+		return
+	}
+	_ = gzw.Close()
+
+	_, err := minioClient.PutObject(
+		ctx,
+		minioBucket,
+		objectName,
+		bytes.NewReader(gzBuf.Bytes()),
+		int64(gzBuf.Len()),
+		minio.PutObjectOptions{
+			ContentType:     "text/html",
+			ContentEncoding: "gzip",
+		},
+	)
+	if err != nil {
+		log.Printf("MinIO upload failed for %s: %v", u, err)
+	} else {
+		log.Printf("Saved page to MinIO: %s", objectName)
+	}
+}
+
+func sanitizeFilename(urlStr string) string {
+	urlStr = strings.ReplaceAll(urlStr, "https://", "")
+	urlStr = strings.ReplaceAll(urlStr, "http://", "")
+	urlStr = strings.ReplaceAll(urlStr, "/", "_")
+	urlStr = strings.ReplaceAll(urlStr, "?", "_")
+	urlStr = strings.ReplaceAll(urlStr, "&", "_")
+	return urlStr
 }
 
 func extractSameDomainLinks(htmlStr, baseURL string) []string {
@@ -465,7 +577,7 @@ func percent(done, total int) float64 {
 }
 
 func normalizeURL(baseURL, href string) string {
-	if href == "" || strings.HasPrefix(href, "javascript:") {
+	if href == "" || strings.HasPrefix(strings.ToLower(strings.TrimSpace(href)), "javascript:") {
 		return ""
 	}
 	bu, err := url.Parse(baseURL)
@@ -492,7 +604,7 @@ func getEnv(key, fallback string) string {
 func envInt(key string, fallback int) int {
 	if v := os.Getenv(key); v != "" {
 		var n int
-		fmt.Sscanf(v, "%d", &n)
+		_, _ = fmt.Sscanf(v, "%d", &n)
 		if n > 0 {
 			return n
 		}

@@ -14,7 +14,9 @@ from config.settings import (
     MINIO_BUCKET,
 )
 
-# ✅ Initialize MinIO client
+# ==========================================================
+# 🔹 Initialize MinIO client
+# ==========================================================
 client = Minio(
     MINIO_ENDPOINT.replace("http://", "").replace("https://", ""),
     access_key=MINIO_ACCESS_KEY,
@@ -22,7 +24,6 @@ client = Minio(
     secure=MINIO_ENDPOINT.startswith("https"),
 )
 
-# Ensure bucket exists
 try:
     if not client.bucket_exists(MINIO_BUCKET):
         client.make_bucket(MINIO_BUCKET)
@@ -33,8 +34,10 @@ except Exception as e:
     print(f"[ERROR] MinIO init failed: {e}", flush=True)
 
 
+# ==========================================================
+# 🔹 Utility: Upload cropped screenshot to MinIO
+# ==========================================================
 def _upload_crop_to_minio(url: str, keyword: str, img: Image.Image) -> str | None:
-    """Upload cropped screenshot to MinIO and return its object URL."""
     try:
         ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
         safe = safe_name(url)
@@ -58,15 +61,14 @@ def _upload_crop_to_minio(url: str, keyword: str, img: Image.Image) -> str | Non
 
 
 # ==========================================================
-# 🔹 Simplified Screenshot Renderer (No HTML Extraction)
+# 🔹 Screenshot Renderer (with stability and retry)
 # ==========================================================
 def render_and_screenshot(url: str, keyword: str, max_matches: int = 5) -> dict:
     """
-    Opens the page using Playwright and captures cropped screenshots of visible
-    keyword occurrences — no HTML extraction, no DOM parsing beyond bounding boxes.
+    Opens the page with Playwright and captures cropped screenshots of
+    keyword occurrences. Includes stability waits and retry logic.
     """
     print(f"[TASK] Screenshot for {url} | keyword='{keyword}'", flush=True)
-
     if not keyword:
         return {"url": url, "error": "Keyword required"}
 
@@ -86,38 +88,47 @@ def render_and_screenshot(url: str, keyword: str, max_matches: int = 5) -> dict:
             page = ctx.new_page()
 
             try:
-                page.goto(url, wait_until="load", timeout=45000)
-                page.wait_for_timeout(1000)
+                # ✅ Use 'networkidle' for more reliable loading
+                page.goto(url, wait_until="networkidle", timeout=45000)
+                page.wait_for_timeout(1500)
+
                 dpr = page.evaluate("window.devicePixelRatio || 1")
 
-                # JS logic → find text nodes that contain the keyword
-                rects = page.evaluate(
-                    """
-                    ({kw, maxMatches}) => {
-                        const results = [];
-                        const keyword = kw.toLowerCase();
-                        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-                        let node;
-                        while ((node = walker.nextNode())) {
-                            const txt = node.textContent || "";
-                            if (txt.toLowerCase().includes(keyword)) {
-                                const el = node.parentElement;
-                                if (el) {
-                                    const r = el.getBoundingClientRect();
-                                    if (r.width > 5 && r.height > 5)
-                                        results.push({
-                                            rect: r,
-                                            snippet: txt.trim().slice(0,150)
-                                        });
+                # ✅ Retry logic for JS evaluation (if navigation happens)
+                rects = None
+                for attempt in range(3):
+                    try:
+                        rects = page.evaluate(
+                            """
+                            ({kw, maxMatches}) => {
+                                const results = [];
+                                const keyword = kw.toLowerCase();
+                                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                                let node;
+                                while ((node = walker.nextNode())) {
+                                    const txt = node.textContent || "";
+                                    if (txt.toLowerCase().includes(keyword)) {
+                                        const el = node.parentElement;
+                                        if (el) {
+                                            const r = el.getBoundingClientRect();
+                                            if (r.width > 5 && r.height > 5)
+                                                results.push({
+                                                    rect: r,
+                                                    snippet: txt.trim().slice(0,150)
+                                                });
+                                        }
+                                        if (results.length >= maxMatches) break;
+                                    }
                                 }
-                                if (results.length >= maxMatches) break;
+                                return results;
                             }
-                        }
-                        return results;
-                    }
-                    """,
-                    {"kw": keyword, "maxMatches": max_matches},
-                )
+                            """,
+                            {"kw": keyword, "maxMatches": max_matches},
+                        )
+                        break
+                    except Exception as e:
+                        print(f"[WARN] Retry {attempt+1}/3 evaluating keyword search: {e}", flush=True)
+                        page.wait_for_timeout(1000)
 
                 if not rects:
                     print(f"[INFO] No matches for '{keyword}' on {url}", flush=True)
@@ -129,7 +140,7 @@ def render_and_screenshot(url: str, keyword: str, max_matches: int = 5) -> dict:
                         "message": "Keyword not found",
                     }
 
-                # ✅ Single full-page screenshot
+                # ✅ Capture full page
                 img_bytes = page.screenshot(full_page=True)
                 im = Image.open(BytesIO(img_bytes))
 
@@ -174,11 +185,11 @@ def render_and_screenshot(url: str, keyword: str, max_matches: int = 5) -> dict:
 
 
 # ==========================================================
-# ✅ HTML Renderer (for heavy JS pages)
+# 🔹 HTML Renderer (with stability and retry)
 # ==========================================================
 def render_html(url: str, timeout: int = 30000) -> dict:
     """
-    Fully render page HTML for JS-heavy sites (used in analyzer when needed).
+    Fully render page HTML for JS-heavy sites with robust retry and stability logic.
     """
     print(f"[TASK] Rendering HTML for {url}", flush=True)
 
@@ -197,8 +208,22 @@ def render_html(url: str, timeout: int = 30000) -> dict:
         page = ctx.new_page()
 
         try:
-            page.goto(url, wait_until="domcontentloaded", timeout=timeout)
-            html = page.content()
+            # ✅ Wait for all requests to finish for stable DOM
+            page.goto(url, wait_until="networkidle", timeout=timeout)
+            page.wait_for_timeout(1500)
+
+            html = None
+            for attempt in range(3):
+                try:
+                    html = page.content()
+                    break
+                except Exception as e:
+                    print(f"[WARN] Retry {attempt+1}/3 fetching HTML: {e}", flush=True)
+                    page.wait_for_timeout(1000)
+
+            if not html:
+                raise RuntimeError("Failed to get stable HTML after retries")
+
             print(f"[INFO] Rendered {url} ({len(html)} chars)", flush=True)
             return {"url": url, "html": html, "error": None}
 
