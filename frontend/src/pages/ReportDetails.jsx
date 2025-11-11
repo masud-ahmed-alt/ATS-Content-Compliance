@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import ProductGallery from "../components/ProductGallery";
 import { API_CONFIG } from "../utils/apiConfig";
 
 /**
@@ -41,7 +42,8 @@ function ReportDetails() {
       const response = await fetch(
         `${API_CONFIG.analyzerBaseUrl}/report/tasks/${encodedUrl}`
       );
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setReport(data);
     } catch (err) {
@@ -65,7 +67,10 @@ function ReportDetails() {
         <div className="flex-grow-1 bg-light min-vh-100">
           <Topbar />
           <div className="text-center py-5">
-            <div className="spinner-border text-primary mb-3" role="status"></div>
+            <div
+              className="spinner-border text-primary mb-3"
+              role="status"
+            ></div>
             <p className="text-muted">Loading report details...</p>
           </div>
         </div>
@@ -83,7 +88,10 @@ function ReportDetails() {
           <div className="container py-5 text-center">
             <i className="bi bi-exclamation-octagon text-danger fs-1 mb-3"></i>
             <h5 className="text-danger">{error}</h5>
-            <button onClick={fetchReportDetails} className="btn btn-outline-primary mt-3">
+            <button
+              onClick={fetchReportDetails}
+              className="btn btn-outline-primary mt-3"
+            >
               Retry
             </button>
           </div>
@@ -128,7 +136,7 @@ function ReportDetails() {
     if (typeof t === "number") return new Date(t * 1000).toLocaleString();
     const d = new Date(t);
     return isNaN(d.getTime()) ? String(t) : d.toLocaleString();
-    };
+  };
 
   return (
     <div className="d-flex flex-column flex-lg-row">
@@ -162,7 +170,11 @@ function ReportDetails() {
                 </div>
                 <div>
                   <i className="bi bi-globe me-1"></i>
-                  <a href={report.main_url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={report.main_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Visit Main URL
                   </a>
                 </div>
@@ -170,10 +182,15 @@ function ReportDetails() {
             </div>
           </div>
 
+          {/* Product gallery (reference taxonomy) */}
+          <ProductGallery maxPerCategory={6} />
+
           {/* Matches Table */}
           <div className="card shadow-sm border-0">
             <div className="card-body p-3 p-md-4">
-              <h5 className="fw-semibold text-primary mb-3">Detected Matches</h5>
+              <h5 className="fw-semibold text-primary mb-3">
+                Detected Matches
+              </h5>
 
               <div className="table-responsive">
                 <table className="table table-striped table-hover align-middle">
@@ -192,13 +209,21 @@ function ReportDetails() {
                   </thead>
                   <tbody>
                     {sub_url.map((url, i) => {
-                      const screenshot = getPublicScreenshotUrl(screenshot_url[i]);
-                      const conf = confident_score && confident_score[i] ? confident_score[i] : 0;
+                      const screenshot = getPublicScreenshotUrl(
+                        screenshot_url[i]
+                      );
+                      const conf =
+                        confident_score && confident_score[i]
+                          ? confident_score[i]
+                          : 0;
 
                       return (
                         <tr key={i}>
                           <td>{i + 1}</td>
-                          <td className="text-break" style={{ maxWidth: "280px" }}>
+                          <td
+                            className="text-break"
+                            style={{ maxWidth: "280px" }}
+                          >
                             <a
                               href={url}
                               target="_blank"
@@ -209,9 +234,13 @@ function ReportDetails() {
                             </a>
                           </td>
                           <td>
-                            <span className="badge bg-info text-dark">{category[i]}</span>
+                            <span className="badge bg-info text-dark">
+                              {category[i]}
+                            </span>
                           </td>
-                          <td><code>{matched_keyword[i]}</code></td>
+                          <td>
+                            <code>{matched_keyword[i]}</code>
+                          </td>
                           <td
                             className="small text-muted"
                             style={{
@@ -262,7 +291,11 @@ function ReportDetails() {
 
                           <td>
                             {screenshot ? (
-                              <a href={screenshot} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={screenshot}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 <img
                                   src={screenshot}
                                   alt="Screenshot"
@@ -279,7 +312,9 @@ function ReportDetails() {
                               <span className="text-muted small">N/A</span>
                             )}
                           </td>
-                          <td className="text-muted small">{toLocalString(timestamp[i])}</td>
+                          <td className="text-muted small">
+                            {toLocalString(timestamp[i])}
+                          </td>
                         </tr>
                       );
                     })}
@@ -290,7 +325,8 @@ function ReportDetails() {
               {/* Empty state */}
               {sub_url.length === 0 && (
                 <div className="text-center py-4 text-muted">
-                  <i className="bi bi-info-circle me-2"></i>No detected matches for this URL.
+                  <i className="bi bi-info-circle me-2"></i>No detected matches
+                  for this URL.
                 </div>
               )}
             </div>

@@ -1,0 +1,108 @@
+{
+  "categories": [
+    {
+      "name": "Controlled Narcotics",
+      "description": "High-risk substances and related paraphernalia.",
+      "products": [
+        {"name": "Cannabis/CBD Products", "risk_score": 9.5, "description": "Herbal cannabis products including buds, oils and edibles commonly sold without regulation.", "keywords": ["cannabis", "weed", "CBD oil", "edibles", "THC"]},
+        {"name": "Opioids & Heroin", "risk_score": 10.0, "description": "Illicit opioids, including heroin, fentanyl, and diverted prescription opioids.", "keywords": ["heroin", "fentanyl", "opioid", "buy oxy", "painkillers"]},
+        {"name": "Cocaine & Stimulants", "risk_score": 10.0, "description": "Cocaine and synthetic stimulants advertised for illicit sale.", "keywords": ["cocaine", "speed", "meth", "buy coke", "crack"]},
+        {"name": "Kratom & Khat", "risk_score": 7.5, "description": "Natural alkaloid products sold often without regulatory oversight.", "keywords": ["kratom", "mitragyna", "khat", "buy kratom", "natural opiate"]},
+        {"name": "Unauthorized Prescription Drugs", "risk_score": 8.5, "description": "Prescription medications sold without a valid prescription.", "keywords": ["no rx", "no prescription", "buy xanax", "buy oxycodone", "rx not required"]},
+        {"name": "Psychedelics & Hallucinogens", "risk_score": 9.0, "description": "Psychedelic compounds marketed for recreational use.", "keywords": ["psilocybin", "LSD", "DMT", "buy shrooms", "magic mushrooms"]},
+        {"name": "Novel Psychoactive Substances", "risk_score": 8.5, "description": "Synthetic designer drugs sold under brand names to evade regulation.", "keywords": ["spice", "bath salts", "designer drug", "research chemical", "novel NPS"]}
+      ]
+    },
+    {
+      "name": "Anabolic Steroids",
+      "description": "Steroid and performance-enhancing drug sales.",
+      "products": [
+        {"name": "Injectable Steroids", "risk_score": 9.5, "description": "Parenteral anabolic steroids marketed for muscle growth.", "keywords": ["testosterone enanthate", "trenbolone", "nandrolone", "buy steroids", "injectable"]},
+        {"name": "Oral Steroids", "risk_score": 9.0, "description": "Oral anabolic agents often counterfeited or misused.", "keywords": ["dianabol", "winstrol", "anavar", "buy dbol", "oral steroid"]},
+        {"name": "Post Cycle Therapy", "risk_score": 8.0, "description": "Products marketed for hormone recovery after steroid cycles.", "keywords": ["PCT", "clomid", "tamoxifen", "aromatase inhibitor", "post cycle"]},
+        {"name": "Growth Hormones & Peptides", "risk_score": 8.5, "description": "Peptide growth promoters and HGH sold through unverified channels.", "keywords": ["HGH", "IGF-1", "peptides", "GHRP", "buy hgh"]},
+        {"name": "Fat Burners & Stimulants", "risk_score": 8.5, "description": "High-risk stimulants and thermogenics often sold without labeling.", "keywords": ["clenbuterol", "ephedrine", "DNP", "fat burner", "thermogenic"]},
+        {"name": "Veterinary Steroids", "risk_score": 9.0, "description": "Animal-grade products repurposed for human use.", "keywords": ["veterinary steroid", "animal grade", "vet steroid", "not for human use", "veterinary"]},
+        {"name": "Counterfeit Steroids", "risk_score": 9.5, "description": "Fake branded steroids and mislabeled supplies aimed at profit.", "keywords": ["fake dianabol", "counterfeit winstrol", "fake steroids", "pharma fake", "counterfeit"]}
+      ]
+    },
+    {
+      "name": "Pharmaceutical Abuse",
+      "description": "Pharmaceuticals marketed for misuse or without prescription.",
+      "products": [
+        {"name": "Benzodiazepines", "risk_score": 7.5, "description": "Anti-anxiety medications sold without medical oversight.", "keywords": ["xanax", "alprazolam", "valium", "buy xanax", "benzo"]},
+        {"name": "Stimulant Medications", "risk_score": 7.0, "description": "ADHD and wakefulness agents sold illicitly.", "keywords": ["adderall", "ritalin", "methylphenidate", "modafinil", "buy adderall"]},
+        {"name": "ED Drugs & Counterfeits", "risk_score": 6.5, "description": "Erectile dysfunction meds sold through unverified vendors.", "keywords": ["viagra", "cialis", "generic viagra", "ED meds", "buy viagra"]},
+        {"name": "Painkillers", "risk_score": 8.0, "description": "Opioid and non-opioid pain relief sold without prescription.", "keywords": ["oxycodone", "tramadol", "painkiller", "buy oxy", "narcotic"]},
+        {"name": "Sleep Aids & Sedatives", "risk_score": 7.0, "description": "Sedatives and hypnotics marketed without oversight.", "keywords": ["ambien", "zopiclone", "sleep aid", "zolpidem", "sedative"]},
+        {"name": "Cough Syrups (DXM)", "risk_score": 6.5, "description": "DXM-containing syrups sold for recreational misuse.", "keywords": ["DXM", "dextromethorphan", "cough syrup", "robodose", "delsym"]},
+        {"name": "Anesthetics", "risk_score": 8.5, "description": "Dissociative and anesthetic agents diverted for illicit use.", "keywords": ["ketamine", "propofol", "anesthetic", "dissociative", "sedation"]}
+      ]
+    },
+    {
+      "name": "Gambling",
+      "description": "Illegal or unlicensed betting platforms and services.",
+      "products": [
+        {"name": "International Betting Platforms", "risk_score": 8.0, "description": "Unlicensed sportsbooks and offshore bookmakers.", "keywords": ["bet365", "1xbet", "bookmaker", "online betting", "sportsbook"]},
+        {"name": "IPL & Cricket Betting", "risk_score": 8.5, "description": "Country-specific illegal cricket betting operations.", "keywords": ["IPL betting", "cricket bet", "satta", "fix match", "cricket betting"]},
+        {"name": "Satta/Matka", "risk_score": 8.5, "description": "Traditional illegal number-game gambling platforms.", "keywords": ["satta", "matka", "satta king", "number game", "illegal lottery"]},
+        {"name": "Crypto Betting", "risk_score": 7.5, "description": "Unregulated crypto gambling platforms and casinos.", "keywords": ["crypto casino", "bitcoin bet", "blockchain gambling", "provably fair", "crypto betting"]},
+        {"name": "Horse Racing Betting", "risk_score": 7.0, "description": "Betting exchanges and unlicensed racing bets.", "keywords": ["horse racing bet", "pari-mutuel", "race betting", "fixed race", "bookie"]},
+        {"name": "Casino & Slots", "risk_score": 7.5, "description": "Online casinos operating in restricted regions.", "keywords": ["online casino", "slots", "roulette", "blackjack", "casino bonus"]},
+        {"name": "Fantasy Sports Unregulated", "risk_score": 6.5, "description": "Fantasy platforms operating without proper licensing.", "keywords": ["fantasy sports", "play fantasy", "daily fantasy", "DFS", "unregulated fantasy"]}
+      ]
+    },
+    {
+      "name": "Adult Services",
+      "description": "Commercial sexual services and associated marketplaces.",
+      "products": [
+        {"name": "Escort Services", "risk_score": 9.5, "description": "Paid escort and companionship services frequently linked to exploitation.", "keywords": ["escort", "call girl", "sugar baby", "escort service", "companion"]},
+        {"name": "Adult Content Distribution", "risk_score": 8.0, "description": "Sites distributing explicit content often without age verification.", "keywords": ["porn", "adult videos", "xxx", "paywall porn", "tube porn"]},
+        {"name": "Massage with Extras", "risk_score": 8.5, "description": "Massage services which covertly offer sexual services.", "keywords": ["sensual massage", "massage with extras", "escort massage", "escort spa", "adult massage"]},
+        {"name": "Dating/Companionship Platforms", "risk_score": 7.5, "description": "Transactional dating and sugar-daddy platforms.", "keywords": ["sugar dating", "paid dating", "companion service", "escort dating", "sugar daddy"]},
+        {"name": "Adult Novelty Sales", "risk_score": 5.5, "description": "Sale of adult devices and novelty items.", "keywords": ["sex toy", "novelty adult", "vibrator", "adult shop", "novelty"]},
+        {"name": "Webcam/Live Performance", "risk_score": 8.0, "description": "Live adult streaming services where payment channels may be hidden.", "keywords": ["webcam", "camgirl", "cam model", "live adult", "private show"]},
+        {"name": "Human Trafficking Indicators", "risk_score": 10.0, "description": "Signals and patterns indicating trafficking or coercion.", "keywords": ["trafficking", "forced", "underage escort", "coerced", "victim"]}
+      ]
+    },
+    {
+      "name": "Counterfeit & Fraud",
+      "description": "Fake goods, forged documents, and fraudulent services.",
+      "products": [
+        {"name": "Counterfeit Luxury Goods", "risk_score": 7.5, "description": "Replica designer goods sold as authentic.", "keywords": ["replica", "authentic copy", "fake gucci", "fake louis vuitton", "counterfeit"]},
+        {"name": "Fake IDs & Documents", "risk_score": 9.5, "description": "Forged identification and travel documents for illicit use.", "keywords": ["fake id", "forged passport", "buy id", "id forgery", "fake documents"]},
+        {"name": "Counterfeit Electronics", "risk_score": 8.0, "description": "Fake electronics marketed under known brands.", "keywords": ["fake iphone", "counterfeit electronics", "clone phone", "replica gadget", "fake electronics"]},
+        {"name": "Fraudulent Services", "risk_score": 8.5, "description": "Scams offering fraudulent investment or earning opportunities.", "keywords": ["scam", "ponzi", "investment scam", "get rich quick", "fraud service"]},
+        {"name": "Counterfeit Food & Cosmetics", "risk_score": 7.0, "description": "Unsafe or mislabeled consumables and beauty products.", "keywords": ["fake perfume", "counterfeit makeup", "fake cosmetics", "fake food", "adulterated"]},
+        {"name": "Fake Pharmaceuticals", "risk_score": 9.0, "description": "Adulterated or fake medicines offered online.", "keywords": ["fake medicine", "counterfeit pharma", "fake pills", "adulterated drug", "fake tablet"]},
+        {"name": "Ticket & Credential Fraud", "risk_score": 7.5, "description": "Fraudulent tickets and digital credentials sold illegally.", "keywords": ["fake ticket", "scalper", "fake boarding pass", "stolen ticket", "credential fraud"]}
+      ]
+    },
+    {
+      "name": "Weapons & Explosives",
+      "description": "Illicit weapons, ammunition, and components.",
+      "products": [
+        {"name": "Illegal Firearms", "risk_score": 10.0, "description": "Unregistered and illegal firearms marketed to the public.", "keywords": ["buy gun", "illegal firearm", "unregistered weapon", "firearm for sale", "gun seller"]},
+        {"name": "Ammunition & Explosives", "risk_score": 10.0, "description": "Ammunition, explosive materials, and components.", "keywords": ["ammunition", "explosives", "detonator", "bomb material", "explosive for sale"]},
+        {"name": "Knives & Bladed Weapons", "risk_score": 8.0, "description": "Prohibited knife designs and tactical blades.", "keywords": ["switchblade", "karambit", "buy knife", "blade for sale", "illegal knife"]},
+        {"name": "Martial Arts Weapons", "risk_score": 7.5, "description": "Training and combat weapons often restricted in jurisdictions.", "keywords": ["nunchaku", "brass knuckles", "eskrima", "martial weapon", "buy nunchucks"]},
+        {"name": "Chemical Agents & Poisons", "risk_score": 10.0, "description": "Toxic chemicals and reagents that can be weaponized.", "keywords": ["cyanide", "toxin", "poison", "chemical agent", "restricted chemical"]},
+        {"name": "Armor Piercing Ammunition", "risk_score": 9.5, "description": "Specialized rounds designed to penetrate protective armor.", "keywords": ["armor piercing", "AP rounds", "penetrator", "military grade ammo", "AP ammo"]},
+        {"name": "3D Printed Weapons & CAD", "risk_score": 9.5, "description": "CAD files and kits enabling weapon fabrication.", "keywords": ["3d printed gun", "download STL", "ghost gun", "weapon CAD", "print firearm"]}
+      ]
+    },
+    {
+      "name": "Cryptocurrency & Finance Fraud",
+      "description": "Crypto-based fraud, laundering and illicit finance services.",
+      "products": [
+        {"name": "Illicit Wallet Services", "risk_score": 8.0, "description": "Wallets and custodial services facilitating laundering.", "keywords": ["mixing service", "tumblr", "crypto mixer", "anon wallet", "privacy wallet"]},
+        {"name": "Pump & Dump Schemes", "risk_score": 8.0, "description": "Coordinated manipulation schemes for small-market tokens.", "keywords": ["pump and dump", "pump group", "moon token", "pump signal", "pump group buy"]},
+        {"name": "Ransomware Payment Services", "risk_score": 9.5, "description": "Services facilitating ransomware payments and cashouts.", "keywords": ["ransomware", "payment service", "btc transfer", "ransom payment", "ransom wallet"]},
+        {"name": "Money Laundering Exchanges", "risk_score": 8.5, "description": "Exchanges or OTC desks enabling untracked flows.", "keywords": ["no KYC exchange", "OTC desk", "dark exchange", "no identity exchange", "crypto launder"]},
+        {"name": "Illegal Remittance", "risk_score": 7.5, "description": "Underground remittance and hawala-like services.", "keywords": ["hawala", "remittance service", "underground bank", "offshore remittance", "informal transfer"]},
+        {"name": "ICO Fraud & Token Scams", "risk_score": 8.0, "description": "Fraudulent token sales and pump schemes.", "keywords": ["ICO scam", "token sale scam", "rug pull", "fake ico", "token scam"]},
+        {"name": "Credit Card Fraud Services", "risk_score": 9.0, "description": "Carding shops and stolen card data marketplaces.", "keywords": ["carding", "cc dump", "stolen cards", "card shop", "buy cards"]}
+      ]
+    }
+  ]
+}

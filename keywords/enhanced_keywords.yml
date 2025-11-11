@@ -1,0 +1,744 @@
+product_categories:
+  - id: 1
+    name: "Controlled Narcotics"
+    description: "Illegal or heavily regulated drugs including cannabis derivatives, opioids, and synthetic substances"
+    risk_level: "critical"
+    products:
+      - id: 101
+        name: "Cannabis/CBD Products"
+        description: "Cannabis flower, concentrates, edibles, oils, and CBD products without proper licensing. Detection patterns include buds, flower, hash, concentrates, CBD oil, THC products, and cannabis-related terminology."
+        risk_score: 9.5
+        keywords:
+          - cannabis
+          - marijuana
+          - weed
+          - ganja
+          - bhang
+          - charas
+          - hashish
+          - cbd_oil
+          - thc_products
+          - dispensary
+          
+      - id: 102
+        name: "Opioids & Heroin"
+        description: "Prescription opioids sold without medical supervision, heroin, morphine derivatives, and synthetic opioids. Includes fentanyl and poppy-based products."
+        risk_score: 10.0
+        keywords:
+          - heroin
+          - morphine
+          - fentanyl
+          - oxycodone
+          - hydrocodone
+          - opium
+          - poppy_seed
+          - narcotic_painkillers
+          - synthetic_opioid
+          
+      - id: 103
+        name: "Cocaine & Stimulants"
+        description: "Cocaine, crack cocaine, methamphetamine, MDMA, and other illicit stimulants sold through online channels"
+        risk_score: 10.0
+        keywords:
+          - cocaine
+          - crack
+          - methamphetamine
+          - meth
+          - ecstasy
+          - mdma
+          - crystal
+          - speed
+          - amphetamine
+          
+      - id: 104
+        name: "Kratom & Khat"
+        description: "Kratom leaves and extracts sold as alternatives to opioids; khat leaves and preparations"
+        risk_score: 7.5
+        keywords:
+          - kratom
+          - kratom_leaves
+          - khat
+          - qat
+          - alkaloid
+          - mitragyna_speciosa
+          
+      - id: 105
+        name: "Prescription Drugs (Unauthorized)"
+        description: "Prescription medications sold without valid prescriptions or pharmacist oversight"
+        risk_score: 8.5
+        keywords:
+          - no_prescription_required
+          - without_rx
+          - prescription_waived
+          - generic_medication
+          - pharma_supplier
+          
+      - id: 106
+        name: "Psychedelics & Hallucinogens"
+        description: "LSD, psilocybin mushrooms, mescaline, DMT, and other hallucinogenic substances"
+        risk_score: 9.0
+        keywords:
+          - lsd
+          - acid
+          - psilocybin
+          - magic_mushrooms
+          - dmt
+          - mescaline
+          - peyote
+          - ayahuasca
+          
+      - id: 107
+        name: "Novel Psychoactive Substances"
+        description: "Synthetic cannabinoids, cathinones, and other designer drugs marketed as legal alternatives"
+        risk_score: 8.5
+        keywords:
+          - spice
+          - k2
+          - bath_salts
+          - synthetic_cathinone
+          - designer_drug
+          - legal_high
+
+  - id: 2
+    name: "Anabolic Steroids & Performance Enhancers"
+    description: "Controlled substances for muscle building and performance enhancement without medical supervision"
+    risk_level: "critical"
+    products:
+      - id: 201
+        name: "Anabolic Steroids (Injectable)"
+        description: "Testosterone, Trenbolone, Nandrolone, Boldenone preparations in injectable form without prescription"
+        risk_score: 9.5
+        keywords:
+          - trenbolone
+          - testosterone_injection
+          - sustanon
+          - nandrolone
+          - decanoate
+          - deca
+          - enanthate
+          - propionate
+          
+      - id: 202
+        name: "Oral Steroids"
+        description: "Dianabol, Winstrol, Anavar, Halotestin, and other oral anabolic agents"
+        risk_score: 9.0
+        keywords:
+          - dianabol
+          - winstrol
+          - anavar
+          - halotestin
+          - oxandrolone
+          - stanozolol
+          - methandienone
+          - turinabol
+          
+      - id: 203
+        name: "Post-Cycle Therapy (PCT)"
+        description: "Hormone-related recovery drugs including SARMs, aromatase inhibitors, and anti-estrogens marketed for steroid users"
+        risk_score: 8.0
+        keywords:
+          - sarm
+          - ostarine
+          - ligandrol
+          - rad140
+          - pct_therapy
+          - aromatase_inhibitor
+          - clomid
+          - nolvadex
+          
+      - id: 204
+        name: "Growth Hormone & Peptides"
+        description: "Human growth hormone, IGF-1, GHRP peptides sold without medical prescription"
+        risk_score: 8.5
+        keywords:
+          - hgh
+          - human_growth_hormone
+          - igf1
+          - ghrp
+          - tb500
+          - hcg
+          - growth_hormone
+          
+      - id: 205
+        name: "Fat Burners & Stimulants"
+        description: "Clenbuterol, ephedrine, DNP, and other dangerous weight loss agents"
+        risk_score: 8.5
+        keywords:
+          - clenbuterol
+          - ephedrine
+          - dnp
+          - dinitrophenol
+          - thyroxine
+          - t3_t4
+          - fat_burner_extreme
+          
+      - id: 206
+        name: "Veterinary Steroids"
+        description: "Animal-grade steroids and biologics repurposed for human use"
+        risk_score: 9.0
+        keywords:
+          - veterinary_testosterone
+          - equine_steroid
+          - animal_grade
+          - vet_pharma
+          - livestock_hormone
+          
+      - id: 207
+        name: "Counterfeit Pharmaceutical"
+        description: "Fake branded steroids with incorrect formulations or contamination risks"
+        risk_score: 9.5
+        keywords:
+          - counterfeit_pharmaceutical
+          - replica_steroid
+          - underground_lab
+          - uglab
+          - chinese_source
+
+  - id: 3
+    name: "Pharmaceutical Abuse & Misuse"
+    description: "Legitimate drugs marketed for non-approved uses or with high abuse potential"
+    risk_level: "high"
+    products:
+      - id: 301
+        name: "Anti-Anxiety Medications (Benzodiazepines)"
+        description: "Alprazolam, Diazepam, Clonazepam sold without psychiatric evaluation or proper dosing"
+        risk_score: 7.5
+        keywords:
+          - xanax
+          - alprazolam
+          - valium
+          - diazepam
+          - ativan
+          - lorazepam
+          - klonopin
+          - benzodiazepine
+          
+      - id: 302
+        name: "Stimulant Medications (ADHD)"
+        description: "Modafinil, Ritalin, Adderall sold as cognitive enhancers without medical supervision"
+        risk_score: 7.0
+        keywords:
+          - modafinil
+          - provigil
+          - ritalin
+          - adderall
+          - amphetamine_salt
+          - methylphenidate
+          - phentermine
+          - nootropic
+          
+      - id: 303
+        name: "Erectile Dysfunction Medications"
+        description: "Viagra, Cialis, and generic versions with unverified formulation, counterfeit risk"
+        risk_score: 6.5
+        keywords:
+          - viagra
+          - sildenafil
+          - cialis
+          - tadalafil
+          - levitra
+          - vardenafil
+          - erectile_dysfunction
+          - ed_pills
+          
+      - id: 304
+        name: "Painkillers & Tramadol"
+        description: "Tramadol and other opioid painkillers sold without prescription or medical records"
+        risk_score: 8.0
+        keywords:
+          - tramadol
+          - ultram
+          - paracetamol_codeine
+          - morphine_sulfate
+          - vicodin
+          - fioricet
+          - oxycontin
+          
+      - id: 305
+        name: "Sleep Aids & Sedatives"
+        description: "Zopiclone, Ambien, and barbiturates sold for recreational use or without medical supervision"
+        risk_score: 7.0
+        keywords:
+          - zopiclone
+          - lunesta
+          - ambien
+          - zolpidem
+          - barbiturate
+          - phenobarbital
+          - seconal
+          
+      - id: 306
+        name: "Cough Syrups (DXM Abuse)"
+        description: "Dextromethorphan-containing products marketed for non-therapeutic purposes"
+        risk_score: 6.5
+        keywords:
+          - dxm
+          - dextromethorphan
+          - cough_syrup_abuse
+          - robotripping
+          - robitussin
+          - promethazine
+          
+      - id: 307
+        name: "Anesthetics (Ketamine, Propofol)"
+        description: "Medical anesthetics diverted for recreational use"
+        risk_score: 8.5
+        keywords:
+          - ketamine
+          - propofol
+          - mk-ultra
+          - special_k
+          - medical_anesthetic
+
+  - id: 4
+    name: "Gambling & Illegal Betting"
+    description: "Unauthorized betting platforms, satta operations, and gambling services"
+    risk_level: "high"
+    products:
+      - id: 401
+        name: "International Betting Platforms"
+        description: "Websites offering sports betting, casino games, and poker without local regulatory approval"
+        risk_score: 8.0
+        keywords:
+          - 1xbet
+          - bet365
+          - betfair
+          - sportybet
+          - sports_betting
+          - online_casino
+          - poker_site
+          
+      - id: 402
+        name: "IPL & Cricket Betting"
+        description: "Unauthorized Indian Premier League and cricket match betting services"
+        risk_score: 8.5
+        keywords:
+          - ipl_betting
+          - cricket_betting
+          - match_prediction
+          - odds_booking
+          - betting_exchange
+          - live_odds
+          
+      - id: 403
+        name: "Satta/Matka (Indian Lottery Scams)"
+        description: "Traditional illegal lottery games operating online with high fraud risk"
+        risk_score: 8.5
+        keywords:
+          - satta
+          - matka
+          - satta_king
+          - jodi_number
+          - patti
+          - kalyan_matka
+          - delhi_satta
+          
+      - id: 404
+        name: "Cryptocurrency Betting"
+        description: "Unregulated betting platforms accepting cryptocurrencies for sports/casino betting"
+        risk_score: 7.5
+        keywords:
+          - crypto_betting
+          - bitcoin_casino
+          - ethereum_betting
+          - defi_gambling
+          - blockchain_betting
+          
+      - id: 405
+        name: "Horse Racing Betting"
+        description: "Online horse racing betting without proper licensing"
+        risk_score: 7.0
+        keywords:
+          - horse_racing_betting
+          - turf_betting
+          - racecourse_bookmaker
+          - trading_exchange
+          
+      - id: 406
+        name: "Casino & Slot Machines"
+        description: "Online casino games and slot machines accessed from restricted jurisdictions"
+        risk_score: 7.5
+        keywords:
+          - online_casino
+          - slot_machine
+          - blackjack
+          - roulette
+          - baccarat
+          - virtual_casino
+          
+      - id: 407
+        name: "Fantasy Sports (Unregulated)"
+        description: "Fantasy sports platforms without proper licensing or age verification"
+        risk_score: 6.5
+        keywords:
+          - fantasy_sports
+          - dream11_alternative
+          - daily_fantasy
+          - sports_gaming
+
+  - id: 5
+    name: "Adult Services & Sexual Exploitation"
+    description: "Services related to sexual exploitation, human trafficking, and adult content"
+    risk_level: "critical"
+    products:
+      - id: 501
+        name: "Escort & Call Girl Services"
+        description: "Commercial sexual services often linked to trafficking and exploitation"
+        risk_score: 9.5
+        keywords:
+          - escort_service
+          - call_girl
+          - sex_worker
+          - paid_companionship
+          - adult_service
+          - erotic_service
+          - shemale_service
+          
+      - id: 502
+        name: "Adult Content Distribution"
+        description: "Premium adult/pornographic content with potential non-consensual material"
+        risk_score: 8.0
+        keywords:
+          - adult_content
+          - pornographic_site
+          - xxx_content
+          - adult_streaming
+          - premium_adult
+          
+      - id: 503
+        name: "Massage with Sexual Services"
+        description: "Massage parlors and wellness centers offering concealed sexual services"
+        risk_score: 8.5
+        keywords:
+          - massage_service
+          - happy_ending_massage
+          - body_massage
+          - therapeutic_massage_with_extras
+          - spa_and_services
+          
+      - id: 504
+        name: "Dating/Companionship Platforms"
+        description: "Dating platforms with transactional elements and exploitation risks"
+        risk_score: 7.5
+        keywords:
+          - sugar_dating
+          - transactional_dating
+          - companionship_site
+          - arrangement_platform
+          
+      - id: 505
+        name: "Adult Novelty Sales"
+        description: "Unrestricted sale of sexual devices, toys, and adult products"
+        risk_score: 5.5
+        keywords:
+          - adult_toys
+          - sex_toys
+          - adult_novelties
+          - intimate_products
+          
+      - id: 506
+        name: "Webcam/Live Performance Services"
+        description: "Live streaming of adult performances with exploitation and trafficking risks"
+        risk_score: 8.0
+        keywords:
+          - live_cam
+          - webcam_performance
+          - adult_streaming
+          - live_adult_chat
+          
+      - id: 507
+        name: "Human Trafficking Indicators"
+        description: "Pages showing typical trafficking patterns, debt bondage, or coercion indicators"
+        risk_score: 10.0
+        keywords:
+          - human_trafficking
+          - debt_bondage
+          - forced_labor
+          - coercion_indicator
+          - rescue_services
+
+  - id: 6
+    name: "Counterfeit & Fraud"
+    description: "Counterfeit goods, fake documentation, and identity fraud services"
+    risk_level: "high"
+    products:
+      - id: 601
+        name: "Counterfeit Luxury Goods"
+        description: "Fake designer handbags, watches, clothing bearing counterfeit trademarks"
+        risk_score: 7.5
+        keywords:
+          - counterfeit_designer
+          - replica_designer
+          - fake_gucci
+          - fake_louis_vuitton
+          - fake_rolex
+          - knockoff
+          - duplicate_brand
+          
+      - id: 602
+        name: "Fake IDs & Documents"
+        description: "Forged government IDs, passports, and official documents"
+        risk_score: 9.5
+        keywords:
+          - fake_id
+          - forged_passport
+          - counterfeit_driving_license
+          - document_forgery
+          - identity_fraud
+          - fake_certificate
+          
+      - id: 603
+        name: "Counterfeit Electronics"
+        description: "Fake branded electronics, components, and accessories"
+        risk_score: 8.0
+        keywords:
+          - counterfeit_iphone
+          - fake_electronics
+          - replica_phone
+          - fake_charger
+          - knockoff_gadget
+          
+      - id: 604
+        name: "Fraudulent Services"
+        description: "Services promising unrealistic returns, investment scams, and Ponzi schemes"
+        risk_score: 8.5
+        keywords:
+          - investment_fraud
+          - ponzi_scheme
+          - unrealistic_returns
+          - quick_money_scam
+          - work_from_home_fraud
+          
+      - id: 605
+        name: "Counterfeited Food & Cosmetics"
+        description: "Fake branded food items, cosmetics, and personal care products"
+        risk_score: 7.0
+        keywords:
+          - fake_cosmetics
+          - counterfeit_food
+          - knockoff_skincare
+          - replica_perfume
+          
+      - id: 606
+        name: "Fake Pharmaceuticals"
+        description: "Counterfeit medications and supplements with incorrect or toxic formulations"
+        risk_score: 9.0
+        keywords:
+          - counterfeit_medicine
+          - fake_pharmaceutical
+          - replica_drug
+          - substandard_medicine
+          
+      - id: 607
+        name: "Ticket & Credential Fraud"
+        description: "Fake event tickets, airline tickets, and digital credentials"
+        risk_score: 7.5
+        keywords:
+          - fake_ticket
+          - counterfeit_voucher
+          - fraudulent_booking
+          - ticket_scalping
+
+  - id: 7
+    name: "Weapons & Explosives"
+    description: "Illegal firearms, ammunition, explosives, and weapons trafficking"
+    risk_level: "critical"
+    products:
+      - id: 701
+        name: "Illegal Firearms"
+        description: "Unregistered guns, automatic weapons, and firearms without proper licensing"
+        risk_score: 10.0
+        keywords:
+          - illegal_gun
+          - black_market_firearm
+          - unregistered_weapon
+          - automatic_weapon
+          - ghost_gun
+          - improvised_weapon
+          
+      - id: 702
+        name: "Ammunition & Explosives"
+        description: "Explosive materials, ammunition, and bomb-making instructions"
+        risk_score: 10.0
+        keywords:
+          - explosives
+          - ammunition
+          - gunpowder
+          - bomb_making
+          - ied_components
+          - detonator
+          - remote_bomb
+          
+      - id: 703
+        name: "Knife & Bladed Weapons"
+        description: "Prohibited knife designs and weapons designed for harm"
+        risk_score: 8.0
+        keywords:
+          - illegal_knife
+          - switchblade
+          - butterfly_knife
+          - hunting_knife_illegal
+          - blade_weapon
+          
+      - id: 704
+        name: "Martial Arts Weapons"
+        description: "Nunchucks, brass knuckles, tasers, and similar restricted weapons"
+        risk_score: 7.5
+        keywords:
+          - nunchuck
+          - brass_knuckle
+          - stun_gun
+          - taser
+          - self_defense_weapon
+          
+      - id: 705
+        name: "Chemical Weapons & Poisons"
+        description: "Chemical agents, toxins, and poison precursors"
+        risk_score: 10.0
+        keywords:
+          - chemical_weapon
+          - poison
+          - nerve_agent
+          - toxic_substance
+          - ricin
+          - arsenic
+          
+      - id: 706
+        name: "Armor Piercing Ammunition"
+        description: "Specialized ammunition designed to penetrate protective equipment"
+        risk_score: 9.5
+        keywords:
+          - armor_piercing_round
+          - ap_ammunition
+          - penetrating_round
+          
+      - id: 707
+        name: "3D Printed Weapons"
+        description: "Files and services for manufacturing weapons via 3D printing"
+        risk_score: 9.5
+        keywords:
+          - 3d_printed_gun
+          - cad_file_weapon
+          - polymer_firearm
+          - printed_weapon
+
+  - id: 8
+    name: "Cryptocurrency & Financial Fraud"
+    description: "Cryptocurrency-related fraud, money laundering, and financial crimes"
+    risk_level: "high"
+    products:
+      - id: 801
+        name: "Bitcoin/Cryptocurrency Wallets (Illicit)"
+        description: "Cryptocurrency services facilitating money laundering or illegal transactions"
+        risk_score: 8.0
+        keywords:
+          - bitcoin_wallet
+          - crypto_tumbler
+          - mixer_service
+          - anonymity_coin
+          - monero_wallet
+          - privacy_coin
+          - darknet_wallet
+          
+      - id: 802
+        name: "Pump & Dump Schemes"
+        description: "Coordinated cryptocurrency pump and dump operations"
+        risk_score: 8.0
+        keywords:
+          - pump_and_dump
+          - coin_manipulation
+          - volume_fraud
+          - coordinated_trading
+          
+      - id: 803
+        name: "Ransomware Payment Services"
+        description: "Services facilitating ransomware payments and criminal fund transfers"
+        risk_score: 9.5
+        keywords:
+          - ransomware_payment
+          - extortion_fund
+          - criminal_proceeds
+          - illicit_payment_gateway
+          
+      - id: 804
+        name: "Money Laundering Exchanges"
+        description: "Cryptocurrency exchanges without AML/KYC compliance"
+        risk_score: 8.5
+        keywords:
+          - no_kyc_exchange
+          - unregulated_exchange
+          - money_laundering_service
+          - exchange_without_verification
+          
+      - id: 805
+        name: "Illegal Remittance Services"
+        description: "Unregulated money transfer services facilitating capital flight"
+        risk_score: 7.5
+        keywords:
+          - underground_banking
+          - hawala_service
+          - illegal_remittance
+          - unregulated_transfer
+          
+      - id: 806
+        name: "ICO Fraud & Token Scams"
+        description: "Fraudulent initial coin offerings and token schemes"
+        risk_score: 8.0
+        keywords:
+          - ico_fraud
+          - token_scam
+          - exit_scam
+          - fake_blockchain_project
+          
+      - id: 807
+        name: "Credit Card Fraud Services"
+        description: "Stolen card sales, skimming devices, and carding services"
+        risk_score: 9.0
+        keywords:
+          - stolen_credit_card
+          - cc_shop
+          - dumps_and_pins
+          - carding_service
+
+detection_patterns:
+  text_matching:
+    - type: "regex"
+      pattern: '\b([0-9]{3,4}[-\s]?){3}[0-9]{3,4}\b'  # Credit card pattern
+      category: "Financial"
+      
+    - type: "regex"
+      pattern: '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'  # Email
+      category: "Contact"
+      
+    - type: "fuzzy_match"
+      threshold: 0.85
+      example: "alprazolam"  # Will match xanax, ativan, etc.
+      
+    - type: "nlp_entity"
+      entity_type: "DRUG_REFERENCE"
+      confidence_threshold: 0.8
+
+upi_providers:
+  - name: "Paytm"
+    pattern: "@paytm"
+    risk_level: "high"
+    
+  - name: "Google Pay"
+    pattern: "@okaxis|@okhdfcbank"
+    risk_level: "medium"
+    
+  - name: "PhonePe"
+    pattern: "@ybl"
+    risk_level: "high"
+    
+  - name: "BHIM ICICI"
+    pattern: "@icici"
+    risk_level: "medium"
+
+reporting:
+  csv_export: true
+  json_export: true
+  pdf_export: true
+  summary_dashboard: true
+  merchant_mapping: true
+  category_breakdown: true

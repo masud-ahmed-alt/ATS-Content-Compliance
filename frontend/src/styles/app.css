@@ -1,0 +1,221 @@
+/* Main layout adjustments for fixed sidebar */
+
+/* Body adjustment for fixed sidebar */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Main content area offset from fixed sidebar */
+.main-content {
+  margin-left: 250px;
+}
+
+/* Ensure protected pages account for fixed sidebar */
+.d-flex.flex-lg-row {
+  align-items: stretch;
+}
+
+.d-flex.flex-lg-row > nav {
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.d-flex.flex-lg-row > .flex-grow-1 {
+  margin-left: 250px;
+}
+
+/* Sidebar styling */
+nav.bg-gradient-primary {
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive: hide sidebar on mobile */
+@media (max-width: 991px) {
+  .d-flex.flex-lg-row > nav {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-left: 0 !important;
+  }
+
+  .d-flex.flex-lg-row > .flex-grow-1 {
+    margin-left: 0 !important;
+  }
+
+  nav.bg-gradient-primary {
+    width: 100% !important;
+    flex-direction: row !important;
+    padding: 0.5rem 1rem !important;
+  }
+
+  nav.bg-gradient-primary h4 {
+    margin-bottom: 0 !important;
+    margin-right: 1rem !important;
+  }
+
+  nav.bg-gradient-primary ul {
+    flex-direction: row !important;
+    margin-left: auto !important;
+    margin-bottom: 0 !important;
+  }
+
+  nav.bg-gradient-primary .nav-item {
+    margin-bottom: 0 !important;
+    margin-right: 1rem !important;
+  }
+
+  nav.bg-gradient-primary .mt-auto {
+    display: none;
+  }
+}
+
+/* Smooth transitions */
+button.btn-link {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem !important;
+}
+
+button.btn-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+button.btn-link.fw-bold {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-left: 3px solid #fff;
+  padding-left: calc(0.75rem - 3px) !important;
+}
+
+/* Alert styling */
+.alert {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card styling */
+.card {
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Badge styling */
+.badge {
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+/* Table styling */
+.table {
+  margin-bottom: 0;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(78, 115, 223, 0.05);
+}
+
+/* Progress bar styling */
+.progress {
+  border-radius: 10px;
+  background-color: #e9ecef;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Button styling */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #4e73df;
+  border-color: #4e73df;
+}
+
+.btn-primary:hover {
+  background-color: #224abe;
+  border-color: #224abe;
+}
+
+/* Input styling */
+.form-control,
+.form-select {
+  border-radius: 6px;
+  border: 1px solid #d1d3d4;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Spinner styling */
+.spinner-border {
+  border-width: 0.25em;
+}
+
+/* Loading state */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+/* Text truncation utilities */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Status badges */
+.badge.bg-success {
+  background-color: #1cc88a !important;
+}
+
+.badge.bg-warning {
+  background-color: #f6c23e !important;
+}
+
+.badge.bg-danger {
+  background-color: #e74a3b !important;
+}
+
+.badge.bg-info {
+  background-color: #36b9cc !important;
+}
+
+/* Topbar styling */
+.topbar {
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa !important;
+}
+
+/* Empty state styling */
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: #d1d3d4;
+}

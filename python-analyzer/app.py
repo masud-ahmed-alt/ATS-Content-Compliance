@@ -7,18 +7,24 @@ from core.core_analyzer import load_semantic_model
 
 # DB + environment
 from config.settings import init_environment, Base, engine
+from models.database_init import init_database, seed_taxonomy
+from utils.progress_manager import get_progress_manager
 
 # Routers
 from routes.ingest_routes import router as ingest_router
 from routes.report_routes import router as report_router
+from routes.progress_routes import router as progress_router
 
 # Initialize folders, environment, and DB
 init_environment()
 load_semantic_model("/app/semantic_model")
+init_database()
+seed_taxonomy()
+_ = get_progress_manager()  # Initialize global progress manager
 # -------------------- FastAPI App --------------------
 app = FastAPI(
     title="Analyzer with Screenshot Integration",
-    version="0.6",
+    version="0.7",
 )
 
 # -------------------- CORS Configuration --------------------
@@ -42,6 +48,7 @@ app.add_middleware(
 # -------------------- Include Routers --------------------
 app.include_router(ingest_router)
 app.include_router(report_router)
+app.include_router(progress_router)
 
 # -------------------- Health Check --------------------
 @app.get("/health")
@@ -62,3 +69,6 @@ def on_startup():
         methods = getattr(route, "methods", None)
         if path and methods:
             logging.info(f"  {sorted(methods)} {path}")
+    
+    logging.info("Analyzer started: database initialized, progress tracking enabled")
+

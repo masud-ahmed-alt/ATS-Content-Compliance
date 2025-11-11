@@ -6,6 +6,7 @@ import ReportDetails from "./pages/ReportDetails";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Events from "./pages/Events";
+import "./styles/app.css"; // Custom styling for layout
 
 function App() {
   return (
