@@ -1,19 +1,17 @@
 # ----------------------------
 # Build stage
 # ----------------------------
-FROM golang:1.23-alpine AS build
+FROM golang:1.24-alpine AS build
 
-WORKDIR /src
+WORKDIR /app
+
 RUN apk add --no-cache git ca-certificates
 
-# Copy entire source (avoids failing when go.sum doesn't exist yet)
+# Copy everything from the build context (which *is already* go-fetcher/)
 COPY . .
 
-# If there's no go.mod, initialize one. Then resolve deps.
-# You can override MODULE_PATH at build time if you want.
-ARG MODULE_PATH=github.com/yourorg/go-fetcher
-RUN if [ ! -f go.mod ]; then go mod init ${MODULE_PATH}; fi && \
-    go mod tidy
+# Download dependencies
+RUN go mod tidy
 
 # Build static binary
 ENV CGO_ENABLED=0

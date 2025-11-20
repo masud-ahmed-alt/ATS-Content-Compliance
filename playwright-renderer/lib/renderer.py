@@ -1,239 +1,223 @@
-#!/usr/bin/env python3
-import os, traceback
-from datetime import datetime
-from PIL import Image
-from playwright.sync_api import sync_playwright, TimeoutError
-from utils.helpers import safe_name
-from io import BytesIO
+# lib/renderer.py
+import asyncio
+import os
+import time
+import io
+from typing import Optional, Dict, Any, List
+
+from playwright.async_api import async_playwright, Browser, Page
 from minio import Minio
+from minio.error import S3Error
 
-from config.settings import (
-    MINIO_ENDPOINT,
-    MINIO_ACCESS_KEY,
-    MINIO_SECRET_KEY,
-    MINIO_BUCKET,
-)
+# Globals
+_browser: Optional[Browser] = None
+_playwright = None
+# concurrency limit (tune with env var)
+MAX_CONCURRENCY = int(os.environ.get("RENDERER_CONCURRENCY", "4"))
+_semaphore = asyncio.Semaphore(MAX_CONCURRENCY)
 
-# ==========================================================
-# 🔹 Initialize MinIO client
-# ==========================================================
-client = Minio(
-    MINIO_ENDPOINT.replace("http://", "").replace("https://", ""),
-    access_key=MINIO_ACCESS_KEY,
-    secret_key=MINIO_SECRET_KEY,
-    secure=MINIO_ENDPOINT.startswith("https"),
-)
+# MinIO env config
+MINIO_ENDPOINT = os.environ.get("MINIO_ENDPOINT")
+MINIO_ACCESS_KEY = os.environ.get("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = os.environ.get("MINIO_SECRET_KEY")
+MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "screenshots")
 
-try:
-    if not client.bucket_exists(MINIO_BUCKET):
-        client.make_bucket(MINIO_BUCKET)
-        print(f"[INIT] Created MinIO bucket '{MINIO_BUCKET}'", flush=True)
-    else:
-        print(f"[INIT] Using MinIO bucket '{MINIO_BUCKET}'", flush=True)
-except Exception as e:
-    print(f"[ERROR] MinIO init failed: {e}", flush=True)
+# Allow skipping stealth or other advanced behaviours
+STEALTH = os.environ.get("RENDERER_STEALTH", "false").lower() in ("1", "true", "yes")
 
+# Small JS used to find text matches in page and return bounding rects
+# Modified to accept a single array argument [keyword, maxMatches] for Playwright evaluate()
+_FIND_RECTS_JS = """
+(function(args) {
+  const keyword = args[0];
+  const maxMatches = args[1];
+  if (!keyword) return [];
+  const kw = keyword.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+  const re = new RegExp(kw, 'gi');
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  const rects = [];
+  let node;
+  while (node = walker.nextNode()) {
+    const text = node.nodeValue;
+    if (!text) continue;
+    let match;
+    while ((match = re.exec(text)) !== null) {
+      const start = match.index;
+      const end = start + match[0].length;
+      try {
+        const range = document.createRange();
+        range.setStart(node, start);
+        range.setEnd(node, end);
+        const clientRects = Array.from(range.getClientRects()).map(r => ({
+          x: r.x, y: r.y, width: r.width, height: r.height
+        }));
+        clientRects.forEach(cr => rects.push(cr));
+        range.detach && range.detach();
+      } catch (err) {
+        // ignore ranges we can't read (cross-node complexities)
+      }
+      if (rects.length >= maxMatches) return rects;
+    }
+  }
+  return rects;
+})
+"""
 
-# ==========================================================
-# 🔹 Utility: Upload cropped screenshot to MinIO
-# ==========================================================
-def _upload_crop_to_minio(url: str, keyword: str, img: Image.Image) -> str | None:
+async def init_browser() -> None:
+    """
+    Initialize Playwright browser singleton.
+    """
+    global _browser, _playwright
+    if _browser is not None:
+        return
+
+    _playwright = await async_playwright().start()
+    # Use Chromium by default
+    _browser = await _playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"])
+    # Create bucket in MinIO if needed (lazy)
+    return
+
+async def shutdown_browser() -> None:
+    global _browser, _playwright
     try:
-        ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-        safe = safe_name(url)
-        fname = f"{safe}_{keyword}_{ts}_{abs(hash(url))}.png"
+        if _browser:
+            await _browser.close()
+            _browser = None
+        if _playwright:
+            await _playwright.stop()
+            _playwright = None
+    except Exception:
+        pass
 
-        buf = BytesIO()
-        img.save(buf, format="PNG")
-        buf.seek(0)
-        client.put_object(
-            MINIO_BUCKET,
-            fname,
-            buf,
-            length=len(buf.getvalue()),
-            content_type="image/png",
-        )
+async def upload_to_minio(png_bytes: bytes, object_name: str) -> Dict[str, Any]:
+    """
+    Uploads bytes to MinIO. Returns dictionary with bucket and object info.
+    If MINIO_ENDPOINT is not set, returns empty dict.
+    """
+    if not MINIO_ENDPOINT:
+        return {"ok": False, "error": "minio not configured"}
 
-        return f"{MINIO_ENDPOINT}/{MINIO_BUCKET}/{fname}"
+    client = Minio(
+        MINIO_ENDPOINT,
+        access_key=MINIO_ACCESS_KEY,
+        secret_key=MINIO_SECRET_KEY,
+        secure=MINIO_ENDPOINT.startswith("https")
+    )
+
+    # ensure bucket exists
+    try:
+        if not client.bucket_exists(MINIO_BUCKET):
+            client.make_bucket(MINIO_BUCKET)
     except Exception as e:
-        print(f"[minio:upload:error] {url} -> {e}", flush=True)
-        return None
-
-
-# ==========================================================
-# 🔹 Screenshot Renderer (with stability and retry)
-# ==========================================================
-def render_and_screenshot(url: str, keyword: str, max_matches: int = 5) -> dict:
-    """
-    Opens the page with Playwright and captures cropped screenshots of
-    keyword occurrences. Includes stability waits and retry logic.
-    """
-    print(f"[TASK] Screenshot for {url} | keyword='{keyword}'", flush=True)
-    if not keyword:
-        return {"url": url, "error": "Keyword required"}
+        return {"ok": False, "error": f"minio bucket error: {e}"}
 
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=True,
-                args=[
-                    "--no-sandbox",
-                    "--disable-gpu",
-                    "--disable-dev-shm-usage",
-                    "--disable-setuid-sandbox",
-                    "--disable-software-rasterizer",
-                ],
-            )
-            ctx = browser.new_context(viewport={"width": 1280, "height": 900})
-            page = ctx.new_page()
-
-            try:
-                # ✅ Use 'networkidle' for more reliable loading
-                page.goto(url, wait_until="networkidle", timeout=45000)
-                page.wait_for_timeout(1500)
-
-                dpr = page.evaluate("window.devicePixelRatio || 1")
-
-                # ✅ Retry logic for JS evaluation (if navigation happens)
-                rects = None
-                for attempt in range(3):
-                    try:
-                        rects = page.evaluate(
-                            """
-                            ({kw, maxMatches}) => {
-                                const results = [];
-                                const keyword = kw.toLowerCase();
-                                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-                                let node;
-                                while ((node = walker.nextNode())) {
-                                    const txt = node.textContent || "";
-                                    if (txt.toLowerCase().includes(keyword)) {
-                                        const el = node.parentElement;
-                                        if (el) {
-                                            const r = el.getBoundingClientRect();
-                                            if (r.width > 5 && r.height > 5)
-                                                results.push({
-                                                    rect: r,
-                                                    snippet: txt.trim().slice(0,150)
-                                                });
-                                        }
-                                        if (results.length >= maxMatches) break;
-                                    }
-                                }
-                                return results;
-                            }
-                            """,
-                            {"kw": keyword, "maxMatches": max_matches},
-                        )
-                        break
-                    except Exception as e:
-                        print(f"[WARN] Retry {attempt+1}/3 evaluating keyword search: {e}", flush=True)
-                        page.wait_for_timeout(1000)
-
-                if not rects:
-                    print(f"[INFO] No matches for '{keyword}' on {url}", flush=True)
-                    return {
-                        "url": url,
-                        "keyword": keyword,
-                        "matches": [],
-                        "total": 0,
-                        "message": "Keyword not found",
-                    }
-
-                # ✅ Capture full page
-                img_bytes = page.screenshot(full_page=True)
-                im = Image.open(BytesIO(img_bytes))
-
-                matches_info = []
-                for i, r in enumerate(rects, start=1):
-                    rect = r["rect"]
-                    x = max(int(rect["left"] * dpr - 10), 0)
-                    y = max(int(rect["top"] * dpr - 10), 0)
-                    w = min(int(rect["width"] * dpr + 20), im.width - x)
-                    h = min(int(rect["height"] * dpr + 20), im.height - y)
-
-                    crop = im.crop((x, y, x + w, y + h))
-                    uploaded_path = _upload_crop_to_minio(url, keyword, crop)
-
-                    matches_info.append({
-                        "snippet": r["snippet"],
-                        "screenshot_url": uploaded_path,
-                    })
-
-                print(f"[INFO] Uploaded {len(matches_info)} cropped screenshot(s) for '{keyword}'", flush=True)
-                return {
-                    "url": url,
-                    "keyword": keyword,
-                    "matches": matches_info,
-                    "total": len(matches_info),
-                }
-
-            except TimeoutError:
-                print(f"[WARN] Timeout loading {url}", flush=True)
-                return {"url": url, "keyword": keyword, "error": "Timeout while loading page"}
-
-            except Exception as e:
-                print(f"[ERROR] Screenshot failed: {e}\n{traceback.format_exc()}", flush=True)
-                return {"url": url, "keyword": keyword, "error": str(e)}
-
-            finally:
-                browser.close()
-
+        client.put_object(MINIO_BUCKET, object_name, io.BytesIO(png_bytes), length=len(png_bytes))
+        url = f"{MINIO_ENDPOINT.rstrip('/')}/{MINIO_BUCKET}/{object_name}"
+        return {"ok": True, "bucket": MINIO_BUCKET, "object": object_name, "url": url}
+    except S3Error as e:
+        return {"ok": False, "error": str(e)}
     except Exception as e:
-        print(f"[FATAL] Playwright launch failed: {e}\n{traceback.format_exc()}", flush=True)
-        return {"url": url, "keyword": keyword, "error": "Playwright launch failed"}
+        return {"ok": False, "error": str(e)}
 
 
-# ==========================================================
-# 🔹 HTML Renderer (with stability and retry)
-# ==========================================================
-def render_html(url: str, timeout: int = 30000) -> dict:
+async def render_html(url: str) -> Dict[str, Any]:
     """
-    Fully render page HTML for JS-heavy sites with robust retry and stability logic.
+    Render the page at URL and return its HTML content (no screenshot).
+    Used for JS-heavy pages where initial fetch doesn't have full content.
     """
-    print(f"[TASK] Rendering HTML for {url}", flush=True)
+    await init_browser()
+    start = time.time()
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--no-sandbox",
-                "--disable-gpu",
-                "--disable-dev-shm-usage",
-                "--disable-setuid-sandbox",
-                "--disable-software-rasterizer",
-            ],
-        )
-        ctx = browser.new_context(viewport={"width": 1280, "height": 900})
-        page = ctx.new_page()
+    async with _semaphore:
+        if _browser is None:
+            return {"ok": False, "error": "browser not initialized"}
 
+        # create context and page
+        ctx = await _browser.new_context(viewport={"width": 1280, "height": 900}, locale="en-US")
+        page: Page = await ctx.new_page()
         try:
-            # ✅ Wait for all requests to finish for stable DOM
-            page.goto(url, wait_until="networkidle", timeout=timeout)
-            page.wait_for_timeout(1500)
+            goto_timeout = int(os.environ.get("RENDERER_GOTO_TIMEOUT", "120000"))
+            wait_until = os.environ.get("RENDERER_WAIT_UNTIL", "load")
+            await page.goto(url, wait_until=wait_until, timeout=goto_timeout)
+            await asyncio.sleep(0.5)
 
-            html = None
-            for attempt in range(3):
-                try:
-                    html = page.content()
-                    break
-                except Exception as e:
-                    print(f"[WARN] Retry {attempt+1}/3 fetching HTML: {e}", flush=True)
-                    page.wait_for_timeout(1000)
+            # get rendered HTML content
+            html_content = await page.content()
+            elapsed = int((time.time() - start) * 1000)
 
-            if not html:
-                raise RuntimeError("Failed to get stable HTML after retries")
-
-            print(f"[INFO] Rendered {url} ({len(html)} chars)", flush=True)
-            return {"url": url, "html": html, "error": None}
-
-        except TimeoutError:
-            print(f"[WARN] Timeout loading {url}", flush=True)
-            return {"url": url, "html": "", "error": "Timeout while loading page"}
-
+            return {
+                "ok": True,
+                "url": url,
+                "content": html_content,
+                "time_ms": elapsed,
+            }
         except Exception as e:
-            print(f"[ERROR] Render failed: {e}\n{traceback.format_exc()}", flush=True)
-            return {"url": url, "html": "", "error": str(e)}
-
+            print(f"[renderer:error] render_html {url} -> {e}", flush=True)
+            return {"ok": False, "error": str(e)}
         finally:
-            browser.close()
+            try:
+                await ctx.close()
+            except Exception:
+                pass
+
+
+async def render_and_screenshot(url: str, keyword: Optional[str], max_matches: int = 5) -> Dict[str, Any]:
+    """
+    Render the page at URL, find bounding rects for keyword, return screenshot bytes and boxes.
+    """
+    await init_browser()
+    start = time.time()
+
+    async with _semaphore:
+        if _browser is None:
+            return {"ok": False, "error": "browser not initialized"}
+
+        # create context and page
+        ctx = await _browser.new_context(viewport={"width": 1280, "height": 900}, locale="en-US")
+        page: Page = await ctx.new_page()
+        try:
+            # navigate
+            # Configurable timeout (default 120 seconds for slow-loading pages)
+            goto_timeout = int(os.environ.get("RENDERER_GOTO_TIMEOUT", "120000"))
+            # Use "load" instead of "networkidle" for pages with continuous network activity
+            # "load" waits for the load event, which is more reliable for slow pages
+            wait_until = os.environ.get("RENDERER_WAIT_UNTIL", "load")
+            await page.goto(url, wait_until=wait_until, timeout=goto_timeout)
+            # small delay to allow dynamic content to settle (tweak if needed)
+            await asyncio.sleep(0.5)  # Increased from 0.3s to 0.5s for better content rendering
+
+            # find rects for keyword
+            boxes = []
+            if keyword:
+                try:
+                    # Playwright evaluate: pass arguments as a list
+                    # The JS function receives the list as a single argument
+                    boxes = await page.evaluate(
+                        _FIND_RECTS_JS,
+                        [keyword, max_matches]
+                    )
+                except Exception as e:
+                    print(f"[renderer:boxes:error] {url} -> {e}", flush=True)
+
+            # take full page screenshot (png bytes)
+            screenshot_bytes = await page.screenshot(full_page=True)
+            elapsed = int((time.time() - start) * 1000)
+
+            return {
+                "ok": True,
+                "url": url,
+                "keyword": keyword,
+                "matches": len(boxes),
+                "boxes": boxes,
+                "time_ms": elapsed,
+                "screenshot": screenshot_bytes,
+            }
+        except Exception as e:
+            print(f"[renderer:error] render_and_screenshot {url} -> {e}", flush=True)
+            return {"ok": False, "error": str(e)}
+        finally:
+            try:
+                await ctx.close()
+            except Exception:
+                pass

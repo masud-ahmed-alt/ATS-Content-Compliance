@@ -6,6 +6,7 @@ import ReportDetails from "./pages/ReportDetails";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Events from "./pages/Events";
+import BatchMonitor from "./pages/BatchMonitor";
 import "./styles/app.css"; // Custom styling for layout
 
 function App() {
@@ -39,6 +40,15 @@ function App() {
         element={
           <ProtectedRoute>
             <Events />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/batch-monitor"
+        element={
+          <ProtectedRoute>
+            <BatchMonitor />
           </ProtectedRoute>
         }
       />

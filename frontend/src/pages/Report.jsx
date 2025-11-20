@@ -60,6 +60,10 @@ function Report() {
                       <tr>
                         <th style={{ width: "60px" }}>#</th>
                         <th>Main URL</th>
+                        <th style={{ width: "100px" }}>Total Matches</th>
+                        <th style={{ width: "100px" }}>URLs Scanned</th>
+                        <th style={{ width: "150px" }}>Categories</th>
+                        <th style={{ width: "130px" }}>Date</th>
                         <th style={{ width: "120px" }}>Action</th>
                       </tr>
                     </thead>
@@ -76,6 +80,42 @@ function Report() {
                             >
                               {task.main_url}
                             </a>
+                          </td>
+                          <td>
+                            <span className="badge bg-info text-dark">
+                              {task.total_matches || 0}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="text-muted small">
+                              {task.total_urls || 0}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="d-flex flex-wrap gap-1">
+                              {task.categories && task.categories.length > 0 ? (
+                                task.categories.slice(0, 2).map((cat, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="badge bg-secondary small"
+                                  >
+                                    {cat}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-muted small">-</span>
+                              )}
+                              {task.categories && task.categories.length > 2 && (
+                                <span className="badge bg-light text-dark small">
+                                  +{task.categories.length - 2}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="text-muted small">
+                            {task.timestamp
+                              ? new Date(task.timestamp * 1000).toLocaleDateString()
+                              : "-"}
                           </td>
                           <td>
                             <a

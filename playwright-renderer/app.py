@@ -1,41 +1,103 @@
-#!/usr/bin/env python3
-from fastapi import FastAPI, Query
-from utils.load_keywords import load_keywords
-from lib.renderer import render_and_screenshot, render_html
-from playwright.sync_api import sync_playwright
+# app.py
+import base64
+import os
+import uuid
+from typing import Optional
 
-app = FastAPI(title="Playwright Renderer (Optimized)")
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, field_validator
+from urllib.parse import urlparse
 
-def ensure_browser():
-    """Launch a Playwright browser safely."""
-    return sync_playwright().start().chromium.launch(
-        headless=True,
-        args=[
-            "--no-sandbox",
-            "--disable-gpu",
-            "--disable-dev-shm-usage",
-            "--disable-setuid-sandbox",
-            "--disable-software-rasterizer",
-        ],
-    )
+from lib.renderer import (
+    init_browser,
+    shutdown_browser,
+    render_html,
+    render_and_screenshot,
+    upload_to_minio,
+)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan event handler for startup and shutdown."""
+    # Startup
+    await init_browser()
+    yield
+    # Shutdown
+    await shutdown_browser()
 
-# ---------------------------------------------------------------------
-# ROUTES
-# ---------------------------------------------------------------------
+app = FastAPI(title="Playwright Async Renderer", lifespan=lifespan)
 
-@app.get("/render")
-def render_endpoint(url: str = Query(..., description="URL to render HTML content")):
-    """Render HTML content (used by analyzer for JS-heavy pages)."""
-    return render_html(url)
-
-@app.get("/render-and-screenshot")
-def render_and_screenshot_api(
-    url: str = Query(..., description="Target webpage URL"),
-    keyword: str = Query(..., description="Keyword to capture"),
-    max_matches: int = Query(5, description="Maximum cropped screenshots per page")
-):
-    """Expose render_and_screenshot() from lib/renderer.py via API."""
-    return render_and_screenshot(url, keyword, max_matches)
+# default upload behaviour if not specified in request (env var "true"/"1"/"yes")
+MINIO_UPLOAD_DEFAULT = os.environ.get("MINIO_UPLOAD_DEFAULT", "false").lower() in ("1", "true", "yes")
 
 
+class RenderRequest(BaseModel):
+    url: str  # Changed from HttpUrl to str to handle URLs with query parameters
+    keyword: Optional[str] = None
+    # If present, overrides MINIO_UPLOAD_DEFAULT
+    upload: Optional[bool] = None
+    # optional max matches to return
+    max_matches: Optional[int] = 20
+    
+    @field_validator('url')
+    @classmethod
+    def validate_url(cls, v: str) -> str:
+        """Validate that the URL is well-formed"""
+        if not v:
+            raise ValueError("URL cannot be empty")
+        try:
+            parsed = urlparse(v)
+            if not parsed.scheme or not parsed.netloc:
+                raise ValueError(f"Invalid URL format: {v}")
+            return v
+        except Exception as e:
+            raise ValueError(f"Invalid URL: {v} - {e}")
+
+
+# Lifespan events are now handled in the lifespan context manager above
+
+
+@app.post("/render")
+async def api_render_html(req: RenderRequest):
+    """
+    Render a URL and return its HTML content (no screenshot).
+    Used for JS-heavy pages where initial fetch doesn't have full content.
+    """
+    try:
+        result = await render_html(str(req.url))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if not result.get("ok", False):
+        raise HTTPException(status_code=500, detail=result.get("error", "unknown error"))
+
+    return result
+
+
+@app.post("/render-and-screenshot")
+async def api_render(req: RenderRequest):
+    # call renderer
+    try:
+        result = await render_and_screenshot(str(req.url), keyword=req.keyword, max_matches=req.max_matches)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if not result.get("ok", False):
+        raise HTTPException(status_code=500, detail=result.get("error", "unknown error"))
+
+    # screenshot bytes may be included
+    screenshot_bytes = result.get("screenshot")
+    if screenshot_bytes:
+        result["screenshot_b64"] = base64.b64encode(screenshot_bytes).decode()
+        # drop raw bytes to keep JSON friendly
+        del result["screenshot"]
+
+    # optionally upload to MinIO if requested or default enabled
+    should_upload = req.upload if req.upload is not None else MINIO_UPLOAD_DEFAULT
+    if should_upload and screenshot_bytes:
+        object_name = f"screenshots/{uuid.uuid4().hex}.png"
+        upload_info = await upload_to_minio(screenshot_bytes, object_name)
+        result["minio"] = upload_info
+
+    return result

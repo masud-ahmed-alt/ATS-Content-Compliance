@@ -13,13 +13,35 @@ type PageContent struct {
 	ContentType string `json:"content_type,omitempty"`
 }
 
+// PageMetadata describes an entry embedded inside the compressed archive
+type PageMetadata struct {
+	URL         string `json:"url"`
+	FileName    string `json:"file_name,omitempty"`
+	ContentType string `json:"content_type,omitempty"`
+	Error       string `json:"error,omitempty"`
+	SizeBytes   int    `json:"size_bytes,omitempty"`
+	HasHTML     bool   `json:"has_html"`
+}
+
+// BatchStats provides a quick overview of successes and failures
+type BatchStats struct {
+	Successful int `json:"successful"`
+	Failed     int `json:"failed"`
+}
+
 // PageBatch represents a batch of pages to send to analyzer
 type PageBatch struct {
-	RequestID  string        `json:"request_id"`
-	MainURL    string        `json:"main_url"`
-	BatchNum   int           `json:"batch_num"`
-	Pages      []PageContent `json:"pages"`
-	IsComplete bool          `json:"is_complete"`
+	RequestID      string        `json:"request_id"`
+	BatchID        string        `json:"batch_id"`
+	MainURL        string        `json:"main_url"`
+	BatchNum       int           `json:"batch_num"`
+	Pages          []PageContent `json:"pages,omitempty"`
+	IsComplete     bool          `json:"is_complete"`
+	TotalPages     int           `json:"total_pages"`
+	ArchiveBase64  string        `json:"archive_base64,omitempty"`
+	Compression    string        `json:"compression,omitempty"`
+	Metadata       []PageMetadata `json:"metadata,omitempty"`
+	Stats          BatchStats    `json:"stats,omitempty"`
 }
 
 // ProgressEvent represents a progress event for SSE
@@ -31,17 +53,4 @@ type ProgressEvent struct {
 	Total     int     `json:"total"`
 	Percent   float64 `json:"percent"`
 	Message   string  `json:"message,omitempty"`
-}
-
-// CrawlState tracks the state of crawling a single seed
-type CrawlState struct {
-	RequestID   string
-	MainURL     string
-	MainHost    string
-	Visited     map[string]struct{}
-	CurrentBatch []PageContent
-	BatchNum    int
-	Processed   int64
-	Enqueued    int64
-	MaxPages    int
 }

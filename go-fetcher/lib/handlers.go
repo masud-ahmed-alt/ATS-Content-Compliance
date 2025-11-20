@@ -6,15 +6,18 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 // Handler contains HTTP handlers
 type Handler struct {
-	crawler   *Crawler
-	eventHub  *EventHub
-	semaphore chan struct{}
+	crawler        *Crawler
+	eventHub       *EventHub
+	semaphore      chan struct{}
+	activeRequests sync.Map
 }
 
 // NewHandler creates a new handler
@@ -24,6 +27,12 @@ func NewHandler(crawler *Crawler, eventHub *EventHub, maxConcurrent int) *Handle
 		eventHub:  eventHub,
 		semaphore: make(chan struct{}, maxConcurrent),
 	}
+}
+
+type ActiveRequest struct {
+	RequestID string    `json:"request_id"`
+	StartedAt time.Time `json:"started_at"`
+	UrlCount  int       `json:"url_count"`
 }
 
 // HandleFetch handles fetch requests
@@ -41,10 +50,17 @@ func (h *Handler) HandleFetch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestID := uuid.NewString()
+	h.activeRequests.Store(requestID, ActiveRequest{
+		RequestID: requestID,
+		StartedAt: time.Now().UTC(),
+		UrlCount:  len(req.Urls),
+	})
+
 	go func() {
 		h.semaphore <- struct{}{}
 		defer func() { <-h.semaphore }()
 		h.crawler.StartCrawl(requestID, req.Urls)
+		h.activeRequests.Delete(requestID)
 	}()
 
 	w.Header().Set("Content-Type", "application/json")
@@ -100,4 +116,25 @@ func (h *Handler) streamSSE(w http.ResponseWriter, r *http.Request, requestID st
 			flusher.Flush()
 		}
 	}
+}
+
+// HandleActiveRequests returns the currently running requests
+func (h *Handler) HandleActiveRequests(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var requests []ActiveRequest
+	h.activeRequests.Range(func(_, value any) bool {
+		if ar, ok := value.(ActiveRequest); ok {
+			requests = append(requests, ar)
+		}
+		return true
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]any{
+		"requests": requests,
+	})
 }

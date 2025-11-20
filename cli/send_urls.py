@@ -18,7 +18,8 @@ EXPORT_TIMEOUT = int(os.environ.get("EXPORT_TIMEOUT", "120"))  # seconds
 def send_url(url: str):
     try:
         print(f"[send] Sending URL to fetcher: {url}", flush=True)
-        r = requests.post(FETCHER, json={"url": url}, timeout=10)
+        # Go fetcher expects {"urls": ["url1", "url2"]} format (plural, array)
+        r = requests.post(FETCHER, json={"urls": [url]}, timeout=10)
         if r.status_code in (200, 202):
             print(f"  [ok] {url} accepted by fetcher", flush=True)
             return True

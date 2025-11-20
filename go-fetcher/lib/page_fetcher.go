@@ -12,15 +12,13 @@ import (
 type PageFetcher struct {
 	httpClient  *http.Client
 	maxPageBytes int64
-	minioUploader *MinIOUploader
 }
 
 // NewPageFetcher creates a new page fetcher
-func NewPageFetcher(httpClient *http.Client, maxPageBytes int64, minioUploader *MinIOUploader) *PageFetcher {
+func NewPageFetcher(httpClient *http.Client, maxPageBytes int64) *PageFetcher {
 	return &PageFetcher{
 		httpClient:    httpClient,
 		maxPageBytes:   maxPageBytes,
-		minioUploader:  minioUploader,
 	}
 }
 
@@ -45,9 +43,8 @@ func (pf *PageFetcher) FetchPage(target string) PageContent {
 	_, _ = io.Copy(&buf, io.LimitReader(resp.Body, pf.maxPageBytes))
 	html := buf.String()
 
-	if strings.HasPrefix(ct, "text/html") && pf.minioUploader != nil {
-		go pf.minioUploader.UploadPage(target, []byte(html))
-	}
+	// HTML pages are no longer saved to MinIO in go-fetcher
+	// They will be saved by python-analyzer only when hits are detected
 
 	return PageContent{URL: target, HTML: html, ContentType: ct}
 }

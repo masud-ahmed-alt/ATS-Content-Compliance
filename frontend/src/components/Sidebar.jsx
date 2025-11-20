@@ -29,6 +29,16 @@ function Sidebar() {
         </li>
         <li className="nav-item mb-2">
           <button
+            onClick={() => navigate("/batch-monitor")}
+            className={`btn btn-link text-white text-start w-100 ${
+              isActive("/batch-monitor") ? "fw-bold" : ""
+            }`}
+          >
+            <i className="bi bi-clock-history me-2"></i> Batch Monitor
+          </button>
+        </li>
+        <li className="nav-item mb-2">
+          <button
             onClick={() => navigate("/events")}
             className={`btn btn-link text-white text-start w-100 ${
               isActive("/events") ? "fw-bold" : ""

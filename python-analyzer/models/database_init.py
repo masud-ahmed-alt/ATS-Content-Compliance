@@ -16,6 +16,7 @@ from config.settings import engine, SessionLocal, Base
 from models.database_models import (
     ProductCategory, Product, PaymentProvider, CrawlSession, AuditLog
 )
+from models.hit_model import Result, Hit  # noqa: F401 - ensures Base registers tables
 
 logger = logging.getLogger(__name__)
 

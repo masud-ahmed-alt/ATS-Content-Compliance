@@ -4,16 +4,17 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { API_CONFIG } from "../utils/apiConfig";
 
-const MAX_URLS_PER_FILE = 10000;
+const MAX_URLS_PER_FILE = 50; // Limit to 50 URLs per file for testing
+const MAX_FILE_SIZE_MB = 10; // File size limit for testing
 const BATCH_SIZE = 50; // match crawler's internal batchSize
 const MAX_CONCURRENT_UPLOADS = 5;
 const CHUNK_READ_SIZE = 1024 * 1024; // 1MB chunks for large files
 
 /**
- * Dashboard - Optimized URL Upload Page
+ * Dashboard - URL Upload Page for Testing
  * Features:
- * - Large file support with streaming
- * - Better error handling and retry
+ * - Upload up to 50 URLs per file for testing
+ * - File validation (size + URL count)
  * - Progress tracking
  * - Concurrent upload management
  */
@@ -21,9 +22,15 @@ function Dashboard() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [fileStats, setFileStats] = useState({ count: 0, valid: false });
+  const [fileStats, setFileStats] = useState({
+    count: 0,
+    valid: false,
+    warning: "",
+  });
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [uploadMode, setUploadMode] = useState("file"); // "file" or "manual"
+  const [manualUrls, setManualUrls] = useState("");
   const fileInputRef = useRef(null);
 
   // ===============================
@@ -53,11 +60,25 @@ function Dashboard() {
       const file = e.target.files?.[0];
       if (!file) return;
 
+      // ✅ NEW: Check file type
       const validType = /\.(xlsx|csv)$/i.test(file.name);
       if (!validType) {
         setError("Invalid file type. Please upload .xlsx or .csv");
         setSelectedFile(null);
-        setFileStats({ count: 0, valid: false });
+        setFileStats({ count: 0, valid: false, warning: "" });
+        return;
+      }
+
+      // ✅ NEW: Check file size (100MB limit)
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        setError(
+          `File too large (${fileSizeMB.toFixed(
+            1
+          )}MB > ${MAX_FILE_SIZE_MB}MB). Please reduce file size.`
+        );
+        setSelectedFile(null);
+        setFileStats({ count: 0, valid: false, warning: "" });
         return;
       }
 
@@ -78,20 +99,30 @@ function Dashboard() {
           }
 
           const count = urls.length;
+          let warning = "";
+
+          // Show warning if exceeding test limit
+          if (count > MAX_URLS_PER_FILE) {
+            warning = `⚠️ Exceeds test limit: ${count} URLs found. Maximum ${MAX_URLS_PER_FILE} URLs allowed for testing.`;
+          } else if (count > 0) {
+            warning = `ℹ️ Ready to upload ${count} URL(s) for testing.`;
+          }
+
           setFileStats({
             count,
             valid: count > 0 && count <= MAX_URLS_PER_FILE,
+            warning,
           });
         } catch (err) {
           console.error("[file:parse] Error:", err);
           setError("Failed to parse file. Please check format.");
-          setFileStats({ count: 0, valid: false });
+          setFileStats({ count: 0, valid: false, warning: "" });
         }
       };
 
       reader.onerror = () => {
         setError("Failed to read file");
-        setFileStats({ count: 0, valid: false });
+        setFileStats({ count: 0, valid: false, warning: "" });
       };
 
       if (file.name.endsWith(".csv")) reader.readAsText(file);
@@ -124,88 +155,134 @@ function Dashboard() {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return alert("Please select a file first.");
-    if (!fileStats.valid)
-      return alert(`Invalid file or exceeds ${MAX_URLS_PER_FILE} URLs.`);
+    let urls = [];
 
-    setUploading(true);
-    setProgress({ current: 0, total: 0 });
+    if (uploadMode === "manual") {
+      // Parse manual URLs from textarea
+      urls = manualUrls
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith("http"));
 
-    const ext = selectedFile.name.split(".").pop().toLowerCase();
-    const reader = new FileReader();
+      if (urls.length === 0) {
+        alert("Please enter at least one valid URL (starting with http:// or https://)");
+        return;
+      }
 
-    reader.onload = async (e) => {
-      try {
-        let urls = [];
-        if (ext === "csv") {
-          const text = e.target.result;
-          urls = text
-            .split(/\r?\n/)
-            .map((line) => line.trim())
-            .filter((line) => line.startsWith("http"));
-        } else {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: "array" });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-          urls = rows
-            .flat()
-            .filter((u) => typeof u === "string" && u.startsWith("http"));
-        }
+      if (urls.length > MAX_URLS_PER_FILE) {
+        alert(`Too many URLs. Maximum ${MAX_URLS_PER_FILE} URLs allowed.`);
+        return;
+      }
+    } else {
+      // File upload mode
+      if (!selectedFile) return alert("Please select a file first.");
+      if (!fileStats.valid)
+        return alert(`Invalid file or exceeds ${MAX_URLS_PER_FILE} URLs.`);
 
-        if (urls.length === 0) {
-          alert("No valid URLs found in file.");
-          setUploading(false);
-          return;
-        }
+      const ext = selectedFile.name.split(".").pop().toLowerCase();
+      const reader = new FileReader();
 
-        // split into batches (match crawler’s batch handling)
-        const batches = [];
-        for (let i = 0; i < urls.length; i += BATCH_SIZE)
-          batches.push(urls.slice(i, i + BATCH_SIZE));
+      return new Promise((resolve) => {
+        reader.onload = async (e) => {
+          try {
+            if (ext === "csv") {
+              const text = e.target.result;
+              urls = text
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter((line) => line.startsWith("http"));
+            } else {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const sheet = workbook.Sheets[workbook.SheetNames[0]];
+              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+              urls = rows
+                .flat()
+                .filter((u) => typeof u === "string" && u.startsWith("http"));
+            }
 
-        setProgress({ current: 0, total: batches.length });
-        console.log(
-          `Uploading ${urls.length} URLs in ${batches.length} batches`
-        );
+            if (urls.length === 0) {
+              alert("No valid URLs found in file.");
+              setUploading(false);
+              resolve();
+              return;
+            }
 
-        // Manage concurrency
-        const queue = [...batches];
-        const active = [];
-
-        const runNext = async () => {
-          if (!queue.length) return;
-          const batch = queue.shift();
-          const index = progress.current + 1;
-          const task = uploadBatch(batch, index, batches.length)
-            .catch((err) => console.error("Batch upload error:", err))
-            .finally(() => {
-              active.splice(active.indexOf(task), 1);
-              runNext();
-            });
-          active.push(task);
+            await processUrls(urls);
+            resolve();
+          } catch (err) {
+            console.error("Upload failed:", err);
+            alert("Upload failed. Please check logs.");
+            setUploading(false);
+            resolve();
+          }
         };
 
-        const concurrency = Math.min(MAX_CONCURRENT_UPLOADS, batches.length);
-        await Promise.all(Array.from({ length: concurrency }, runNext));
-        await Promise.all(active);
+        if (ext === "csv") reader.readAsText(selectedFile);
+        else reader.readAsArrayBuffer(selectedFile);
+      });
+    }
 
-        alert(
-          `Upload completed (${urls.length} URLs in ${batches.length} batches)`
-        );
-      } catch (err) {
-        console.error("Upload failed:", err);
-        alert("Upload failed. Please check logs.");
-      } finally {
-        setUploading(false);
+    await processUrls(urls);
+  };
+
+  const processUrls = async (urls) => {
+    setUploading(true);
+    setProgress({ current: 0, total: 0 });
+    setError("");
+    setSuccessMessage("");
+
+    try {
+      // split into batches (match crawler's batch handling)
+      const batches = [];
+      for (let i = 0; i < urls.length; i += BATCH_SIZE)
+        batches.push(urls.slice(i, i + BATCH_SIZE));
+
+      setProgress({ current: 0, total: batches.length });
+      console.log(
+        `Uploading ${urls.length} URLs in ${batches.length} batches`
+      );
+
+      // Manage concurrency
+      const queue = [...batches];
+      const active = [];
+
+      const runNext = async () => {
+        if (!queue.length) return;
+        const batch = queue.shift();
+        const index = progress.current + 1;
+        const task = uploadBatch(batch, index, batches.length)
+          .catch((err) => {
+            console.error("Batch upload error:", err);
+            setError(`Batch ${index} failed: ${err.message}`);
+          })
+          .finally(() => {
+            active.splice(active.indexOf(task), 1);
+            runNext();
+          });
+        active.push(task);
+      };
+
+      const concurrency = Math.min(MAX_CONCURRENT_UPLOADS, batches.length);
+      await Promise.all(Array.from({ length: concurrency }, runNext));
+      await Promise.all(active);
+
+      setSuccessMessage(
+        `Upload completed! ${urls.length} URLs in ${batches.length} batches sent to crawler.`
+      );
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setError(`Upload failed: ${err.message}`);
+    } finally {
+      setUploading(false);
+      if (uploadMode === "file") {
         setSelectedFile(null);
         setFileStats({ count: 0, valid: false });
-        setProgress({ current: 0, total: 0 });
+      } else {
+        setManualUrls("");
       }
-    };
-
-    if (ext === "csv") reader.readAsText(selectedFile);
-    else reader.readAsArrayBuffer(selectedFile);
+      setProgress({ current: 0, total: 0 });
+    }
   };
 
   // ===============================
@@ -227,28 +304,93 @@ function Dashboard() {
             <div className="col-12 col-lg-8 mx-auto">
               <div className="card border-0 shadow-sm p-4">
                 <h5 className="fw-semibold text-primary mb-3">
-                  <i className="bi bi-file-earmark-excel me-2"></i>Upload URLs
-                  File
+                  <i className="bi bi-cloud-upload me-2"></i>Upload URLs
                 </h5>
-                <p className="text-muted small mb-3">
-                  Supports <strong>.xlsx</strong> and <strong>.csv</strong>{" "}
-                  files (up to {MAX_URLS_PER_FILE} URLs). Each batch sends{" "}
-                  {BATCH_SIZE} URLs to the crawler for processing.
-                </p>
+                
+                {/* Mode Toggle */}
+                <div className="btn-group w-100 mb-3" role="group">
+                  <input
+                    type="radio"
+                    className="btn-check"
+                    name="uploadMode"
+                    id="mode-file"
+                    checked={uploadMode === "file"}
+                    onChange={() => setUploadMode("file")}
+                    disabled={uploading}
+                  />
+                  <label className="btn btn-outline-primary" htmlFor="mode-file">
+                    <i className="bi bi-file-earmark-excel me-2"></i>File Upload
+                  </label>
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  className="form-control mb-3"
-                  accept=".xlsx,.csv"
-                  onChange={handleFileChange}
-                  disabled={uploading}
-                />
+                  <input
+                    type="radio"
+                    className="btn-check"
+                    name="uploadMode"
+                    id="mode-manual"
+                    checked={uploadMode === "manual"}
+                    onChange={() => setUploadMode("manual")}
+                    disabled={uploading}
+                  />
+                  <label className="btn btn-outline-primary" htmlFor="mode-manual">
+                    <i className="bi bi-pencil-square me-2"></i>Manual Entry
+                  </label>
+                </div>
+
+                {uploadMode === "file" ? (
+                  <>
+                    <div className="alert alert-info mb-3">
+                      <i className="bi bi-info-circle me-2"></i>
+                      <strong>For Testing:</strong> Please upload a file with up to {MAX_URLS_PER_FILE} URLs.
+                      <br />
+                      <small>Supports <strong>.xlsx</strong> and <strong>.csv</strong> files with one URL per row.</small>
+                    </div>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="form-control mb-3"
+                      accept=".xlsx,.csv"
+                      onChange={handleFileChange}
+                      disabled={uploading}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="alert alert-info mb-3">
+                      <i className="bi bi-info-circle me-2"></i>
+                      <strong>For Testing:</strong> Enter up to {MAX_URLS_PER_FILE} URLs manually (one per line).
+                    </div>
+
+                    <textarea
+                      className="form-control mb-3"
+                      rows="8"
+                      placeholder="https://example.com/&#10;https://another-site.com/page"
+                      value={manualUrls}
+                      onChange={(e) => setManualUrls(e.target.value)}
+                      disabled={uploading}
+                      style={{ fontFamily: "monospace", fontSize: "0.9rem" }}
+                    />
+
+                    {manualUrls && (
+                      <div className="alert alert-info small mb-3">
+                        <i className="bi bi-info-circle me-2"></i>
+                        {manualUrls
+                          .split(/\r?\n/)
+                          .filter((line) => line.trim().startsWith("http")).length}{" "}
+                        valid URL(s) detected (max {MAX_URLS_PER_FILE} allowed)
+                      </div>
+                    )}
+                  </>
+                )}
 
                 <button
                   className="btn btn-primary w-100"
                   onClick={handleUpload}
-                  disabled={!fileStats.valid || uploading}
+                  disabled={
+                    uploading ||
+                    (uploadMode === "file" && !fileStats.valid) ||
+                    (uploadMode === "manual" && !manualUrls.trim())
+                  }
                 >
                   {uploading ? (
                     <>
@@ -262,7 +404,7 @@ function Dashboard() {
                   )}
                 </button>
 
-                {selectedFile && !uploading && (
+                {uploadMode === "file" && selectedFile && !uploading && (
                   <div
                     className={`alert mt-3 small text-center ${
                       fileStats.valid ? "alert-info" : "alert-warning"
@@ -276,6 +418,16 @@ function Dashboard() {
                           ⚠️ Exceeds {MAX_URLS_PER_FILE} URL limit
                         </div>
                       )}
+                  </div>
+                )}
+
+                {/* Show file stats warning/info */}
+                {fileStats.warning && !uploading && (
+                  <div className={`alert mt-3 small mb-0 ${
+                    fileStats.count > MAX_URLS_PER_FILE ? 'alert-warning' : 'alert-info'
+                  }`}>
+                    <i className={`bi me-2 ${fileStats.count > MAX_URLS_PER_FILE ? 'bi-exclamation-triangle' : 'bi-info-circle'}`}></i>
+                    {fileStats.warning}
                   </div>
                 )}
 
@@ -313,28 +465,6 @@ function Dashboard() {
                     {successMessage}
                   </div>
                 )}
-              </div>
-
-              {/* Info cards */}
-              <div className="row g-3 mt-3">
-                <div className="col-md-6">
-                  <div className="card shadow-sm border-0 text-center p-3">
-                    <i className="bi bi-info-circle text-primary fs-4 mb-2"></i>
-                    <h6 className="fw-semibold mb-1">Supported Formats</h6>
-                    <small className="text-muted">
-                      Excel (.xlsx) or CSV files with one URL per row
-                    </small>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="card shadow-sm border-0 text-center p-3">
-                    <i className="bi bi-clock-history text-info fs-4 mb-2"></i>
-                    <h6 className="fw-semibold mb-1">Monitor Progress</h6>
-                    <small className="text-muted">
-                      View live crawl updates in the Events tab
-                    </small>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

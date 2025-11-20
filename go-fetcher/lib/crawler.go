@@ -2,11 +2,13 @@ package lib
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"strings"
 	"sync"
 	"sync/atomic"
 
+	"github.com/google/uuid"
 	"go-fetcher/utils"
 )
 
@@ -67,10 +69,10 @@ func (c *Crawler) CrawlOneSeed(requestID, seed string) error {
 		mainURL:       seed,
 		mainHost:      strings.ToLower(u.Host),
 		visited:       make(map[string]struct{}),
-		currentBatch:  make([]PageContent, 0, c.config.BatchSize),
 		maxPages:      c.config.MaxPagesPerSeed,
 		mu:            &sync.Mutex{},
-		muBatch:       &sync.Mutex{},
+		pages:         make([]PageContent, 0, c.config.MaxPagesPerSeed),
+		pagesMu:       &sync.Mutex{},
 	}
 
 	urlQueue := make(chan string, 1024)
@@ -107,7 +109,7 @@ func (c *Crawler) CrawlOneSeed(requestID, seed string) error {
 		go func() {
 			for u := range urlQueue {
 				pc := c.pageFetcher.FetchPage(u)
-				st.addToBatch(pc, c.analyzerClient, c.config.BatchSize)
+				st.addPage(pc)
 				done := int(atomic.AddInt64(&st.processed, 1))
 				total := int(atomic.LoadInt64(&st.enqueued))
 				if done%c.config.ProgressEveryN == 0 {
@@ -143,7 +145,7 @@ func (c *Crawler) CrawlOneSeed(requestID, seed string) error {
 
 	wg.Wait()
 	close(urlQueue)
-	st.flushBatch(true, c.analyzerClient)
+	st.sendSingleBatch(c.analyzerClient)
 	done := int(atomic.LoadInt64(&st.processed))
 	total := int(atomic.LoadInt64(&st.enqueued))
 	c.eventHub.Publish(ProgressEvent{
@@ -164,41 +166,47 @@ type crawlState struct {
 	mainHost     string
 	mu           *sync.Mutex
 	visited      map[string]struct{}
-	muBatch      *sync.Mutex
-	currentBatch []PageContent
-	batchNum     int
+	pagesMu      *sync.Mutex
+	pages        []PageContent
 	processed    int64
 	enqueued     int64
 	maxPages     int
 }
 
-func (st *crawlState) addToBatch(pc PageContent, ac *AnalyzerClient, batchSize int) {
-	st.muBatch.Lock()
-	defer st.muBatch.Unlock()
-	st.currentBatch = append(st.currentBatch, pc)
-	if len(st.currentBatch) >= batchSize {
-		st.flushBatchUnsafe(false, ac)
-	}
+func (st *crawlState) addPage(pc PageContent) {
+	st.pagesMu.Lock()
+	st.pages = append(st.pages, pc)
+	st.pagesMu.Unlock()
 }
 
-func (st *crawlState) flushBatchUnsafe(isComplete bool, ac *AnalyzerClient) {
-	if len(st.currentBatch) == 0 {
+func (st *crawlState) sendSingleBatch(ac *AnalyzerClient) {
+	st.pagesMu.Lock()
+	pagesCopy := make([]PageContent, len(st.pages))
+	copy(pagesCopy, st.pages)
+	st.pagesMu.Unlock()
+
+	archive, metadata, stats, err := buildCompressedArchive(st.mainURL, pagesCopy)
+	if err != nil {
+		log.Printf("[crawler:error] failed to compress archive for %s: %v", st.mainURL, err)
 		return
 	}
-	st.batchNum++
-	batch := PageBatch{
-		RequestID:  st.requestID,
-		MainURL:    st.mainURL,
-		BatchNum:   st.batchNum,
-		Pages:      st.currentBatch,
-		IsComplete: isComplete,
-	}
-	go ac.SendBatch(batch)
-	st.currentBatch = make([]PageContent, 0, cap(st.currentBatch))
-}
 
-func (st *crawlState) flushBatch(isComplete bool, ac *AnalyzerClient) {
-	st.muBatch.Lock()
-	defer st.muBatch.Unlock()
-	st.flushBatchUnsafe(isComplete, ac)
+	batch := PageBatch{
+		RequestID:     st.requestID,
+		BatchID:       uuid.New().String(),
+		MainURL:       st.mainURL,
+		BatchNum:      1,
+		IsComplete:    true,
+		TotalPages:    len(metadata),
+		ArchiveBase64: archive,
+		Compression:   "zip-base64",
+		Metadata:      metadata,
+		Stats:         stats,
+	}
+
+	go func(b PageBatch) {
+		if err := ac.SendBatch(b); err != nil {
+			log.Printf("[crawler:error] batch delivery failed for %s: %v", b.BatchID, err)
+		}
+	}(batch)
 }
